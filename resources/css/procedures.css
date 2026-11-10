@@ -1,0 +1,21 @@
+/* Facial procedure strip, scoped to the homepage component. */
+.procedure-card{cursor:pointer;text-decoration:none;color:inherit}.procedure-card:focus-visible{outline:2px solid #a67c3d;outline-offset:-3px;border-radius:12px}.procedure-card:active img{filter:brightness(.95)}
+.procedures-section{width:calc(100% - 64px);max-width:1952px;margin-top:-86px}
+.procedure-shell{border-radius:28px;background:#fffffffa;box-shadow:0 18px 50px #8e73500a;padding:65px 14px 30px}
+.procedure-heading{z-index:1;left:30px;top:22px;gap:24px;align-items:center}
+.procedure-heading h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(15px,1vw,21px);font-weight:600;color:#b8a18a}
+.procedure-heading p{font-size:clamp(11px,.8vw,17px);color:#a8a6a3;margin:0}
+.procedure-card{flex:0 0 12.5%;min-width:0;padding:0 17px;border-right:1px solid #eeeae5;display:flex;flex-direction:column;align-items:stretch}
+.procedure-card img{height:auto;aspect-ratio:1.32;object-fit:cover;object-position:center;border-radius:12px;transition:transform .35s ease,filter .35s ease}
+.procedure-card h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(15px,1.1vw,23px);font-weight:600;line-height:1.25;letter-spacing:-.35px;color:#283b47;margin-top:16px;white-space:normal}
+.procedure-card p{font-size:clamp(11px,.83vw,17px);color:#7f8b98;letter-spacing:0;line-height:1.5;white-space:normal;max-width:180px;min-height:3em;margin:12px auto 0;padding:0 5px}
+.procedure-card-1 img{object-position:50% 50%}.procedure-card-3 img{object-position:75% 65%}.procedure-card-5 img{object-position:78% 100%;transform:scaleX(-1)}.procedure-card-6 img{object-position:95% 45%}.procedure-card-7 img{object-position:45% 35%}
+.procedure-card-5:hover img{transform:scaleX(-1) translateY(-4px)}
+.procedure-card p{font-size:clamp(11px,.79vw,16px);max-width:190px;padding:0}
+@media(min-width:1021px){.procedure-card h3{font-size:clamp(14px,1vw,21px);white-space:nowrap}.procedure-card-6 h3{font-size:clamp(13px,.9vw,19px)}}
+.procedure-next{right:-32px;width:64px;height:64px;border:1px solid #cba976;color:#aa7a36;background:#ffffffed;box-shadow:none;top:47%}.procedure-next svg{width:29px;height:29px}
+html[lang=th] .procedure-card h3,html[lang=ko] .procedure-card h3{font-family:inherit;font-size:clamp(12px,.9vw,18px);line-height:1.6;letter-spacing:0}
+@media(min-width:1021px){.hero{height:600px}.hero-benefits{bottom:128px;gap:38px}.hero-benefits>div{font-size:clamp(11px,.82vw,17px);line-height:1.6;gap:19px}.hero-benefits svg{width:clamp(30px,2.3vw,48px);height:clamp(30px,2.3vw,48px)}}
+@media(min-width:1700px){.procedures-section{width:calc(100% - 96px)}.procedure-shell{padding-top:65px;padding-bottom:30px}.hero-inner{max-width:1890px;width:calc(100% - 150px)}.hero-benefits{gap:50px}.hero-benefits>div{gap:24px}}
+@media(min-width:761px) and (max-width:1020px){.procedures-section{margin-top:-49px;width:calc(100% - 48px)}.procedure-card{flex-basis:22%;min-width:155px}.procedure-shell{padding-top:64px}.procedure-card h3{font-size:18px}.procedure-card p{font-size:12px}.procedure-next{width:48px;height:48px;right:-20px}}
+@media(max-width:760px){.procedures-section{width:calc(100% - 32px);margin-top:-44px}.procedure-shell{padding:73px 6px 22px;border-radius:20px}.procedure-heading{left:20px;top:17px;display:block}.procedure-heading h2{font-size:18px}.procedure-heading p{font-size:10px;margin-top:5px;max-width:260px;line-height:1.6}.procedure-card{flex:0 0 44%;min-width:142px;padding:0 12px}.procedure-card img{border-radius:9px}.procedure-card h3{font-size:18px;line-height:1.25;margin-top:14px;letter-spacing:-.2px}.procedure-card p{font-size:11px;margin-top:9px;line-height:1.5;padding:0;max-width:145px}.procedure-next{width:40px;height:40px;right:-10px;top:49%}.procedure-next svg{width:22px;height:22px}html[lang=th] .procedure-card h3,html[lang=ko] .procedure-card h3{font-size:13px}}

@@ -1,0 +1,79 @@
+/* Shared sizing for customer, hospital and admin workspaces. */
+img, video, canvas { max-width: 100%; }
+input, select, textarea { min-width: 0; max-width: 100%; }
+.hero-benefits > div, .real-guest-grid > *, .real-guest-panel,
+.ap-shell, .hd-shell, .ap-panel, .hd-panel { min-width: 0; }
+.hero-benefits svg { flex-shrink: 0; }
+.hero-benefits span { overflow-wrap: anywhere; }
+dialog { max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; }
+.ap-table-wrap, .hd-table-wrap { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+
+@media (max-width: 1100px) {
+    .site-header .desktop-nav { display: none; }
+    .site-header .menu-toggle { display: inline-flex; }
+    .site-header .mobile-nav:not([hidden]) {
+        display: flex; flex-direction: column; position: absolute;
+        top: 100%; left: 0; right: 0; padding: 16px 24px;
+        background: #fff; box-shadow: 0 15px 20px #29292912;
+        max-height: calc(100dvh - 80px); overflow-y: auto;
+    }
+    .site-header .mobile-nav a, .site-header .mobile-nav button {
+        display: block; min-height: 44px; padding: 12px 0; text-align: left;
+    }
+    .site-header .mobile-nav .mobile-guest-account {
+        display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 10px;
+        padding-top: 12px;
+    }
+    .site-header .mobile-nav .mobile-guest-account > a,
+    .site-header .mobile-nav .mobile-guest-account > button {
+        display: inline-flex !important; width: auto; flex: 0 0 auto;
+        align-items: center; justify-content: center;
+        padding: 11px 22px; text-align: center; margin: 0;
+    }
+    .nav-wrap { width: calc(100% - 40px); }
+    .account-dropdown summary { max-width: 230px; overflow-wrap: anywhere; }
+    .real-guest-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .hero-benefits { max-width: 100%; }
+    .hero-benefits > div { gap: 12px; }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+    .hero-benefits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 28px; }
+    .hero-benefits > div { font-size: 12px; }
+    .hospital-dashboard .hd-sidebar { transform: translateX(-100%); width: 245px; }
+    .hospital-dashboard .hd-sidebar.is-open { transform: translateX(0); }
+    .hospital-dashboard .hd-shell { margin-left: 0; }
+    .hospital-dashboard .hd-menu { display: block; font-size: 21px; min-width: 44px; min-height: 44px; }
+}
+
+@media (max-width: 760px) {
+    .container, .requests-container { width: calc(100% - 32px); }
+    .site-header .mobile-nav { max-height: calc(100dvh - 72px); }
+    .hero-benefits { left: 0; right: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .hero-benefits > div { font-size: 11px; align-items: flex-start; }
+    .hero-buttons { flex-wrap: wrap; }
+    .real-guest-request h1 { font-size: clamp(30px, 8vw, 38px); overflow-wrap: anywhere; }
+    .real-guest-panel { padding: 20px 16px; }
+    .real-guest-panel dl { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 0 12px; }
+    .real-guest-panel .button { max-width: 100%; white-space: normal; }
+    .real-guest-quote { padding: 16px 12px; }
+    .real-guest-reference, .account-status { overflow-wrap: anywhere; }
+    .request-filters { max-width: 100%; overflow-x: auto; padding-bottom: 6px; }
+    .ap-header, .hd-header { min-width: 0; }
+    .ap-sidebar, .hd-sidebar { max-height: 100dvh; }
+    .ap-button, .hd-button, .icon-button { min-height: 44px; }
+}
+
+/* Prevent mobile browsers from zooming into small form controls. */
+@media (hover: none) and (pointer: coarse) {
+    input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px; }
+    button, a, summary { touch-action: manipulation; }
+}
+
+@media (max-width: 380px) {
+    .site-header .brand strong { font-size: 15px; letter-spacing: 2px; }
+    .site-header .brand { gap: 8px; }
+    .site-header .nav-actions { gap: 4px; }
+    .hero-benefits > div { gap: 8px; font-size: 10px; }
+    .guest-otp-dialog { padding-inline: 16px; }
+}
