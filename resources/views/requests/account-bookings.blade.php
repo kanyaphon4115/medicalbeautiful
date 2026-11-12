@@ -4,6 +4,9 @@
  <section class="real-guest-quote"><h3>{{ $booking->reference }} · {{ $booking->status }}</h3>
  <p>{{ $booking->treatmentRequest->procedure_label }} · {{ $booking->hospital?->name }}</p>
  <p>Treatment date: {{ $booking->appointment_date?->format('M j, Y') ?? 'Awaiting hospital confirmation' }}</p>
+ @if($booking->deposit_phase==='treatment' && $booking->quotation)
+ <x-requests.deposit-summary :deposit="(new \App\Services\DepositPayment)->treatmentSummary($booking)" :verification-amount="in_array($booking->deposit_status,['Pending','Pending Verification','Information Required'],true)?$booking->deposit_amount_satang:null" />
+ @endif
  <a class="button button-outline" href="{{ route('guest.requests.show',$booking->treatmentRequest->reference) }}#booking-deposit">View Booking &amp; Payment</a>
  @if($booking->deposit_status==='Paid' && $booking->payment_verified_at && $booking->treatmentRequest->canChatWithHospital())<button type="button" class="button button-outline" data-customer-booking-chat>Booking Chat</button>@else<p class="real-guest-help">Booking Chat unlocks after deposit approval.</p>@endif
  </section>

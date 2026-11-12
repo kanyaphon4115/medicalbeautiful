@@ -1,3 +1,4 @@
+import {chatSenderLabel} from './chat-sender-label.js';
 import {attachMessageTranslation} from './chat-translation.js';
 import {postChatMessage, refreshChatSession} from './chat-request.js';
 import {createChatPolling} from './chat-polling.js';
@@ -9,12 +10,12 @@ const select = $('#chat-request-select'), customers = $('#chat-customer-select')
 const authenticated = widget.dataset.authenticated === 'true';
 const staff = widget.dataset.support === 'true';
 let channel = 'support', eligible = [], loadVersion = 0, pendingLoad;
-let renderedMessages = [], renderedSignature = null, sessionBlocked = false, sending = false;
+let renderedMessages = [], renderedSignature = null, sessionBlocked = false, sending = false, conversationWritable = false;
 const feedback = message => { $('.chat-feedback').textContent = message; };
 const csrf = document.querySelector('meta[name="csrf-token"]');
 function context() { return channel + ':' + (channel === 'hospital' ? select.value : customers?.value || ''); }
 function updateComposer() {
-    const unavailable = sessionBlocked || (staff && channel === 'support' && !customers?.value);
+    const unavailable = sessionBlocked || !conversationWritable || (staff && channel === 'support' && !customers?.value);
     const button = $('button[type="submit"]');
     if (button) button.disabled = unavailable || sending;
     const textarea = $('#chat-message');
@@ -32,6 +33,11 @@ function blockSession(message) {
     updateComposer();
 }
 function gate() {
+    const hospitalName=eligible.find(item=>String(item.id)===select.value)?.hospital_name||'Hospital';
+    const heading=$('#chat-title'), eyebrow=$('[data-chat-heading]'), input=$('#chat-message');
+    if(heading)heading.textContent=channel==='hospital'?'Hospital Chat':'How can we help?';
+    if(eyebrow)eyebrow.textContent=channel==='hospital'?hospitalName:'AESTHETIC CONCIERGE';
+    if(input)input.placeholder=channel==='hospital'?'Message your hospital...':'How can we help you?';
     const locked = channel === 'hospital' && !eligible.length;
     $('.chat-hospital-gate').hidden = !locked;
     $('.chat-conversation').hidden = locked;
@@ -65,7 +71,7 @@ function renderMessages(messages, forceScroll = false) {
         const text = document.createElement('p');
         text.textContent = message.body;
         const stamp = document.createElement('small');
-        stamp.textContent = (own ? 'You' : message.sender_type === 'customer' ? 'Customer' : 'Support team')
+        stamp.textContent = chatSenderLabel({channel,senderType:message.sender_type,own,hospitalName:eligible.find(item=>String(item.id)===select.value)?.hospital_name})
             + ' - ' + new Date(message.sent_at).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
         bubble.append(text, stamp);
         attachMessageTranslation(bubble,message);
@@ -114,6 +120,7 @@ async function load() {
         if (String(data.user_id) !== widget.dataset.userId) {
             blockSession('The signed-in account changed. Open this page again.'); return;
         }
+        conversationWritable=data.can_send===true;
         eligible = data.eligible_requests;
         options(select, eligible);
         if (customers) options(customers, data.conversations || [], 'Select a customer conversation');
@@ -124,6 +131,7 @@ async function load() {
     }
 }
 function resetConversation() {
+    conversationWritable=false;
     loadVersion++; pendingLoad?.abort();
     renderedMessages = []; renderedSignature = null;
     $('.chat-messages').replaceChildren();

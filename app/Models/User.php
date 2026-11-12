@@ -13,6 +13,8 @@ class User extends Authenticatable
     public const ROLE_USER = 'user';
     public const ROLE_ADMIN = 'admin';
     public const ROLE_HOSPITAL = 'hospital';
+    public const ROLE_SUPPORT = 'support';
+    protected $attributes = ['role'=>self::ROLE_USER];
 
     public function sendPasswordResetNotification($token): void
     {
@@ -65,7 +67,7 @@ class User extends Authenticatable
     }
     public function isChatSupport(): bool
     {
-        return $this->isAdmin();
+        return $this->isAdmin() || $this->role === self::ROLE_SUPPORT;
     }
     public function isAdmin(): bool
     {
@@ -79,7 +81,7 @@ class User extends Authenticatable
 
     public function landingRoute(): string
     {
-        return $this->isHospital() ? 'hospital.dashboard' : 'home';
+        return $this->role===self::ROLE_SUPPORT ? 'admin.support' : ($this->isHospital() ? 'hospital.dashboard' : 'home');
     }
 
 
@@ -89,6 +91,7 @@ class User extends Authenticatable
         return match ($this->role) {
             self::ROLE_ADMIN => 'Admin',
             self::ROLE_HOSPITAL => 'Hospital',
+            self::ROLE_SUPPORT => 'Customer Support',
             default => 'Customer',
         };
     }

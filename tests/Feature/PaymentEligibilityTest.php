@@ -27,7 +27,7 @@ class PaymentEligibilityTest extends TestCase {
   $this->get('/admin/payments?status=Pending%20Payment&size=5')->assertViewHas('realBookings',fn($rows)=>$rows->total()===1);
   $this->get('/admin/payments?search='.urlencode($reset->reference))->assertViewHas('realBookings',fn($rows)=>$rows->isEmpty());
   foreach([$reset,$orphan] as $b){$this->assertSame('quotes_received',$b->treatmentRequest->customer_status);$this->actingAs($b->customer)->get('/my-requests')->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='quotes_received');}
-  $this->assertSame('pending_payment',$pending->treatmentRequest->customer_status);
+  $this->assertSame('pending',$pending->treatmentRequest->customer_status);
   $this->assertSame($before,[$reset->fresh()->getRawOriginal(),$orphan->fresh()->getRawOriginal(),$pending->fresh()->getRawOriginal()]);
   $this->assertSame('quotes_received',$pending->treatmentRequest->fresh()->status);
  }
@@ -40,11 +40,11 @@ class PaymentEligibilityTest extends TestCase {
   $this->get('/admin/payments?status=Paid')->assertViewHas('realBookings',fn($rows)=>$rows->total()===1 && $rows->first()->id===$paid->id);
   $this->assertSame('Paid',$paid->payment_status);$this->assertSame('Refunded',$refund->payment_status);
   $paid->update(['status'=>'Awaiting Acceptance']);$this->assertSame('Paid',$paid->fresh()->payment_status);
-  $this->assertSame('confirmed',$paid->treatmentRequest->customer_status);
+  $this->assertSame('account_activated',$paid->treatmentRequest->customer_status);
  }
  public function test_confirmed_unpaid_requires_acceptance_and_does_not_mean_paid(): void {
   $valid=$this->booking(true,'Confirmed');$invalid=$this->booking(false,'Confirmed');
-  $this->assertSame('pending_payment',$valid->treatmentRequest->customer_status);$this->assertSame('quotes_received',$invalid->treatmentRequest->customer_status);
+  $this->assertSame('pending',$valid->treatmentRequest->customer_status);$this->assertSame('quotes_received',$invalid->treatmentRequest->customer_status);
   $this->actingAs(User::factory()->create(['role'=>'admin']))->get('/admin/payments?status=Pending%20Payment')
    ->assertViewHas('realBookings',fn($rows)=>$rows->total()===1 && $rows->first()->id===$valid->id)
    ->assertViewHas('paymentTotals',fn($totals)=>$totals['pending']===1);

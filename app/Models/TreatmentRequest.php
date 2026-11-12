@@ -17,8 +17,11 @@ class TreatmentRequest extends Model {
   if ($this->status==='cancelled') return 'cancelled';
   $booking=$this->booking;
   if ($booking && $booking->is_payment_eligible) {
-   if ($booking->deposit_status==='Paid') return $booking->status==='Completed'?'completed':'confirmed';
-   return 'pending_payment';
+   if ($booking->status==='Cancelled') return 'cancelled';
+   if ($booking->deposit_phase==='treatment' && $booking->deposit_status==='Paid' && $booking->payment_verified_at && !$booking->is_test && !$booking->payment_is_simulated) return $booking->status==='Completed'?'completed':'confirmed';
+   if ($booking->deposit_phase==='treatment') return 'pending_booking_deposit';
+   if ($booking->deposit_status==='Paid') return $this->user_id ? 'account_activated' : 'pending';
+   return 'pending';
   }
   if ($booking?->status==='Awaiting Acceptance') return 'quotes_received';
   if (in_array($this->status,['pending_payment','confirmed'],true)) return $this->quotations()->exists()?'quotes_received':'pending';

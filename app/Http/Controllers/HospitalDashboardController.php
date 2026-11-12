@@ -78,13 +78,41 @@ class HospitalDashboardController extends Controller
             $item->update(['status'=>'pending_payment','selected_hospital_id'=>$quote->hospital_id,'selected_hospital_name'=>$quote->hospital->name,'hospital_approved_at'=>now()]);
             if ($existing) {
                 $existing->update(['status'=>'Pending Payment','deposit_amount_satang'=>$existing->deposit_amount_satang ?? $due]);
+                (new \App\Services\PaymentLedger)->ensureCurrent($existing);
                 return $existing;
             }
-            return Booking::create(['treatment_request_id'=>$item->id,'quotation_id'=>$quote->id,'hospital_id'=>$quote->hospital_id,
+            $created = Booking::create(['treatment_request_id'=>$item->id,'quotation_id'=>$quote->id,'hospital_id'=>$quote->hospital_id,
                 'user_id'=>$request->user()->id,'status'=>'Pending Payment','deposit_status'=>'Pending','deposit_amount_satang'=>$due,'is_test'=>false]);
+            (new \App\Services\PaymentLedger)->ensureCurrent($created);
+            return $created;
         });
         if ($request->expectsJson()) return response()->json((new \App\Services\DepositPayment)->summary($booking),201)->header('Cache-Control','private, no-store');
         return back()->with('status','Quotation accepted. Booking is pending verified deposit payment.');
+    }
+
+    public function treatmentDeposit(Request $request, Booking $booking) {
+        $request->validate(['confirm_treatment'=>'required|accepted']);
+        $row = DB::transaction(function() use ($request,$booking) {
+            $item = TreatmentRequest::whereKey($booking->treatment_request_id)->lockForUpdate()->firstOrFail();
+            $row = Booking::whereKey($booking->id)->lockForUpdate()->firstOrFail();
+            abort_unless($row->user_id === $request->user()->id && $item->user_id === $request->user()->id,404);
+            abort_unless($item->status !== 'cancelled' && !in_array($row->status,['Cancelled','Completed']) && !$row->is_test && !$row->payment_is_simulated,422);
+            if ($row->deposit_phase === 'treatment') {
+                (new \App\Services\PaymentLedger)->ensureCurrent($row);
+                return $row;
+            }
+            abort_unless($row->deposit_status === 'Paid' && $row->payment_verified_at && $item->payment_confirmed_at && $item->selected_hospital_id === $row->hospital_id && $item->hospital_approved_at,422,'A verified initial payment and selected hospital are required.');
+            $summary = (new \App\Services\DepositPayment)->treatmentSummary($row);
+            abort_unless($summary['additional_satang'] > 0,422,'No additional deposit is due. Contact support.');
+            if (!$row->paymentSubmissions()->where('purpose','initial')->where('status','approved')->exists()) {
+                $row->paymentSubmissions()->create(['purpose'=>'initial','amount_satang'=>$summary['initial_satang'],'method'=>'Legacy verified payment','status'=>'approved','submitted_at'=>$row->payment_verified_at,'reviewed_at'=>$row->payment_verified_at,'reviewer_id'=>$row->payment_verified_by]);
+            }
+            $row->update(['deposit_phase'=>'treatment','deposit_percentage'=>$summary['percentage'],'deposit_amount_satang'=>$summary['additional_satang'],'deposit_status'=>'Pending','status'=>'Pending Payment','payment_verified_at'=>null,'payment_verified_by'=>null]);
+            (new \App\Services\PaymentLedger)->ensureCurrent($row);
+            $item->update(['status'=>'pending_booking_deposit']);
+            return $row->fresh();
+        });
+        return response()->json((new \App\Services\DepositPayment)->summary($row));
     }
 
     public function payment(Request $request, Booking $booking) {

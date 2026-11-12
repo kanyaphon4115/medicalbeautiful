@@ -5,8 +5,8 @@ const $ = (selector, parent = document) => parent.querySelector(selector);
 const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
 const images = root.dataset.assets;
 const savedRequests = JSON.parse(document.getElementById('saved-requests').textContent);
-const labels = {pending:'Pending', quotes_received:'Quotes Received', cancelled:'Cancelled', pending_payment:'Pending Payment', confirmed:'Confirmed', completed:'Completed', quote_received:'Quote Received', declined:'Declined'};
-const symbols = {pending:'\u25f7', quotes_received:'\u2713', cancelled:'\u00d7', pending_payment:'\u25f7', confirmed:'\u2713', completed:'\u2713', quote_received:'', declined:'\u00d7'};
+const labels = {account_activated:'Account Activated', pending_booking_deposit:'Pending Booking Deposit', pending:'Pending', quotes_received:'Quotes Received', cancelled:'Cancelled', pending_payment:'Pending Payment', confirmed:'Confirmed', completed:'Completed', quote_received:'Quote Received', declined:'Declined'};
+const symbols = {account_activated:'?', pending_booking_deposit:'!', pending:'\u25f7', quotes_received:'\u2713', cancelled:'\u00d7', pending_payment:'\u25f7', confirmed:'\u2713', completed:'\u2713', quote_received:'', declined:'\u00d7'};
 let activeFilter = 'all';
 let currentPage = 1;
 const pageSize = 5;
@@ -15,14 +15,14 @@ function text(selector, value, parent) { $(selector,parent).textContent = value;
 function badge(node, status) { node.dataset.status=status; text('.request-badge-symbol',symbols[status],node); text('.request-badge-label',labels[status],node); }
 function escape(value) { const span=document.createElement('span');span.textContent=String(value);return span.innerHTML; }
 function showModal(title, html) {
- const modal=$('#demo-modal');$('#modal-content').dataset.noTranslate='';$('#modal-content').lang='en';$('#modal-content').innerHTML='<p class="modal-eyebrow">YOUR PRIVATE REQUEST</p><h2 id="modal-title">'+escape(title)+'</h2>'+html;
+ const modal=$('#demo-modal');modal.classList.remove('booking-payment-dialog');$('#modal-content').dataset.noTranslate='';$('#modal-content').lang='en';$('#modal-content').innerHTML='<p class="modal-eyebrow">YOUR PRIVATE REQUEST</p><h2 id="modal-title">'+escape(title)+'</h2>'+html;
  modal.classList.add('request-dialog'); if(!modal.open) modal.showModal();document.body.style.overflow='hidden';
  modal.addEventListener('close',()=>modal.classList.remove('request-dialog'),{once:true});
 }
 const quotationPrice=value=>'THB '+Number(value).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 function quoteDetails(request, response) {
  showModal('Quotation Details','<p>'+escape(request.procedure_name)+' &middot; '+escape(request.id)+'</p><span class="request-badge" data-status="quote_received">Quote Received</span><div class="request-amount">'+quotationPrice(response.quotation_amount)+'</div><p class="request-sensitive-text">'+escape(response.details||'No quotation details provided.')+'</p>'+(response.valid_until?'<p>Valid Until: '+date(response.valid_until)+'</p>':''));
- if(response.accept_url||response.payment_url){const button=document.createElement('button');button.type='button';button.className='button button-gold';button.textContent=response.payment_url?'View deposit payment':'Accept quotation and confirm booking';button.onclick=()=>openDepositPayment({request,response,showModal,back:()=>quoteDetails(request,response),onAccepted:()=>{request.status='pending_payment';updateFilterCounts();render();}});document.querySelector('#modal-content').append(button);}
+ if(response.accept_url||response.payment_url){const button=document.createElement('button');button.type='button';button.className='button button-gold';button.textContent=response.payment_url?'View deposit payment':'Accept quotation and confirm booking';button.onclick=()=>openDepositPayment({request,response,showModal,back:()=>quoteDetails(request,response),onAccepted:()=>{request.status='pending';updateFilterCounts();render();}});document.querySelector('#modal-content').append(button);}
 
 }
 function requestDetails(request) {
@@ -50,7 +50,37 @@ function render() {
   const stats=quotationStats(request);text('[data-quotation-count]',stats.received+' / '+stats.total,card);
   const progress=$('.request-progress',card);progress.setAttribute('aria-valuenow',String(Math.round(stats.percent*10)/10));progress.setAttribute('aria-valuetext',stats.received+' of '+stats.total+' hospital quotations received');$('span',progress).style.width=stats.percent+'%';
   if(request.payment_is_simulated){const note=document.createElement('small');note.textContent='Simulated test payment ? no real funds received.';note.dataset.noTranslate='';$('.request-summary',card).append(note);}
-  const responses=request.hospital_responses;
+  const deposit=request.treatment_deposit;
+  if(deposit){
+   const section=$('[data-treatment-deposit]',card);section.hidden=false;
+   text('[data-treatment-total]',quotationPrice(deposit.total_satang/100),card);
+   text('[data-treatment-percentage]',deposit.percentage,card);
+   text('[data-treatment-required]',quotationPrice(deposit.required_satang/100),card);
+   text('[data-treatment-initial]','- '+quotationPrice(deposit.initial_satang/100),card);
+   text('[data-treatment-additional]',quotationPrice(deposit.outstanding_satang/100),card);
+   text('[data-treatment-booking-paid]',quotationPrice(deposit.booking_paid_satang/100),card);
+   text('[data-treatment-total-paid]',quotationPrice(deposit.total_paid_satang/100),card);
+   text('[data-treatment-remaining]',quotationPrice(deposit.remaining_satang/100),card);
+   const pay=$('[data-pay-treatment]',card);
+   const paid=deposit.phase==='treatment'&&deposit.payment_status==='Paid';
+   const reviewing=deposit.phase==='treatment'&&deposit.payment_status==='Pending Verification';
+   pay.disabled=deposit.additional_satang===0||paid||reviewing||request.status==='cancelled'||request.status==='completed';
+   if(deposit.additional_satang===0)pay.textContent='No Additional Deposit Required';
+   if(paid)pay.textContent='Booking Deposit Verified';
+   if(reviewing)pay.textContent='Pending Verification';
+   pay.onclick=async()=>{
+    pay.disabled=true;
+    showModal('Pay Booking Deposit','<p role="status">Loading payment details...</p>');
+    try{
+     const response=await fetch(deposit.start_url,{method:'POST',credentials:'same-origin',headers:{Accept:'application/json','Content-Type':'application/json','X-CSRF-TOKEN':$('meta[name="csrf-token"]').content},body:JSON.stringify({confirm_treatment:true})});
+     const data=await response.json();if(!response.ok)throw new Error(data.message||'Payment could not be started.');
+     request.status='pending_booking_deposit';deposit.phase='treatment';updateFilterCounts();render();
+     if($('#demo-modal').open)openDepositPayment({request,response:{payment_url:deposit.payment_url},showModal,back:()=>requestDetails(request)});
+    }catch(error){const message=document.createElement('p');message.setAttribute('role','alert');message.textContent=error.message;$('#modal-content').append(message);pay.disabled=false;}
+   };
+  }
+  const responses=request.selected_quotation_id?request.hospital_responses.filter(r=>r.quotation_id===request.selected_quotation_id):request.hospital_responses;
+  if(request.selected_quotation_id)$('.request-response-content h3',card).firstChild.textContent='Selected Hospital (';
   $('.request-no-responses',card).hidden=responses.length>0;$('.request-response-content',card).hidden=responses.length===0;
   text('[data-response-count]',responses.length,card);
   responses.forEach(response=>{
@@ -79,6 +109,7 @@ function render() {
  }
 }
 function updateFilterCounts() { $$('[data-filter-count]').forEach(node=>{node.textContent=node.dataset.filterCount==='all'?savedRequests.length:savedRequests.filter(request=>request.status===node.dataset.filterCount).length;}); }
+document.addEventListener('booking-payment-submitted',()=>{updateFilterCounts();render();});
 updateFilterCounts();
 $$('[data-request-filter]').forEach(button=>button.onclick=()=>{activeFilter=button.dataset.requestFilter;currentPage=1;$$('[data-request-filter]').forEach(tab=>tab.setAttribute('aria-pressed',String(tab===button)));render();});
 $('#request-sort').addEventListener('change',()=>{currentPage=1;render();});

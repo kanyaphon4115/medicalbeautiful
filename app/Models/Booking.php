@@ -3,6 +3,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 class Booking extends Model {
     protected $guarded = ['id'];
+    protected $attributes = ['deposit_phase'=>'initial'];
     protected function casts(): array { return ['appointment_date'=>'date','deposit_amount_satang'=>'integer','refunded_amount_satang'=>'integer','is_test'=>'boolean','payment_is_simulated'=>'boolean','payment_verified_at'=>'datetime','test_marked_at'=>'datetime']; }
     // Acceptance evidence or payment history makes a retained row a visible booking.
     public function scopeBookingEligible($query) { return $query->paymentEligible(); }

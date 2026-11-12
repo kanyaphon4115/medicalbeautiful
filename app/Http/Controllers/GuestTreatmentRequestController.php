@@ -91,7 +91,8 @@ class GuestTreatmentRequestController extends Controller
    abort_if($item->status==='cancelled'||!$q->hospital?->isHospital()||($q->valid_until&&$q->valid_until->endOfDay()->isPast()),422,'This quotation is no longer available.');
    [$whole,$fraction]=explode('.',$q->amount);$total=(int)$whole*100+(int)$fraction;$deposit=\App\Services\DepositPayment::calculate($total);abort_unless($total===(int)$expected['expected_total_satang'],422,'The quotation price changed. Please reload and review it again.');
    $item->update(['status'=>'pending_payment','selected_hospital_id'=>$q->hospital_id,'selected_hospital_name'=>$q->hospital->name,'hospital_approved_at'=>now()]);
-   Booking::create(['treatment_request_id'=>$item->id,'quotation_id'=>$q->id,'hospital_id'=>$q->hospital_id,'user_id'=>$item->user_id,'status'=>'Pending Payment','deposit_status'=>'Pending','deposit_amount_satang'=>$deposit,'is_test'=>false,'payment_is_simulated'=>false]);
+   $booking=Booking::create(['treatment_request_id'=>$item->id,'quotation_id'=>$q->id,'hospital_id'=>$q->hospital_id,'user_id'=>$item->user_id,'status'=>'Pending Payment','deposit_status'=>'Pending','deposit_amount_satang'=>$deposit,'is_test'=>false,'payment_is_simulated'=>false]);
+   (new \App\Services\PaymentLedger)->ensureCurrent($booking);
   });
   return redirect()->route('guest.requests.show',$reference)->with('status','Quotation accepted. Your booking is pending verified deposit payment.');
  }
@@ -105,14 +106,17 @@ class GuestTreatmentRequestController extends Controller
    $locked=TreatmentRequest::whereKey($item->id)->lockForUpdate()->firstOrFail();
    $row=Booking::where('treatment_request_id',$item->id)->lockForUpdate()->firstOrFail();
    abort_unless(in_array($row->deposit_status,['Pending','Pending Verification','Rejected','Information Required','Failed'],true)&&$row->status==='Pending Payment'&&$locked->status!=='cancelled',422,'This payment cannot be submitted.');
-   if($row->paymentSubmissions()->where('status','pending')->exists())return;
+   $submission=$row->paymentSubmissions()->where('purpose',$row->deposit_phase)->where('status','pending')->first();
+   if($submission && $row->deposit_status==='Pending Verification')return;
    abort_unless($row->deposit_amount_satang!==null&&$row->deposit_amount_satang>0,422,'Deposit amount is not recorded. Contact support.');
    if($request->hasFile('proof'))$path=$request->file('proof')->store('payment-proofs/'.Str::uuid(),'request_photos');
-   $row->paymentSubmissions()->create(['amount_satang'=>$row->deposit_amount_satang,'method'=>$data['method']??'Bank Transfer',
+   $attributes=['purpose'=>$row->deposit_phase,'amount_satang'=>$row->deposit_amount_satang,'method'=>$data['method']??'Bank Transfer',
     'transaction_reference'=>trim($data['transaction_reference']??'')?:null,'proof_path'=>$path,
-    'proof_name'=>$path?Str::limit(basename($request->file('proof')->getClientOriginalName()),190,''):null,'status'=>'pending','submitted_at'=>now()]);
+    'proof_name'=>$path?Str::limit(basename($request->file('proof')->getClientOriginalName()),190,''):null,'status'=>'pending','submitted_at'=>now()];
+   if($submission)$submission->update($attributes);else $row->paymentSubmissions()->create($attributes);
    $row->update(['deposit_status'=>'Pending Verification']);
   });}catch(\Throwable $e){if($path)Storage::disk('request_photos')->delete($path);throw $e;}
+  if($request->expectsJson())return response()->json(['message'=>'Payment submitted. Pending Admin Approval; please do not pay again.','payment_status'=>'Pending Verification']);
   return redirect()->to(route('guest.requests.show',$reference).'#booking-deposit')->with('status','Payment submitted. Pending Admin Approval; please do not pay again.');
  }
  private function paid(TreatmentRequest $item):Booking{$booking=$item->booking;abort_unless($booking&&$booking->deposit_status==='Paid'&&!$booking->is_test&&!$booking->payment_is_simulated&&$booking->payment_verified_at&&$item->payment_confirmed_at,422,'A real, verified deposit payment is required before account activation.');return $booking;}

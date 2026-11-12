@@ -6,10 +6,18 @@ use App\Models\TreatmentRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\{DB,Gate};
 
 class ChatController extends Controller
 {
+    private function supportAccess(Request $request):void
+    {
+        if(Gate::denies('accessSupport',ChatMessage::class)){
+            app(\App\Services\ChatAccessAudit::class)->record($request,'support','denied_access',permitted:false);
+            abort(403,'Hospital accounts cannot access Customer Support conversations.');
+        }
+    }
+
     private function identity(Request $request): void
     {
         $expected = $request->header('X-Chat-User-Id');
@@ -28,14 +36,18 @@ class ChatController extends Controller
         $this->identity($request);
         $channel = $request->query('channel', 'support');
         abort_unless(in_array($channel, ['support', 'hospital'], true), 422);
+        if($channel==='support'){
+            $this->supportAccess($request);
+            abort_if($request->filled('treatment_request_id'),422,'Support conversations cannot use a hospital request ID.');
+        }
         $item = $channel === 'hospital' ? $this->hospitalRequest($request, (int) $request->query('treatment_request_id')) : null;
-        $owner = $this->conversationOwner($request, $channel);
+        $owner = $item ? $item->user_id : $this->conversationOwner($request, $channel);
         $messages = ChatMessage::where('user_id', $owner)->where('channel', $channel)
             ->where('treatment_request_id', $item?->id)->latest('id')->limit(50)->get()->reverse()->values()
             ->map(fn ($message) => $this->messageData($message));
         $eligible = TreatmentRequest::where('user_id', $request->user()->id)->get()
-            ->filter(fn ($r) => $r->canChatWithHospital())
-            ->map(fn ($r) => ['id' => $r->id, 'label' => $r->procedure.' - '.$r->selected_hospital_name])->values();
+            ->filter(fn ($r) => $r->canChatWithHospital() && (!$r->booking || app(\App\Services\BookingChatAccess::class)->unlocked($r->booking)))
+            ->map(fn ($r) => ['id' => $r->id, 'label' => $r->procedure.' - '.$r->selected_hospital_name, 'hospital_name'=>$r->booking?->hospital?->name ?? $r->selected_hospital_name])->values();
         $conversations = [];
         if ($request->user()->isChatSupport() && $channel === 'support') {
             $ids = ChatMessage::where('channel', 'support')->whereNull('treatment_request_id')
@@ -54,7 +66,9 @@ class ChatController extends Controller
                 ->map(fn ($user) => ['id' => $user->id, 'label' => $user->name.' (#'.$user->id.')',
                     'unread_count' => (int) ($unread[$user->id] ?? 0)])->values();
         }
-        return response()->json(['messages' => $messages, 'eligible_requests' => $eligible,
+        app(\App\Services\ChatAccessAudit::class)->record($request,$channel,$channel==='support'&&!$request->filled('customer_id')?'list_conversations':'view_conversation',
+            $item?->user_id ?? ($request->filled('customer_id')?$owner:null),$item?->id,$item?->booking?->id);
+        return response()->json(['can_send'=>$channel==='support'?Gate::allows('sendSupport',[ChatMessage::class,$owner]):Gate::allows('sendHospitalRequest',[ChatMessage::class,$item]),'messages' => $messages, 'eligible_requests' => $eligible,
             'conversations' => $conversations, 'user_id' => $request->user()->id])
             ->header('Cache-Control', 'private, no-store')->header('Vary', 'Cookie');
     }
@@ -62,23 +76,38 @@ class ChatController extends Controller
     public function store(Request $request)
     {
         $this->identity($request);
+        if($request->input('channel')==='support')$this->supportAccess($request);
+        abort_if(count($request->allFiles())>0,422,'Chat attachments are not supported.');
         $data = $request->validate([
             'channel' => ['required', Rule::in(['support', 'hospital'])],
             'body' => ['required', 'string', 'max:2000'],
-            'treatment_request_id' => ['nullable', 'integer'],
+            'treatment_request_id' => ['nullable', 'prohibited_unless:channel,hospital', 'integer'],
+            'attachments'=>['prohibited'],'attachment'=>['prohibited'],
             'customer_id' => ['nullable', 'integer', 'min:1'],
         ]);
         $body = trim($data['body']);
         abort_if($body === '', 422, 'Please enter a message.');
-        $item = $data['channel'] === 'hospital' ? $this->hospitalRequest($request, (int) ($data['treatment_request_id'] ?? 0)) : null;
-        $owner = $this->conversationOwner($request, $data['channel']);
+        $item = $data['channel'] === 'hospital' ? $this->hospitalRequest($request, (int) ($data['treatment_request_id'] ?? 0),true) : null;
+        $owner = $item ? $item->user_id : $this->conversationOwner($request, $data['channel']);
+        if($data['channel']==='support')Gate::authorize('sendSupport',[ChatMessage::class,$owner]);
         $reply = $owner !== $request->user()->id;
-        if ($reply) {
+        if ($reply && $data['channel']==='support') {
             abort_unless(ChatMessage::where('user_id', $owner)->where('channel', 'support')
                 ->whereNull('treatment_request_id')->exists(), 404);
         }
-        $message = ChatMessage::create(['user_id' => $owner, 'treatment_request_id' => $item?->id,
-            'channel' => $data['channel'], 'sender_type' => $reply ? 'support' : 'customer', 'body' => $body]);
+        $message=DB::transaction(function()use($request,$data,$body,$owner,$item){
+            if($item){
+                $item=TreatmentRequest::whereKey($item->id)->lockForUpdate()->firstOrFail();
+                if($item->booking)\App\Models\Booking::whereKey($item->booking->id)->lockForUpdate()->firstOrFail();
+                $item->unsetRelation('booking');
+                Gate::authorize('sendHospitalRequest',[ChatMessage::class,$item]);
+                $owner=$item->user_id;
+            }
+            $message=ChatMessage::create(['user_id'=>$owner,'treatment_request_id'=>$item?->id,'channel'=>$data['channel'],
+                'sender_type'=>$data['channel']==='hospital'?($request->user()->isHospital()?'hospital':'customer'):($request->user()->isChatSupport()?'support':'customer'),'body'=>$body]);
+            app(\App\Services\ChatAccessAudit::class)->record($request,$data['channel'],'send_message',$owner,$item?->id,$item?->booking?->id);
+            return $message;
+        });
         return response()->json(['id' => $message->id, 'message' => $this->messageData($message)], 201)
             ->header('Cache-Control', 'private, no-store');
     }
@@ -100,14 +129,17 @@ class ChatController extends Controller
             ->where('customer_id', $data['customer_id'])->where('last_message_id', '<', $data['last_message_id'])
             ->update(['last_message_id' => $data['last_message_id']]);
 
+        app(\App\Services\ChatAccessAudit::class)->record($request,'support','mark_read',$data['customer_id']);
         return response()->json(['saved' => true])->header('Cache-Control', 'private, no-store');
     }
 
     private function conversationOwner(Request $request, string $channel): int
     {
+        $this->supportAccess($request);
         $target = $request->input('customer_id');
         if ($target === null || $target === '') return $request->user()->id;
-        abort_unless($channel === 'support' && $request->user()->isChatSupport(), 403);
+        abort_unless($channel==='support',403);
+        Gate::authorize('viewSupport',[ChatMessage::class,(int)$target]);
         abort_unless(ctype_digit((string) $target) && (int) $target > 0, 422);
         return User::findOrFail((int) $target)->id;
     }
@@ -118,11 +150,13 @@ class ChatController extends Controller
             'sent_at' => $message->created_at->toIso8601String()];
     }
 
-    private function hospitalRequest(Request $request, int $id): TreatmentRequest
+    private function hospitalRequest(Request $request, int $id,bool $write=false): TreatmentRequest
     {
-        $item = TreatmentRequest::where('user_id', $request->user()->id)->findOrFail($id);
-        abort_unless($item->canChatWithHospital(), 403,
-            'Hospital chat unlocks after procedure selection, hospital approval, and confirmed payment.');
+        $query=TreatmentRequest::query();
+        if(!$request->user()->isChatSupport()&&!$request->user()->isHospital())$query->where('user_id',$request->user()->id);
+        $item=$query->findOrFail($id);
+        if($request->user()->isHospital())abort_unless($item->selected_hospital_id===$request->user()->id,404);
+        Gate::authorize($write?'sendHospitalRequest':'viewHospitalRequest',[ChatMessage::class,$item]);
         return $item;
     }
 }

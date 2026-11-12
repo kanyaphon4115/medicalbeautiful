@@ -51,7 +51,7 @@ class PaymentJourneyIntegrationTest extends TestCase {
   $this->withUnencryptedCookie(GuestBookingResume::COOKIE,$cookie)->get(route('guest.booking.resume'))->assertRedirect(route('guest.requests.show',$item->reference).'#booking-deposit');
   for($i=0;$i<2;$i++)$this->get(route('guest.requests.show',$item->reference))->assertOk()->assertSee('Payment Under Review')->assertDontSee('name="proof"',false);
   $this->assertSame($mailCount,Mail::mailer()->getSymfonyTransport()->messages()->count());
-  $admin=User::factory()->create(['role'=>'admin']);$this->actingAs($admin)->get('/admin/payments?status=Pending%20Verification')->assertOk()->assertSee('TEST-CUSTOMER-TRANSFER-1');
+  $admin=User::factory()->create(['role'=>'admin']);$this->actingAs($admin)->get('/admin/payments?status=Pending%20Verification')->assertOk()->assertSee('Payment Details')->assertViewHas('paymentTransactions',fn($rows)=>$rows->first()->transaction_reference==='TEST-CUSTOMER-TRANSFER-1');
   $this->get(route('admin.payments.proof',$submission))->assertOk();
   $data=['decision'=>'approved','confirmation'=>1,'notes'=>'TEST operator verification fixture; no real transfer occurred','funds_verified'=>1,'verification_reference'=>'TEST-BANK-RESULT-1'];
   $this->post(route('admin.payments.review',$submission),$data)->assertRedirect();

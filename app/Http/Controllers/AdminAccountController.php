@@ -32,7 +32,7 @@ class AdminAccountController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:80'],
             'email' => ['required', 'email', 'max:254', Rule::unique('users')->ignore($user->id)],
-            'role' => ['required', Rule::in([User::ROLE_USER, User::ROLE_ADMIN, User::ROLE_HOSPITAL])],
+            'role' => ['required', Rule::in([User::ROLE_USER, User::ROLE_ADMIN, User::ROLE_HOSPITAL, User::ROLE_SUPPORT])],
             'password' => [$user->exists ? 'nullable' : 'required', 'string', 'min:8', 'max:255'],
         ]);
         if ($user->id === $request->user()->id && $data['role'] !== User::ROLE_ADMIN) {

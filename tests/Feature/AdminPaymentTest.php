@@ -20,7 +20,7 @@ class AdminPaymentTest extends TestCase {
   $this->post(route('admin.payments.test-verify',$booking),['confirm_simulation'=>1])->assertConflict();
   $this->get('/admin/payments')->assertOk()->assertSee('SIMULATED PAYMENT')->assertDontSee('Test Verify Payment')->assertViewHas('paymentTotals',fn($s)=>(int)$s['received']===0 && (int)$s['paid']===0 && (int)$s['simulated']===500000);
   $this->get('/admin/bookings')->assertOk()->assertSee('Awaiting Hospital Confirmation')->assertSee('Simulated');
-  $this->actingAs($booking->customer)->get('/my-requests')->assertOk()->assertViewHas('requests',fn($r)=>$r->first()['status']==='confirmed' && $r->first()['payment_is_simulated']);
+  $this->actingAs($booking->customer)->get('/my-requests')->assertOk()->assertViewHas('requests',fn($r)=>$r->first()['status']==='account_activated' && $r->first()['payment_is_simulated']);
   $this->actingAs($booking->hospital)->get('/hospital/dashboard')->assertOk()->assertSee('Simulated test payment')->assertViewHas('stats',fn($s)=>$s['Confirmed Bookings']===0);
  }
  public function test_permissions_environment_and_confirmation_are_enforced(): void {
@@ -56,6 +56,10 @@ class AdminPaymentTest extends TestCase {
   $this->post(route('admin.payments.test-verify',$booking),['confirm_simulation'=>1])->assertRedirect();
   $this->assertSame('Awaiting Hospital Confirmation',$booking->fresh()->status);
   $this->postJson(route('admin.bookings.status',$booking),['status'=>'Confirmed'])->assertUnprocessable();
+  $this->postJson(route('admin.bookings.status',$booking),['status'=>'Confirmed','appointment_date'=>'2027-01-10'])->assertUnprocessable();
+  $booking->update(['deposit_phase'=>'treatment','deposit_percentage'=>10,'deposit_amount_satang'=>100000,'is_test'=>false,'payment_is_simulated'=>false]);
+  $booking->paymentSubmissions()->create(['purpose'=>'initial','amount_satang'=>500000,'method'=>'Bank Transfer','status'=>'approved','submitted_at'=>now(),'reviewed_at'=>now(),'reviewer_id'=>auth()->id()]);
+  $booking->paymentSubmissions()->create(['purpose'=>'treatment','amount_satang'=>100000,'method'=>'Bank Transfer','status'=>'approved','submitted_at'=>now(),'reviewed_at'=>now(),'reviewer_id'=>auth()->id()]);
   $this->post(route('admin.bookings.status',$booking),['status'=>'Confirmed','appointment_date'=>'2027-01-10'])->assertRedirect();
   $this->assertSame('Paid',$booking->fresh()->deposit_status);
   $this->assertSame('2027-01-10',$booking->fresh()->appointment_date->format('Y-m-d'));

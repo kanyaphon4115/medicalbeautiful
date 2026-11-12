@@ -125,7 +125,7 @@ class RealGuestRequestTest extends TestCase{
  public function test_admin_approval_to_code_activation_dashboard_is_persistent_and_idempotent():void{
   $item=$this->accepted();$submission=$this->paymentSubmission($item);$admin=User::factory()->create(['role'=>'admin']);
   $this->post(route('guest.requests.payment-claim',$item->reference),['method'=>'Bank Transfer','transaction_reference'=>'duplicate'])->assertRedirect();$this->assertDatabaseCount('payment_submissions',1);
-  $this->actingAs($admin)->get('/admin/payments?status=Pending%20Verification')->assertOk()->assertSee('Payment Verification Queue')->assertSee('Download Private Payment Proof');
+  $this->actingAs($admin)->get('/admin/payments?status=Pending%20Verification')->assertOk()->assertSee('Payment Details')->assertSee('Download Private Payment Proof');
   $data=['decision'=>'approved','confirmation'=>1,'notes'=>'Amount and recipient verified against bank statement','funds_verified'=>1,'verification_reference'=>'BANK-APPROVED-ONE'];
   $this->post(route('admin.payments.review',$submission),$data)->assertRedirect();
   $this->assertSame('Paid',$item->booking->fresh()->deposit_status);$this->assertSame('Awaiting Hospital Confirmation',$item->booking->fresh()->status);
@@ -144,7 +144,7 @@ class RealGuestRequestTest extends TestCase{
   $item=$this->accepted();$first=$this->paymentSubmission($item);$admin=User::factory()->create(['role'=>'admin']);
   $this->actingAs($admin)->post(route('admin.payments.review',$first),['decision'=>'rejected','confirmation'=>1,'notes'=>'Recipient does not match'])->assertRedirect();
   Notification::assertSentOnDemandTimes(GuestJourneyCode::class,0);Auth::logout();
-  $this->get(route('guest.requests.show',$item->reference))->assertOk()->assertSee('Payment Verification Unsuccessful')->assertSee('Recipient does not match')->assertSee('I Have Paid')->assertDontSee('name="proof"',false);
+  $this->get(route('guest.requests.show',$item->reference))->assertOk()->assertSee('Payment Verification Unsuccessful')->assertSee('Recipient does not match')->assertSee('I Have Paid')->assertSee('name="proof"',false);
   $second=$this->paymentSubmission($item);$this->assertNotSame($first->id,$second->id);$this->assertSame('rejected',$first->fresh()->status);
   $this->actingAs($admin)->post(route('admin.payments.review',$second),['decision'=>'information_requested','confirmation'=>1,'notes'=>'Please send a clearer receipt'])->assertRedirect();
   $this->assertSame('Information Required',$item->booking->fresh()->deposit_status);$this->assertDatabaseCount('payment_submissions',2);$this->assertDatabaseCount('payment_reviews',2);$this->assertDatabaseCount('bookings',1);
@@ -174,7 +174,7 @@ class RealGuestRequestTest extends TestCase{
 
  public function test_admin_can_request_missing_evidence_and_customer_can_submit_it_on_existing_booking():void{
   $item=$this->accepted();$booking=$item->booking;$admin=User::factory()->create(['role'=>'admin']);
-  $this->actingAs($admin)->get('/admin/payments?record='.$booking->id)->assertOk()->assertSee('Confirm Payment')->assertSee(route('admin.payments.confirm',$booking),false)->assertDontSee('Request New Payment Slip');
+  $this->actingAs($admin)->get('/admin/payments?record='.$booking->id)->assertOk()->assertSee('Confirm Payment')->assertSee(route('admin.payments.confirm-transaction',$booking->paymentSubmissions()->first()),false)->assertDontSee('Request New Payment Slip');
   $this->post(route('admin.payments.request-evidence',$booking),['notes'=>'Please provide bank reference or receipt','confirmation'=>1])->assertRedirect();
   $this->assertSame('Information Required',$booking->fresh()->deposit_status);$this->assertDatabaseCount('payment_reviews',1);Notification::assertSentOnDemand(\App\Notifications\PaymentEvidenceRequested::class,fn($n)=>str_contains($n->url,$item->reference));
   Notification::assertSentOnDemandTimes(GuestJourneyCode::class,0);Auth::logout();
@@ -201,7 +201,7 @@ class RealGuestRequestTest extends TestCase{
   $item=$this->accepted();$booking=$item->booking;$url=route('admin.payments.confirm',$booking);
   $this->actingAs(User::factory()->create(['role'=>'hospital']))->postJson($url,['confirmation'=>1,'funds_verified'=>1])->assertForbidden();
   $admin=User::factory()->create(['role'=>'admin']);$this->actingAs($admin)->postJson($url,[])->assertUnprocessable();
-  $this->assertDatabaseCount('payment_submissions',0);
+  $this->assertDatabaseCount('payment_submissions',1);
   $this->post($url,['confirmation'=>1,'funds_verified'=>1])->assertRedirect();
   $this->assertSame('Paid',$booking->fresh()->deposit_status);$this->assertSame($admin->id,$booking->fresh()->payment_verified_by);
   $this->assertDatabaseCount('payment_submissions',1);$this->assertDatabaseCount('payment_reviews',1);

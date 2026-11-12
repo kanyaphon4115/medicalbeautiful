@@ -9,6 +9,7 @@ class AdminPaymentController extends Controller {
  public function pageData(Request $request): array {
   abort_unless($request->user()->isAdmin(),403);
   $filters=$request->validate(['search'=>['nullable','string','max:200'],'status'=>['nullable','in:Pending,Pending Payment,Pending Verification,Rejected,Information Required,Paid,Failed,Expired,Refunded,Awaiting Hospital Confirmation,Confirmed,Completed,Cancelled'],
+   'stage'=>['nullable','in:all,initial,treatment'],'payment'=>['nullable','integer','min:1'],'legacy'=>['nullable','integer','min:1'],
    'from'=>['nullable','date_format:Y-m-d'],'to'=>['nullable','date_format:Y-m-d'],
    'method'=>['nullable','in:unrecorded,Bank Transfer,PromptPay,Thai QR'],'record'=>['nullable','integer','min:1'],'hospital'=>['nullable','string','max:200'],'size'=>['nullable','in:5,10,25'],'records'=>['nullable','in:all,real,test']]);
   if(!empty($filters['from']) && !empty($filters['to']) && $filters['to']<$filters['from'])throw \Illuminate\Validation\ValidationException::withMessages(['to'=>'The end date must be on or after the start date.']);
@@ -38,15 +39,28 @@ class AdminPaymentController extends Controller {
   if($filters['to']??null)$rows->whereDate($date,'<=',$filters['to']);
   $real=(clone $payments)->where('payment_is_simulated',false)->where('is_test',false);
   $bookings=$rows->latest()->paginate((int)($filters['size']??5));if(!$paymentReviewReady)foreach($bookings as $booking)$booking->setRelation('paymentSubmissions',collect());
-  return ['realBookings'=>$bookings,'paymentReviewReady'=>$paymentReviewReady, 'paymentFilters'=>$filters,'paymentLocal'=>$local,
+  $transactionData=[];
+  if(!$isBookings && $paymentReviewReady){
+   $transactionBookings=Booking::where(fn($q)=>$q->paymentEligible()->orWhereHas('paymentSubmissions'));
+   if($mode==='real')$transactionBookings->where('is_test',false);elseif($mode==='test')$transactionBookings->where('is_test',true);
+   $transactionData=(new \App\Services\AdminPaymentTransactions)->pageData($filters,$transactionBookings);
+  }
+  return array_merge($transactionData,['realBookings'=>$bookings,'paymentReviewReady'=>$paymentReviewReady, 'paymentFilters'=>$filters,'paymentLocal'=>$local,
    'paymentTotals'=>[
-    'received'=>(clone $real)->where('deposit_status','Paid')->sum('deposit_amount_satang'),
+    'received'=>(clone $real)->where('deposit_status','Paid')->sum('deposit_amount_satang') + ($paymentReviewReady ? \App\Models\PaymentSubmission::where('purpose','initial')->where('status','approved')->whereIn('booking_id',(clone $real)->where('deposit_phase','treatment')->select('bookings.id'))->sum('amount_satang') : 0),
     'paid'=>(clone $real)->where('deposit_status','Paid')->count(),
     'pending'=>(clone $real)->pendingPaymentEligible()->count(),
     'refunded'=>(clone $real)->sum('refunded_amount_satang'),
     'unknown'=>(clone $real)->where('deposit_status','Paid')->whereNull('deposit_amount_satang')->count(),
     'simulated'=>(clone $payments)->where('payment_is_simulated',true)->where('deposit_status','Paid')->sum('deposit_amount_satang'),
-   ]];
+   ]]);
+ }
+ public function depositPolicy(Request $request, \App\Models\User $hospital) {
+  abort_unless($request->user()?->isAdmin(),403);
+  abort_unless($hospital->isHospital(),404);
+  $data=$request->validate(['treatment_deposit_percentage'=>'required|integer|between:10,20']);
+  $hospital->forceFill($data)->save();
+  return back()->with('status','Hospital deposit percentage updated. Deposits already started keep their agreed percentage.');
  }
  public function updateBooking(Request $request,Booking $booking) {
   abort_unless($request->user()->isAdmin(),403);
@@ -55,7 +69,12 @@ class AdminPaymentController extends Controller {
    $row=Booking::bookingEligible()->lockForUpdate()->findOrFail($booking->id);
    $allowed=['Pending Payment'=>['Cancelled'],'Awaiting Hospital Confirmation'=>['Confirmed','Cancelled'],'Confirmed'=>['Completed','Cancelled']];
    abort_unless(in_array($data['status'],$allowed[$row->status]??[],true),422,'Invalid booking status transition.');
-   if(in_array($data['status'],['Confirmed','Completed'],true))abort_unless($row->deposit_status==='Paid',422,'A verified deposit is required.');
+   if(in_array($data['status'],['Confirmed','Completed'],true))abort_unless($row->deposit_status==='Paid' && $row->deposit_phase==='treatment' && $row->payment_verified_at && !$row->is_test && !$row->payment_is_simulated,422,'A verified deposit is required.');
+   if(in_array($data['status'],['Confirmed','Completed'],true)){
+    $payment=$row->paymentSubmissions()->where('purpose','treatment')->where('status','approved')->where('amount_satang',$row->deposit_amount_satang)->first();
+    abort_unless($payment,422,'An approved Step 9 transaction is required.');
+    (new \App\Services\PaymentLedger)->validateTreatmentPayment($row,$payment);
+   }
    if($data['status']==='Confirmed'){
     if(empty($data['appointment_date']))throw \Illuminate\Validation\ValidationException::withMessages(['appointment_date'=>'Confirm the treatment date.']);
     $row->appointment_date=$data['appointment_date'];

@@ -41,6 +41,7 @@ Route::prefix('guest-journey')->name('guest-journey.mail.')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/admin/payments/{booking}/confirm',[\App\Http\Controllers\PaymentReviewController::class,'confirm'])->middleware('throttle:20,1')->name('admin.payments.confirm');
+    Route::post('/admin/payments/submissions/{submission}/confirm',[\App\Http\Controllers\PaymentReviewController::class,'confirmTransaction'])->middleware('throttle:20,1')->name('admin.payments.confirm-transaction');
     Route::post('/admin/payments/{booking}/request-evidence',[\App\Http\Controllers\PaymentReviewController::class,'requestEvidence'])->middleware('throttle:10,1')->name('admin.payments.request-evidence');
     Route::post('/admin/payments/submissions/{submission}/review',[\App\Http\Controllers\PaymentReviewController::class,'review'])->middleware('throttle:20,1')->name('admin.payments.review');
     Route::get('/admin/payments/submissions/{submission}/proof',[\App\Http\Controllers\PaymentReviewController::class,'proof'])->name('admin.payments.proof');
@@ -94,6 +95,9 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
  Route::get('/chat/session',[\App\Http\Controllers\ChatController::class,'session'])->name('chat.session');
+ Route::get('/chat/bookings',[\App\Http\Controllers\BookingChatController::class,'index'])->name('chat.bookings.index');
+ Route::get('/chat/bookings/{booking}/messages',[\App\Http\Controllers\BookingChatController::class,'messages'])->name('chat.bookings.messages');
+ Route::post('/chat/bookings/{booking}/messages',[\App\Http\Controllers\BookingChatController::class,'store'])->middleware('throttle:30,1,booking-chat')->name('chat.bookings.store');
  Route::get('/chat/messages',[\App\Http\Controllers\ChatController::class,'index'])->name('chat.index');
  Route::post('/chat/read',[\App\Http\Controllers\ChatController::class,'read'])->name('chat.read');
  Route::post('/chat/messages',[\App\Http\Controllers\ChatController::class,'store'])->middleware('throttle:30,1,chat')->name('chat.store');
@@ -108,3 +112,7 @@ Route::middleware('auth')->prefix('account')->group(function () {
 });
 
 Route::patch('/account/profile',[\App\Http\Controllers\ProfileController::class,'update'])->middleware(['auth','throttle:20,1,profile-update'])->name('account.profile.update');
+
+Route::post('/bookings/{booking}/treatment-deposit', [\App\Http\Controllers\HospitalDashboardController::class,'treatmentDeposit'])->middleware(['auth','throttle:10,1'])->name('bookings.treatment-deposit');
+
+Route::post('/admin/hospitals/{hospital}/deposit-policy', [\App\Http\Controllers\AdminPaymentController::class,'depositPolicy'])->middleware('auth')->name('admin.hospitals.deposit-policy');

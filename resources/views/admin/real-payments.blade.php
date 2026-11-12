@@ -1,3 +1,6 @@
+@if($page==='payments' && isset($paymentTransactions))
+@include('admin.payment-transactions')
+@else
 @php
  $money=fn($value)=>$value===null?'Not recorded':'THB '.number_format($value/100,2);
  $filters=$paymentFilters;
@@ -57,14 +60,15 @@
  <dt>Hospital Confirmation Status</dt><dd>{{ in_array($booking->status,['Confirmed','Completed'])?'Confirmed':($booking->status==='Cancelled'?'Cancelled':'Awaiting hospital confirmation') }}</dd>
  <dt>Booking Status</dt><dd>{{ $booking->status }}</dd>
  @else
- <dt>Payment ID</dt><dd>{{ $paymentId($booking) }}</dd><dt>Payment Method</dt><dd>{{ $booking->paymentSubmissions->first()?->method ?? 'Not recorded' }}</dd>
- <dt>Transaction Reference</dt><dd>{{ $booking->paymentSubmissions->first()?->transaction_reference ?? 'Not recorded' }}</dd><dt>Payment Date and Time</dt><dd>{{ $paymentDate($booking) }}</dd>
+ <dt>Payment ID</dt><dd>{{ $paymentId($booking) }}</dd>
  <dt>Refund Amount</dt><dd>{{ $money($booking->refunded_amount_satang) }}</dd>
  @endif
  </dl>
  @if(!$isBooking)@include('admin.payment-verification')@endif
- <a class="ap-button" href="{{ route('admin.'.($isBooking?'payments':'bookings'),['record'=>$booking->id]) }}#real-payment-{{ $booking->id }}">{{ $isBooking?'View Payment Details':'View Booking Details' }}</a>
+ @php($currentPayment=$booking->paymentSubmissions->firstWhere('purpose',$booking->deposit_phase))
+ <a class="ap-button" href="{{ route('admin.'.($isBooking?'payments':'bookings'),['record'=>$booking->id]) }}#real-payment-{{ $isBooking ? ($currentPayment?'tx-'.$currentPayment->id:'legacy-'.$booking->id) : $booking->id }}">{{ $isBooking?'View Payment Details':'View Booking Details' }}</a>
  @if($isBooking)
+ <a class="ap-button gold" href="{{ route('admin.booking-chats',['room'=>$booking->id]) }}">Open Booking Chat</a>
  <h3>Booking history</h3><ul><li>Created: {{ $booking->created_at->format('M j, Y H:i') }}</li>@if($booking->payment_verified_at)<li>{{ $booking->payment_is_simulated?'Simulated':'Verified' }} payment: {{ $paymentDate($booking) }}</li>@endif<li>Last updated: {{ $booking->updated_at->format('M j, Y H:i') }} ? {{ $booking->status }}</li></ul>
  <p class="ap-note">Only retained events are shown. Earlier status changes were not recorded by the existing system.</p>
  @php($transitions=['Pending Payment'=>['Cancelled'],'Awaiting Hospital Confirmation'=>['Confirmed','Cancelled'],'Confirmed'=>['Completed','Cancelled']][$booking->status]??[])
@@ -76,3 +80,4 @@
 </dialog>
 @endforeach
 </div>
+@endif

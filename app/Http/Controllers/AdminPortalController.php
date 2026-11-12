@@ -15,7 +15,8 @@ class AdminPortalController extends Controller
 
     public function __invoke(Request $request, string $page = 'dashboard')
     {
-        abort_unless($request->user()->isAdmin(), 403);
+        $supportOnly=$request->user()->role===\App\Models\User::ROLE_SUPPORT;
+        abort_unless($request->user()->isAdmin() || ($supportOnly && in_array($page,['support','booking-chats'],true)),403);
         abort_unless(isset(self::PAGES[$page]), 404);
         // Portal language is a frontend preference; it does not change account settings.
         $locale = $request->query('lang', $request->session()->get('admin_portal_locale', 'en'));
@@ -26,7 +27,7 @@ class AdminPortalController extends Controller
 
         return response()->view('admin.portal', array_merge(in_array($page,['payments','bookings']) ? (new AdminPaymentController)->pageData($request) : [], [
             'realRequests' => $page === 'requests' ? \App\Models\TreatmentRequest::with(['customer','photos','booking','quotations.hospital'])->latest()->paginate(15) : null,
-            'page' => $page, 'pages' => self::PAGES, 'locale' => $locale, 'catalog' => $catalog,
+            'page' => $page, 'pages' => $supportOnly ? ['support'=>self::PAGES['support'],'booking-chats'=>self::PAGES['booking-chats']] : self::PAGES, 'supportOnly'=>$supportOnly, 'locale' => $locale, 'catalog' => $catalog,
         ]))->header('Cache-Control', 'private, no-store');
     }
 }

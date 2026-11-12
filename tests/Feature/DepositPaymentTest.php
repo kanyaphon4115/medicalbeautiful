@@ -14,15 +14,15 @@ class DepositPaymentTest extends TestCase {
  public function test_accept_returns_server_calculated_pending_deposit_without_real_qr(): void {
   $quote=$this->offer();$owner=User::findOrFail($quote->treatmentRequest->user_id);
   $result=$this->actingAs($owner)->postJson(route('quotations.accept',$quote),['expected_total_satang'=>5000000,'deposit_status'=>'Paid','status'=>'Confirmed','payment_status'=>'Paid']);
-  $result->assertCreated()->assertJsonPath('total_satang',5000000)->assertJsonPath('deposit_satang',500000)->assertJsonPath('remaining_satang',4500000)
+  $result->assertCreated()->assertJsonPath('total_satang',5000000)->assertJsonPath('deposit_satang',500000)->assertJsonPath('remaining_satang',5000000)->assertJsonPath('total_paid_satang',0)
    ->assertJsonPath('payment_status','Pending Payment')->assertJsonPath('booking_status','Pending Payment')->assertJsonPath('integration.available',false)->assertJsonPath('integration.qr_payload',null)->assertDontSee('Hidden Payment Hospital');
   $booking=Booking::firstOrFail();$this->assertSame('Pending',$booking->deposit_status);$this->assertSame('Pending Payment',$booking->status);
   $this->assertNull($quote->treatmentRequest->fresh()->payment_confirmed_at);
   $this->getJson(route('bookings.deposit',$booking))->assertOk()->assertJsonPath('booking_status','Pending Payment');
   $this->assertSame('Pending',$booking->fresh()->deposit_status);
-  $this->get('/my-requests')->assertOk()->assertSee('payment_url')->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='pending_payment');
+  $this->get('/my-requests')->assertOk()->assertSee('payment_url')->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='pending');
   $this->assertSame('pending_payment',$quote->treatmentRequest->fresh()->status);
-  $booking->update(['deposit_status'=>'Paid','status'=>'Confirmed']);
+  $booking->update(['deposit_phase'=>'treatment','deposit_status'=>'Paid','status'=>'Confirmed','payment_verified_at'=>now()]);
   $this->get('/my-requests')->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='confirmed');
   $booking->update(['status'=>'Completed']);
   $this->get('/my-requests')->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='completed');

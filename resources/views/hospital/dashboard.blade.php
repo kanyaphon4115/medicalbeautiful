@@ -7,9 +7,13 @@
     <title>Hospital Dashboard | AESTHETIC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/css/hospital.css', 'resources/css/responsive.css', 'resources/js/hospital.js'])
+    @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/css/hospital.css', 'resources/css/responsive.css', 'resources/js/hospital.js'])
 </head>
 <body class="hospital-dashboard">
+@php
+$hospitalChatConfig=['bookingChatEndpoint'=>route('chat.bookings.index'),'chatSessionEndpoint'=>route('chat.session'),'userId'=>auth()->id(),'locale'=>app()->getLocale()];
+@endphp
+<script type="application/json" id="hospital-chat-config">@json($hospitalChatConfig)</script>
 @php
  $menus=['Dashboard'=>'home','Patient Requests'=>'document','My Quotations'=>'document','Bookings'=>'calendar','Booking Chat'=>'chat','Hospital Profile'=>'hospital','Notifications'=>'bell','Settings'=>'settings'];
  $images=['Eye Surgery'=>'eye','Rhinoplasty'=>'nose','Lip Surgery'=>'lips','Facial Contouring'=>'contour','Face Lifting'=>'lifting','Liposuction'=>'body','Breast Surgery'=>'breast'];
@@ -51,14 +55,14 @@
                     <button class="hd-appointment" data-hd-section="Bookings"><span>{{ $booking->appointment_date->format('d M Y') }}</span><strong>{{ __($booking->treatmentRequest->procedure_label) }}</strong><small>{{ $reference($booking->treatmentRequest) }}</small></button>
                     @empty<p class="hd-empty">{{ __('No upcoming appointments.') }}</p>@endforelse
                 </section>
-                <section class="hd-panel hd-messages"><h2>{{ __('Recent Messages') }}</h2><p class="hd-empty">{{ __('Hospital booking chat is not connected yet.') }}</p></section>
+                <section class="hd-panel hd-messages"><h2>{{ __('Recent Messages') }}</h2><button type="button" class="button button-outline" data-hd-section="Booking Chat">{{ __('Open Booking Chat') }}</button></section>
             </div></div></div>
             <section class="hd-panel hd-subpanel" id="hd-section-panel" hidden><div class="hd-panel-heading"><h2 id="hd-section-title"></h2><button data-hd-section="Dashboard">{{ __('Dashboard') }}</button></div><div id="hd-section-content"></div></section>
             <template id="hd-quotations"><div class="hd-table-wrap"><table class="hd-real-table"><thead><tr>@foreach(['Request ID','Procedure','Amount','Valid until','Details','Status','Actions'] as $label)<th>{{ __($label) }}</th>@endforeach</tr></thead><tbody>
                 @forelse($quotations as $quote)<tr><td>{{ $reference($quote->treatmentRequest) }}</td><td>{{ __($quote->treatmentRequest->procedure_label) }}</td><td>{{ $quote->currency }} {{ number_format($quote->amount,2) }}</td><td>{{ $quote->valid_until->format('d M Y') }}</td><td>{{ $quote->details }}</td><td>{{ $quote->withdrawn_at ? __('Withdrawn') : __('Sent') }}</td><td>@if(!$quote->withdrawn_at && !$quote->treatmentRequest->booking && !$quote->treatmentRequest->selected_hospital_id)<form method="POST" action="{{ route('hospital.quotations.withdraw',$quote) }}">@csrf<button class="button button-outline" type="submit">{{ __('Withdraw Quotation') }}</button></form>@endif</td></tr>@empty<tr><td colspan="7" class="hd-empty">{{ __('No quotations sent.') }}</td></tr>@endforelse
             </tbody></table></div></template>
             <template id="hd-bookings"><div class="hd-table-wrap"><table class="hd-real-table"><thead><tr>@foreach(['Request ID','Procedure','Preferred Date','Booking Status','Deposit Status','Actions'] as $label)<th>{{ __($label) }}</th>@endforeach</tr></thead><tbody>
-                @forelse($bookings as $booking)<tr><td>{{ $reference($booking->treatmentRequest) }}</td><td>{{ __($booking->treatmentRequest->procedure_label) }}</td><td>{{ $booking->appointment_date?->format('d M Y') ?? __('Not specified') }}</td><td><span class="hd-badge green">{{ __($booking->status) }}</span></td><td><span class="hd-badge {{ $booking->deposit_status==='Paid'?'green':'yellow' }}">{{ __($booking->payment_status) }}</span>@if($booking->payment_is_simulated)<small>Simulated test payment</small>@endif</td><td>@if($booking->status==='Confirmed' && $booking->deposit_status==='Paid')<form method="POST" action="{{ route('hospital.complete',$booking) }}">@csrf<button class="hd-view">{{ __('Mark completed') }}</button></form>@endif</td></tr>@empty<tr><td colspan="6" class="hd-empty">{{ __('No bookings yet.') }}</td></tr>@endforelse
+                @forelse($bookings as $booking)<tr><td>{{ $reference($booking->treatmentRequest) }}</td><td>{{ __($booking->treatmentRequest->procedure_label) }}</td><td>{{ $booking->appointment_date?->format('d M Y') ?? __('Not specified') }}</td><td><span class="hd-badge green">{{ __($booking->status) }}</span></td><td><span class="hd-badge {{ $booking->deposit_status==='Paid'?'green':'yellow' }}">{{ __($booking->payment_status) }}</span>@if($booking->payment_is_simulated)<small>Simulated test payment</small>@endif</td><td><button type="button" class="hd-view" data-hd-section="Booking Chat" data-booking-room="{{ $booking->id }}">{{ __('Booking Chat') }}</button> @if($booking->status==='Confirmed' && $booking->deposit_status==='Paid')<form method="POST" action="{{ route('hospital.complete',$booking) }}">@csrf<button class="hd-view">{{ __('Mark completed') }}</button></form>@endif</td></tr>@empty<tr><td colspan="6" class="hd-empty">{{ __('No bookings yet.') }}</td></tr>@endforelse
             </tbody></table></div></template>
         </div>
     </main>
