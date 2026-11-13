@@ -18,16 +18,16 @@ class BookingChatController extends Controller
         $query=Booking::bookingEligible()->with(['treatmentRequest','customer','hospital']);
         if($request->user()->isHospital())$query->where('hospital_id',$request->user()->id)->whereHas('treatmentRequest',fn($q)=>$q->whereColumn('selected_hospital_id','bookings.hospital_id'));
         $rooms=$query->latest()->get()->map(function($booking)use($access,$request){
-            $item=$booking->treatmentRequest;
+            $item=$booking->treatmentRequest;$progress=$access->progress($booking);
             return ['id'=>$booking->id,'booking_reference'=>$booking->reference,'treatment_request_id'=>$item->id,
                 'request_reference'=>sprintf('REQ-%s-%06d',$item->created_at->format('Y'),$item->id),
                 'customer_name'=>$item->name,'customer_email'=>$item->email,'hospital_name'=>$booking->hospital?->name ?? 'Not recorded',
                 'procedure'=>$item->procedure_label,'booking_status'=>$booking->status,'deposit_status'=>$booking->deposit_status,
                 'hospital_selected'=>$item->selected_hospital_id===$booking->hospital_id,'hospital_approved'=>(bool)$item->hospital_approved_at,
-                'payment_approved'=>(bool)$item->payment_confirmed_at,'account_active'=>(bool)$item->user_id,'unlocked'=>$access->unlocked($booking),'can_view'=>Gate::allows('viewHospital',[\App\Models\ChatMessage::class,$booking])];
+                'payment_approved'=>$progress['step4_approved'],'account_active'=>$progress['account_activated'],'step4_approved'=>$progress['step4_approved'],'step9_approved'=>$progress['step9_approved'],'unlocked'=>$progress['unlocked'],'can_view'=>Gate::allows('viewHospital',[\App\Models\ChatMessage::class,$booking])];
         });
         app(\App\Services\ChatAccessAudit::class)->record($request,'hospital','list_conversations');
-        return response()->json(['rooms'=>$rooms,'user_id'=>$request->user()->id,'role'=>$request->user()->isHospital()?'hospital':($request->user()->isAdmin()?'admin':'support'),'can_send'=>$request->user()->isHospital()])
+        return response()->json(['rooms'=>$rooms,'user_id'=>$request->user()->id,'role'=>$request->user()->isHospital()?'hospital':'support','can_send'=>$request->user()->isHospital()])
             ->header('Cache-Control','private, no-store')->header('Vary','Cookie');
     }
     public function messages(Request $request,Booking $booking,BookingChatAccess $access){

@@ -7,13 +7,13 @@ use Tests\TestCase;
 
 class ChatSupportTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase; use \Tests\Concerns\HasApprovedChatBooking;
 
     public function test_unread_counts_persist_per_admin_and_only_acknowledge_displayed_messages(): void
     {
-        $customer = User::factory()->create();
-        $admin = User::factory()->create(['role' => 'admin']);
-        $other = User::factory()->create(['role' => 'admin']);
+        $customer = User::factory()->create();$this->approvedChatBooking($customer,false);
+        $admin = User::factory()->create(['role' => 'support']);
+        $other = User::factory()->create(['role' => 'support']);
         $this->actingAs($customer);
         $first = $this->postJson('/chat/messages', ['channel'=>'support', 'body'=>'First'])->json('id');
         $this->postJson('/chat/messages', ['channel'=>'support', 'body'=>'Second'])->assertCreated();
@@ -32,10 +32,10 @@ class ChatSupportTest extends TestCase
 
     public function test_two_different_accounts_can_exchange_private_support_messages(): void
     {
-        $customer = User::factory()->create();
+        $customer = User::factory()->create();$this->approvedChatBooking($customer,false);
         $staff = User::factory()->create();
-        $unrelated = User::factory()->create();
-        $staff->forceFill(['role'=>'admin'])->save();
+        $unrelated = User::factory()->create();$this->approvedChatBooking($unrelated,false);
+        $staff->forceFill(['role'=>'support'])->save();
         $this->actingAs($customer)->postJson('/chat/messages',['channel'=>'support','body'=>'Customer question'])->assertCreated();
         $this->actingAs($staff)->getJson('/chat/messages')->assertOk()
             ->assertJsonCount(1,'conversations')->assertJsonPath('conversations.0.id',$customer->id);
@@ -51,7 +51,7 @@ class ChatSupportTest extends TestCase
 
     public function test_customer_cannot_read_or_reply_to_another_customer(): void
     {
-        $owner = User::factory()->create();
+        $owner = User::factory()->create();$this->approvedChatBooking($owner,false);
         $other = User::factory()->create(['name'=>'admin']);
         $this->actingAs($owner)->postJson('/chat/messages',['channel'=>'support','body'=>'Private'])->assertCreated();
         $this->actingAs($other)->getJson('/chat/messages?customer_id='.$owner->id)->assertForbidden();
@@ -71,9 +71,9 @@ class ChatSupportTest extends TestCase
 
     public function test_support_cannot_bypass_hospital_ownership_or_reply_to_nonexistent_conversations(): void
     {
-        $customer = User::factory()->create();
+        $customer = User::factory()->create();$this->approvedChatBooking($customer,false);
         $staff = User::factory()->create();
-        $staff->forceFill(['role'=>'admin'])->save();
+        $staff->forceFill(['role'=>'support'])->save();
         $this->actingAs($staff)->postJson('/chat/messages',['channel'=>'support','customer_id'=>$customer->id,'body'=>'No conversation'])->assertNotFound();
         $this->getJson('/chat/messages?channel=hospital&customer_id='.$customer->id.'&treatment_request_id=0')->assertNotFound();
         $this->assertDatabaseCount('chat_messages',0);

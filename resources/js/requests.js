@@ -52,7 +52,7 @@ function render() {
   if(request.payment_is_simulated){const note=document.createElement('small');note.textContent='Simulated test payment ? no real funds received.';note.dataset.noTranslate='';$('.request-summary',card).append(note);}
   const deposit=request.treatment_deposit;
   if(deposit){
-   const section=$('[data-treatment-deposit]',card);section.hidden=false;
+   const section=$('[data-treatment-deposit]',card);section.hidden=false;section.id=deposit.section_id;
    text('[data-treatment-total]',quotationPrice(deposit.total_satang/100),card);
    text('[data-treatment-percentage]',deposit.percentage,card);
    text('[data-treatment-required]',quotationPrice(deposit.required_satang/100),card);
@@ -114,3 +114,5 @@ updateFilterCounts();
 $$('[data-request-filter]').forEach(button=>button.onclick=()=>{activeFilter=button.dataset.requestFilter;currentPage=1;$$('[data-request-filter]').forEach(tab=>tab.setAttribute('aria-pressed',String(tab===button)));render();});
 $('#request-sort').addEventListener('change',()=>{currentPage=1;render();});
 render();
+
+if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();

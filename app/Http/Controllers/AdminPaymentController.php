@@ -72,7 +72,7 @@ class AdminPaymentController extends Controller {
    if(in_array($data['status'],['Confirmed','Completed'],true))abort_unless($row->deposit_status==='Paid' && $row->deposit_phase==='treatment' && $row->payment_verified_at && !$row->is_test && !$row->payment_is_simulated,422,'A verified deposit is required.');
    if(in_array($data['status'],['Confirmed','Completed'],true)){
     $payment=$row->paymentSubmissions()->where('purpose','treatment')->where('status','approved')->where('amount_satang',$row->deposit_amount_satang)->first();
-    abort_unless($payment,422,'An approved Step 9 transaction is required.');
+    abort_unless($payment,422,'An approved Booking Deposit transaction is required.');
     (new \App\Services\PaymentLedger)->validateTreatmentPayment($row,$payment);
    }
    if($data['status']==='Confirmed'){

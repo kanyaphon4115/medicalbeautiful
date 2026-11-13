@@ -4,7 +4,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 class ChatSessionTest extends TestCase {
- use RefreshDatabase;
+ use RefreshDatabase; use \Tests\Concerns\HasApprovedChatBooking;
  public function test_session_refresh_requires_login_and_is_not_cached(): void {
   $this->getJson('/chat/session')->assertUnauthorized();
   $user=User::factory()->create();
@@ -13,7 +13,7 @@ class ChatSessionTest extends TestCase {
    ->assertHeader('Cache-Control','no-store, private');
  }
  public function test_real_csrf_middleware_rejects_stale_token_and_accepts_fresh_token(): void {
-  $user=User::factory()->create();$this->actingAs($user);
+  $user=User::factory()->create();$this->approvedChatBooking($user,false);$this->actingAs($user);
   // Enable real CSRF verification for this test rather than Laravel's normal test bypass.
   $this->app->instance('env','local');
   $payload=['channel'=>'support','body'=>'CSRF regression test'];

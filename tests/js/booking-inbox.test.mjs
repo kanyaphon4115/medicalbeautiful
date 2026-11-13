@@ -52,8 +52,8 @@ test('admin can inspect hospital history but cannot send a hospital reply',async
  assert.equal(page.posted(),undefined);page.dispose();
 });
 
-test('customer support can monitor closed hospital history without a composer',async()=>{
- const page=harness([{...room,unlocked:false,can_view:true}],[{id:9,sender_type:'hospital',body:'Historical hospital reply',sent_at:'2026-11-12T12:00:00Z'}],'support');
+test('customer support can monitor approved hospital history without a composer',async()=>{
+ const page=harness([{...room,unlocked:true,can_view:true}],[{id:9,sender_type:'hospital',body:'Historical hospital reply',sent_at:'2026-11-12T12:00:00Z'}],'support');
  await page.ready();assert.equal(page.calls[1].url,'/chat/bookings/42/messages');
  assert.equal(page.nodes.get('#booking-chat-history').hidden,false);assert.equal(page.nodes.get('#booking-chat-compose').hidden,true);
  assert.equal(page.nodes.get('#booking-chat-message').disabled,true);assert.equal(page.nodes.get('#booking-chat-readonly').hidden,false);page.dispose();

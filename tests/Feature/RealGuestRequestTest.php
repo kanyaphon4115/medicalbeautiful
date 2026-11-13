@@ -136,7 +136,7 @@ class RealGuestRequestTest extends TestCase{
   $this->get(route('guest.requests.show',$item->reference))->assertSee('Create Your Account')->assertDontSee('name="code"',false);
   $this->post(route('guest.requests.activate',$item->reference),['password'=>'StrongPassword123!','password_confirmation'=>'StrongPassword123!','terms'=>1])->assertRedirect(route('login'));
   $owner=User::where('email',$item->email)->firstOrFail();$this->assertGuest();$this->post(route('login.store'),['email'=>$owner->email,'password'=>'StrongPassword123!'])->assertRedirect();$this->assertAuthenticatedAs($owner);$this->assertSame($item->phone_number,$owner->phone_number);$this->assertSame($item->date_of_birth,$owner->date_of_birth);
-  $this->assertSame($owner->id,$submission->booking->fresh()->user_id);$this->assertTrue($item->fresh()->canChatWithHospital());
+  $this->assertSame($owner->id,$submission->booking->fresh()->user_id);$this->assertFalse($item->fresh()->canChatWithHospital());
   $this->get('/my-requests')->assertOk()->assertSee('Eye Surgery, Rhinoplasty');
   $this->assertDatabaseCount('bookings',1);$this->assertDatabaseCount('payment_submissions',1);
  }

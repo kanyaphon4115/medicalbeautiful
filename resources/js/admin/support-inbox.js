@@ -3,7 +3,7 @@ import {postChatMessage, refreshChatSession} from '../chat-request.js';
 import {createChatPolling} from '../chat-polling.js';
 
 export function initSupportInbox({root, config, t, esc}) {
-    let conversations = [], selected = '', messages = [], signature = '', blocked = false, sending = false;
+    let conversations = [], selected = '', messages = [], signature = '', blocked = false, sending = false, writable = false;
     const drafts = new Map();
     const acknowledged = new Map();
     let markingRead = false;
@@ -12,10 +12,10 @@ export function initSupportInbox({root, config, t, esc}) {
     const find = selector => root.querySelector(selector);
     const input = find('#support-message'), submit = find('[type="submit"]');
     const feedback = message => { find('#support-feedback').textContent = message; };
-    function controls() { input.disabled = blocked || !selected; submit.disabled = blocked || !selected || sending; }
+    function controls() { input.disabled = blocked || !selected || !writable; submit.disabled = blocked || !selected || !writable || sending; }
     function renderList() {
         const search = find('#support-search').value.toLowerCase();
-        find('#support-list').innerHTML = conversations.filter(c => c.label.toLowerCase().includes(search)).map(c => `<button type="button" data-customer="${esc(c.id)}" class="${String(c.id) === selected ? 'active' : ''}"><span class="ap-avatar">${esc(c.label[0])}</span><strong>${esc(c.label)}</strong>${c.unread_count?`<b class="support-unread" aria-label="${esc(t('Unread'))}: ${c.unread_count}">${c.unread_count}</b>`:''}</button>`).join('') || `<p class="ap-empty">${esc(t('No records found.'))}</p>`;
+        find('#support-list').innerHTML = conversations.filter(c => c.label.toLowerCase().includes(search)).map(c => `<button type="button" data-customer="${esc(c.id)}" class="${String(c.id) === selected ? 'active' : ''}"><span class="ap-avatar">${esc(c.label[0])}</span><span class="ap-booking-conversation-details"><strong>${esc(c.label)}</strong><small>${esc(c.latest_message||'')}</small><time>${esc(c.last_message_time?new Date(c.last_message_time).toLocaleString(config.locale):'')}</time><small>${esc(c.status||'Active')}</small></span>${c.unread_count?`<b class="support-unread" aria-label="${esc(t('Unread'))}: ${c.unread_count}">${c.unread_count}</b>`:''}</button>`).join('') || `<p class="ap-empty">${esc(t('No records found.'))}</p>`;
     }
     function renderMessages() {
         const history = find('#support-history');
@@ -33,7 +33,7 @@ export function initSupportInbox({root, config, t, esc}) {
             if (!bubble) {
                 bubble = document.createElement('article');
                 bubble.className = 'ap-chat-bubble' + (message.sender_type === 'support' ? ' own' : '');
-                bubble.innerHTML = `<strong>${esc(t(message.sender_type === 'support' ? 'Admin' : 'User'))}</strong><p style="white-space:pre-wrap">${esc(message.body)}</p><time>${esc(new Date(message.sent_at).toLocaleString(config.locale))}</time>`;
+                bubble.innerHTML = `<strong>${esc(t(message.sender_type === 'support' ? 'Customer Support' : 'Customer'))}</strong><p style="white-space:pre-wrap">${esc(message.body)}</p><time>${esc(new Date(message.sent_at).toLocaleString(config.locale))}</time>`;
                 attachMessageTranslation(bubble, message);
                 bubbles.set(key, bubble);
             }
@@ -53,6 +53,7 @@ export function initSupportInbox({root, config, t, esc}) {
             if (!response.ok) throw new Error('Conversation could not be loaded. Please try again.');
             const data = await response.json();
             if (target !== selected) return;
+            writable=data.can_send===true;controls();
             conversations = data.conversations || [];
             renderList();
             if (!selected && conversations.length) { choose(String(conversations[0].id)); return; }
@@ -79,7 +80,7 @@ export function initSupportInbox({root, config, t, esc}) {
     find('#support-history').addEventListener('scroll',()=>void markRead());
     function choose(id) {
         drafts.set(selected, input.value);
-        selected = id; input.value = drafts.get(id) || ''; messages = []; signature = '';
+        selected = id; writable=false; input.value = drafts.get(id) || ''; messages = []; signature = '';
         feedback(''); renderList(); renderMessages(); controls(); void load();
     }
     find('#support-list').addEventListener('click', event => { const button = event.target.closest('[data-customer]'); if (button && !blocked) choose(button.dataset.customer); });
@@ -87,7 +88,7 @@ export function initSupportInbox({root, config, t, esc}) {
     find('#support-compose').addEventListener('submit', async event => {
         event.preventDefault();
         const body = input.value.trim(), target = selected;
-        if (!body || !target || sending || blocked) return;
+        if (!body || !target || sending || blocked || !writable) return;
         sending = true; controls(); feedback('');
         try {
             const session = await refreshChatSession({sessionEndpoint:config.chatSessionEndpoint, userId:config.userId});

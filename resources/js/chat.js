@@ -9,7 +9,7 @@ const launcher = $('.chat-launcher'), panel = $('.chat-panel');
 const select = $('#chat-request-select'), customers = $('#chat-customer-select');
 const authenticated = widget.dataset.authenticated === 'true';
 const staff = widget.dataset.support === 'true';
-let channel = 'support', eligible = [], loadVersion = 0, pendingLoad;
+let channel = 'support', hospitalRequests = [], supportAvailable = false, eligible = [], loadVersion = 0, pendingLoad;
 let renderedMessages = [], renderedSignature = null, sessionBlocked = false, sending = false, conversationWritable = false;
 const feedback = message => { $('.chat-feedback').textContent = message; };
 const csrf = document.querySelector('meta[name="csrf-token"]');
@@ -33,20 +33,27 @@ function blockSession(message) {
     updateComposer();
 }
 function gate() {
-    const hospitalName=eligible.find(item=>String(item.id)===select.value)?.hospital_name||'Hospital';
+    const current=hospitalRequests.find(item=>String(item.id)===select.value);
+    const hospitalName=current?.hospital_name||'Hospital';
     const heading=$('#chat-title'), eyebrow=$('[data-chat-heading]'), input=$('#chat-message');
     if(heading)heading.textContent=channel==='hospital'?'Hospital Chat':'How can we help?';
     if(eyebrow)eyebrow.textContent=channel==='hospital'?hospitalName:'AESTHETIC CONCIERGE';
     if(input)input.placeholder=channel==='hospital'?'Message your hospital...':'How can we help you?';
-    const locked = channel === 'hospital' && !eligible.length;
+    const locked = channel === 'hospital' && !current?.unlocked;
+    const supportLocked=authenticated && channel==='support' && !supportAvailable;
     $('.chat-hospital-gate').hidden = !locked;
-    $('.chat-conversation').hidden = locked;
-    $('.chat-hospital-select').hidden = channel !== 'hospital' || locked;
+    $('.chat-support-gate').hidden=!supportLocked;
+    $('.chat-conversation').hidden = locked||supportLocked;
+    $('.chat-hospital-select').hidden = channel !== 'hospital' || !hospitalRequests.length;
     if (customers) customers.closest('label').hidden = channel !== 'support';
-    $('[data-chat-lock]').hidden = eligible.length > 0;
+    $('[data-chat-lock]').hidden = Boolean(current?.unlocked);
+    $('[data-chat-step-four]').textContent=current?.step4_approved?'Approved':'Pending';
+    $('[data-chat-step-nine]').textContent=current?.step9_approved?'Approved':'Pending';
+    const deposit=$('[data-chat-deposit]');deposit.setAttribute('aria-disabled',String(!current?.deposit_url));
+    if(current?.deposit_url)deposit.href=current.deposit_url;else deposit.removeAttribute('href');
     $$('[data-chat-channel]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.chatChannel === channel)));
     updateComposer();
-    return locked;
+    return locked||supportLocked;
 }
 function renderMessages(messages, forceScroll = false) {
     const list = $('.chat-messages'), signature = JSON.stringify(messages);
@@ -93,11 +100,22 @@ function options(element, items, placeholder) {
     if (items.some(item => String(item.id) === previous)) element.value = previous;
 }
 async function load() {
-    if (!authenticated || sessionBlocked || panel.hidden || gate()) return;
+    if (!authenticated || sessionBlocked || panel.hidden) return;
     pendingLoad?.abort();
     const controller = new AbortController();
     pendingLoad = controller;
     const version = ++loadVersion;
+    try {
+        const accessResponse=await fetch(widget.dataset.accessEndpoint,{credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:{Accept:'application/json','X-Chat-User-Id':widget.dataset.userId}});
+        if([401,409].includes(accessResponse.status)){blockSession('Your session expired or account changed. Please reload.');return;}
+        if(!accessResponse.ok)throw new Error('Chat access could not be checked. Please try again.');
+        const access=await accessResponse.json();if(version!==loadVersion)return;
+        hospitalRequests=access.hospital_requests||[];supportAvailable=access.support_available===true;
+        eligible=hospitalRequests.filter(item=>item.unlocked);options(select,hospitalRequests);
+        if(gate()){
+            conversationWritable=false;renderedMessages=[];renderedSignature=null;$('.chat-messages').replaceChildren();updateComposer();return;
+        }
+    }catch(error){if(error.name!=='AbortError'&&version===loadVersion)feedback(error.message);return;}
     const query = new URLSearchParams({channel});
     if (channel === 'hospital') query.set('treatment_request_id', select.value);
     if (staff && channel === 'support' && customers?.value) query.set('customer_id', customers.value);
@@ -112,7 +130,12 @@ async function load() {
             return;
         }
         if (!response.ok) {
-            if (response.status === 403 || response.status === 404) { eligible = []; gate(); }
+            if (response.status === 403 || response.status === 404) {
+                conversationWritable=false;eligible=[];
+                if(channel==='hospital'){const current=hospitalRequests.find(item=>String(item.id)===select.value);if(current)current.unlocked=false;}
+                else supportAvailable=false;
+                renderedMessages=[];renderedSignature=null;$('.chat-messages').replaceChildren();gate();
+            }
             throw new Error('Conversation could not be loaded. Please try again.');
         }
         const data = await response.json();
@@ -122,7 +145,7 @@ async function load() {
         }
         conversationWritable=data.can_send===true;
         eligible = data.eligible_requests;
-        options(select, eligible);
+        options(select, hospitalRequests);
         if (customers) options(customers, data.conversations || [], 'Select a customer conversation');
         gate();
         renderMessages(staff && channel === 'support' && !customers?.value ? [] : data.messages);
@@ -135,7 +158,7 @@ function resetConversation() {
     loadVersion++; pendingLoad?.abort();
     renderedMessages = []; renderedSignature = null;
     $('.chat-messages').replaceChildren();
-    feedback(''); if (!gate()) void load();
+    feedback(''); gate(); void load();
 }
 function choose(value) { channel = value; resetConversation(); }
 const polling = createChatPolling({load, isActive:()=>authenticated && !sessionBlocked && !panel.hidden && !document.hidden});
@@ -158,10 +181,11 @@ document.addEventListener('keydown', event => { if (event.key === 'Escape' && !p
 $$('[data-chat-channel]').forEach(button => button.onclick = () => choose(button.dataset.chatChannel));
 $('[data-chat-support]').onclick = () => choose('support');
 select.addEventListener('change', resetConversation);
+$('[data-chat-deposit]').addEventListener('click',event=>{if(event.currentTarget.getAttribute('aria-disabled')==='true')event.preventDefault();});
 customers?.addEventListener('change', resetConversation);
 $('.chat-compose')?.addEventListener('submit', async event => {
     event.preventDefault();
-    if (sending || sessionBlocked || (staff && channel === 'support' && !customers?.value)) return;
+    if (sending || sessionBlocked || !conversationWritable || (staff && channel === 'support' && !customers?.value)) return;
     const textarea = $('#chat-message'), body = textarea.value.trim();
     if (!body) return;
     const target = context(), targetChannel = channel, requestId = select.value, customerId = customers?.value;

@@ -43,7 +43,7 @@ class DepositPayment
         return [...$paid,'total_satang'=>$total,'percentage'=>$percentage,'required_satang'=>$required,
             'outstanding_satang'=>max(0,$required-$paid['total_paid_satang']),
             'additional_satang'=>max(0,$required-$initial),'phase'=>$booking->deposit_phase,'payment_status'=>$booking->deposit_status,
-            'start_url'=>route('bookings.treatment-deposit',$booking),'payment_url'=>route('bookings.deposit',$booking)];
+            'section_id'=>'booking-deposit-'.$booking->id,'start_url'=>route('bookings.treatment-deposit',$booking),'payment_url'=>route('bookings.deposit',$booking)];
     }
     public function summary(Booking $booking): array
     {

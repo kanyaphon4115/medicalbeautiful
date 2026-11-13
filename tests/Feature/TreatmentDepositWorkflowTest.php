@@ -26,7 +26,7 @@ class TreatmentDepositWorkflowTest extends TestCase {
   $this->postJson(route('bookings.treatment-deposit',$booking),['confirm_treatment'=>true])->assertOk()->assertJsonPath('deposit_satang',6000000);
   $this->postJson(route('bookings.treatment-deposit',$booking),['confirm_treatment'=>true])->assertOk()->assertJsonPath('deposit_satang',6000000);
   $this->assertDatabaseCount('bookings',1);$this->assertDatabaseCount('payment_submissions',2);
-  $this->get('/my-requests')->assertOk()->assertSee('Account Activated')->assertSee('Pending Booking Deposit')->assertSee('Treatment Deposit (Step 9)')->assertDontSee('Booking &amp; Payment Status',false)->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='pending_booking_deposit' && $rows->first()['treatment_deposit']['initial_satang']===500000);
+  $this->get('/my-requests')->assertOk()->assertSee('Account Activated')->assertSee('Pending Booking Deposit')->assertSee('Treatment Deposit')->assertDontSee('Booking &amp; Payment Status',false)->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='pending_booking_deposit' && $rows->first()['treatment_deposit']['initial_satang']===500000);
   $item=$booking->treatmentRequest;
   $this->post(route('guest.requests.payment-claim',$item->reference),['transaction_reference'=>'STEP9-TEST'])->assertRedirect();
   $this->post(route('guest.requests.payment-claim',$item->reference),['transaction_reference'=>'STEP9-TEST'])->assertRedirect();

@@ -51,7 +51,9 @@ class AuthController extends Controller
                     if(!$item || ($item->user_id && $item->user_id!==$request->user()->id))return false;
                     $booking=$item->booking()->whereKey($grant['booking'])->lockForUpdate()->first();
                     if(!$booking || $booking->deposit_status!=='Paid' || $booking->is_test || $booking->payment_is_simulated || !$booking->payment_verified_at || !$item->payment_confirmed_at)return false;
-                    $item->update(['user_id'=>$request->user()->id]);$booking->update(['user_id'=>$request->user()->id]);return true;
+                    $item->update(['user_id'=>$request->user()->id]);$booking->update(['user_id'=>$request->user()->id]);
+                    if(!$request->user()->email_verified_at)$request->user()->forceFill(['email_verified_at'=>now()])->save();
+                    return true;
                 });
                 if($linked){$request->session()->forget(['real_guest_link','real_guest_verified.'.$reference]);return redirect()->route('requests.index')->with('status','Your verified request and booking are linked to your account.');}
             }

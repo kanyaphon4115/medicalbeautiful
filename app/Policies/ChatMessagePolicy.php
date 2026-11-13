@@ -3,12 +3,15 @@ namespace App\Policies;
 use App\Models\{User,Booking,ChatMessage,TreatmentRequest};
 use App\Services\BookingChatAccess;
 class ChatMessagePolicy {
- public function accessSupport(User $user):bool{return $user->role===User::ROLE_USER || $user->isChatSupport();}
+ public function accessSupport(User $user):bool{return $user->isChatSupport() || ($user->role===User::ROLE_USER && app(BookingChatAccess::class)->supportAvailable($user));}
  public function viewSupport(User $user,int $customerId):bool{return $this->accessSupport($user)&&($user->isChatSupport()||$user->id===$customerId);}
- public function sendSupport(User $user,int $customerId):bool{return $this->viewSupport($user,$customerId);}
+ public function sendSupport(User $user,int $customerId):bool {
+  $customer=User::find($customerId);
+  return $customer && $this->viewSupport($user,$customerId) && app(BookingChatAccess::class)->supportAvailable($customer);
+ }
  public function listHospital(User $user):bool{return $user->isChatSupport()||$user->isHospital();}
  public function viewHospital(User $user,Booking $booking):bool {
-  return $user->isChatSupport() || ($this->hospitalParticipant($user,$booking->treatmentRequest) && app(BookingChatAccess::class)->unlocked($booking));
+  return ($user->isChatSupport() || $this->hospitalParticipant($user,$booking->treatmentRequest)) && app(BookingChatAccess::class)->unlocked($booking);
  }
  public function sendHospital(User $user,Booking $booking):bool {
   return !$user->isChatSupport() && $this->hospitalParticipant($user,$booking->treatmentRequest) && app(BookingChatAccess::class)->unlocked($booking);
@@ -17,8 +20,7 @@ class ChatMessagePolicy {
   return $item && $item->user_id && (($user->role===User::ROLE_USER&&$user->id===$item->user_id)||($user->isHospital()&&$user->id===$item->selected_hospital_id));
  }
  public function viewHospitalRequest(User $user,TreatmentRequest $item):bool {
-  if($user->isChatSupport())return true;
-  return $this->hospitalParticipant($user,$item)&&$item->canChatWithHospital()&&(!$item->booking||app(BookingChatAccess::class)->unlocked($item->booking));
+  return $item->booking && ($user->isChatSupport()||$this->hospitalParticipant($user,$item)) && app(BookingChatAccess::class)->unlocked($item->booking);
  }
  public function sendHospitalRequest(User $user,TreatmentRequest $item):bool {
   return !$user->isChatSupport() && $this->viewHospitalRequest($user,$item);

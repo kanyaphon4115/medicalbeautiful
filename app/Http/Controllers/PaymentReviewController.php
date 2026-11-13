@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\{DB,Storage};
 
 class PaymentReviewController extends Controller {
  public function confirm(Request $request,Booking $booking){
-  // Compatibility for old booking links. Missing stage always means Step 4, never Step 9.
+  // Compatibility for old booking links. Missing stage always means Initial Deposit, never Booking Deposit.
   $request->validate(['payment_stage'=>'sometimes|in:initial,treatment']);
   return $this->confirmSelected($request,$booking,null);
  }

@@ -14,7 +14,7 @@ class ChatController extends Controller
     {
         if(Gate::denies('accessSupport',ChatMessage::class)){
             app(\App\Services\ChatAccessAudit::class)->record($request,'support','denied_access',permitted:false);
-            abort(403,'Hospital accounts cannot access Customer Support conversations.');
+            abort(403,'Customer Support requires an approved initial deposit and an activated account. Hospital accounts cannot access these conversations.');
         }
     }
 
@@ -31,6 +31,18 @@ class ChatController extends Controller
             ->header('Cache-Control', 'private, no-store')->header('Vary', 'Cookie');
     }
 
+    public function access(Request $request,\App\Services\BookingChatAccess $access)
+    {
+        $this->identity($request);
+        $items=TreatmentRequest::where('user_id',$request->user()->id)->with(['booking.hospital','booking.quotation'])->get();
+        $rooms=$items->map(function($item)use($access){
+            $progress=$item->booking?$access->progress($item->booking):['step4_approved'=>false,'step9_approved'=>false,'account_activated'=>false,'booking_confirmed'=>false,'unlocked'=>false,'deposit_url'=>null];
+            return ['id'=>$item->id,'label'=>$item->procedure_label.' - '.($item->selected_hospital_name??'Hospital pending'),'hospital_name'=>$item->selected_hospital_name,...$progress];
+        });
+        return response()->json(['user_id'=>$request->user()->id,'support_available'=>$access->supportAvailable($request->user()),'hospital_requests'=>$rooms])
+            ->header('Cache-Control','private, no-store')->header('Vary','Cookie');
+    }
+
     public function index(Request $request)
     {
         $this->identity($request);
@@ -42,8 +54,10 @@ class ChatController extends Controller
         }
         $item = $channel === 'hospital' ? $this->hospitalRequest($request, (int) $request->query('treatment_request_id')) : null;
         $owner = $item ? $item->user_id : $this->conversationOwner($request, $channel);
-        $messages = ChatMessage::where('user_id', $owner)->where('channel', $channel)
-            ->where('treatment_request_id', $item?->id)->latest('id')->limit(50)->get()->reverse()->values()
+        $messageQuery = ChatMessage::where('user_id', $owner)->where('channel', $channel)
+            ->where('treatment_request_id', $item?->id)->latest('id');
+        if(!$request->user()->isChatSupport())$messageQuery->limit(50);
+        $messages = $messageQuery->get()->reverse()->values()
             ->map(fn ($message) => $this->messageData($message));
         $eligible = TreatmentRequest::where('user_id', $request->user()->id)->get()
             ->filter(fn ($r) => $r->canChatWithHospital() && (!$r->booking || app(\App\Services\BookingChatAccess::class)->unlocked($r->booking)))
@@ -62,9 +76,16 @@ class ChatController extends Controller
                 ->whereRaw('messages.id > COALESCE(reads.last_message_id, 0)')
                 ->groupBy('messages.user_id')->selectRaw('messages.user_id, COUNT(*) as total')
                 ->pluck('total', 'user_id');
-            $conversations = User::whereIn('id', $ids)->orderBy('name')->get(['id', 'name'])
-                ->map(fn ($user) => ['id' => $user->id, 'label' => $user->name.' (#'.$user->id.')',
-                    'unread_count' => (int) ($unread[$user->id] ?? 0)])->values();
+            $latestIds=ChatMessage::where('channel','support')->whereNull('treatment_request_id')->selectRaw('MAX(id)')->groupBy('user_id');
+            $latest=ChatMessage::whereIn('id',$latestIds)->get()->keyBy('user_id');
+            $conversations = User::whereIn('id', $ids)->get(['id', 'name', 'role', 'email_verified_at'])
+                ->map(function($user)use($latest,$unread){
+                    $last=$latest->get($user->id);
+                    return ['id'=>$user->id,'label'=>$user->name.' (#'.$user->id.')','customer_name'=>$user->name,
+                        'latest_message'=>$last?->body,'last_message_time'=>$last?->created_at?->toIso8601String(),
+                        'last_message_id'=>$last?->id,'status'=>app(\App\Services\BookingChatAccess::class)->supportAvailable($user)?'Active':'Read Only',
+                        'unread_count'=>(int)($unread[$user->id]??0)];
+                })->sortByDesc('last_message_id')->values();
         }
         app(\App\Services\ChatAccessAudit::class)->record($request,$channel,$channel==='support'&&!$request->filled('customer_id')?'list_conversations':'view_conversation',
             $item?->user_id ?? ($request->filled('customer_id')?$owner:null),$item?->id,$item?->booking?->id);

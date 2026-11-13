@@ -1,3 +1,4 @@
+import {initPortalIcons,svg} from './icons.js';
 import {initSupportInbox} from './support-inbox.js';
 import {initBookingInbox} from '../booking-inbox.js';
 import {loadState,saveState,createState,canChat,financials,pageRows,procedures,hospitalProcedures,countries} from './state.js';
@@ -13,9 +14,7 @@ const date=value=>value?new Intl.DateTimeFormat(config.locale,{day:'numeric',mon
 const tr=value=>esc(t(value));const button=(label,action,id='',cls='')=>`<button type="button" class="ap-button ${cls}" data-action="${action}" data-id="${esc(id)}">${tr(label)}</button>`;
 const hospital=id=>state.hospitals.find(h=>h.id===id);const customer=id=>state.customers.find(c=>c.id===id);const request=id=>state.requests.find(r=>r.id===id);
 const badge=status=>`<span class="ap-badge ${['Approved','Active','Paid','Confirmed','Completed','Selected'].includes(status)?'green':['Suspended','Rejected','Cancelled','Refunded','Expired','Withdrawn'].includes(status)?'red':['Sent','Quotes Received'].includes(status)?'blue':'gold'}">${tr(status)}</span>`;
-const iconPaths={dashboard:'M3 10 12 3l9 7v11h-6v-7H9v7H3Z',hospitals:'M5 3h14v19H5ZM9 7h6m-3-3v6M8 14h2m4 0h2m-8 4h2m4 0h2',customers:'M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2 22v-3a6 6 0 0 1 12 0v3M17 4a4 4 0 0 1 0 8m0 3a5 5 0 0 1 5 5v2',requests:'M14 2H4v20h16V8l-6-6Zm0 0v6h6M8 12h8m-8 4h6',bookings:'M4 5h16v16H4ZM8 2v6m8-6v6M4 11h16',payments:'M3 5h18v15H3ZM3 10h18M7 15h4',support:'M4 14v-3a8 8 0 0 1 16 0v3M2 12h4v8H2ZM18 12h4v8h-4M20 20l-8 2',reports:'M4 21V12m6 9V6m6 15V3m6 18H1',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM10 2h4l1 3 3 1 3 3-1 3 1 3-3 3-3 1-1 3h-4l-1-3-3-1-3-3 1-3-1-3 3-3 3-1Z',notifications:'M5 17h14l-2-4V9a5 5 0 0 0-10 0v4l-2 4Zm5 4h4',search:'M21 21l-5-5M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Z','booking-chats':'M3 4h18v13H9l-6 5V4Z'};
-const svg=name=>`<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${iconPaths[name]||iconPaths.requests}"/></svg>`;
-document.querySelectorAll('[data-ap-icon]').forEach(el=>el.innerHTML=svg(el.dataset.apIcon));
+initPortalIcons();
 let toastTimer;function toast(message){const el=document.getElementById('ap-toast');el.textContent=t(message);el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),4000);}
 function commit(){const saved=saveState(state);if(!saved)toast('Browser storage is full. Changes are visible now but will not survive a page reload. Remove an image or reset the demo.');return saved;}
 const hospitalImage=h=>h?.imageData?.startsWith('data:image/jpeg;base64,')?h.imageData:`${config.assets}/${/^hospital-[1-6]\.jpg$/.test(h?.image)?h.image:'hospital-1.jpg'}`;

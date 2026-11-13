@@ -15,5 +15,5 @@
   <dt class="deposit-remaining">Remaining Balance &mdash; Pay at Hospital</dt><dd class="deposit-remaining">{{ $formatDepositMoney($deposit['remaining_satang']) }}</dd>
  </dl>
  <p class="deposit-hospital-note">Remaining amount to be paid directly to the hospital or clinic on the treatment date.</p>
- @if($admin && $deposit['initial_satang']>0)<p class="ap-badge green">Step 4 &mdash; Approved</p>@endif
+ @if($admin && $deposit['initial_satang']>0)<p class="ap-badge green">Initial Deposit &mdash; Approved</p>@endif
 </section>

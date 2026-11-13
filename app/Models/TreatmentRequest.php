@@ -39,7 +39,7 @@ class TreatmentRequest extends Model {
  }
  protected function casts(): array { return ['date_of_birth'=>'encrypted','additional_notes'=>'encrypted','procedures'=>'array','line_id'=>'encrypted','phone_number'=>'encrypted','age'=>'integer','preferred_surgery_month'=>'integer','preferred_surgery_year'=>'integer','goals'=>'encrypted','medical_information'=>'encrypted','preferred_surgery_date'=>'date','consented_at'=>'datetime','hospital_approved_at'=>'datetime','payment_confirmed_at'=>'datetime']; }
  public function canChatWithHospital(): bool {
-  return $this->status !== 'cancelled' && filled($this->procedure) && filled($this->selected_hospital_name) && $this->hospital_approved_at !== null && $this->payment_confirmed_at !== null;
+  return $this->booking && app(\App\Services\BookingChatAccess::class)->unlocked($this->booking);
  }
  public function photos(): HasMany { return $this->hasMany(RequestPhoto::class); }
 }

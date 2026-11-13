@@ -62,7 +62,7 @@ class AdminPaymentStagesTest extends TestCase
    ->assertViewHas('paymentStageCounts',fn($counts)=>$counts===['all'=>2,'initial'=>1,'treatment'=>1]);
   $initialPage=$this->get('/admin/payments?stage=initial')->assertOk()->assertDontSee('Deposit Summary')
    ->assertViewHas('paymentTransactions',fn($rows)=>$rows->total()===1&&$rows->first()->id===$initial->id);
-  $this->get('/admin/payments?stage=treatment')->assertOk()->assertSee('Deposit Summary')->assertSee('Step 4 &mdash; Approved',false)->assertSee('THB 60,000.00')->assertSee('10%')
+  $this->get('/admin/payments?stage=treatment')->assertOk()->assertSee('Deposit Summary')->assertSee('Initial Deposit &mdash; Approved',false)->assertSee('THB 60,000.00')->assertSee('10%')
    ->assertDontSee('name="treatment_deposit_percentage"',false)->assertDontSee('Initial Deposit Amount')
    ->assertViewHas('paymentTransactions',fn($rows)=>$rows->total()===1&&$rows->first()->id===$treatment->id);
   $this->get('/admin/payments?status=Paid')->assertViewHas('paymentTransactions',fn($rows)=>$rows->total()===1&&$rows->first()->id===$initial->id);
@@ -77,6 +77,21 @@ class AdminPaymentStagesTest extends TestCase
   $initial->update(['status'=>'approved']);$treatment->update(['amount_satang'=>6500000]);
   $booking->update(['deposit_amount_satang'=>6500000]);$this->confirm($treatment)->assertUnprocessable();
   $this->assertSame('pending',$treatment->fresh()->status);$this->assertSame('Pending Payment',$booking->fresh()->status);
+  $this->assertDatabaseCount('payment_reviews',1);
+ }
+ public function test_step_nine_approval_requires_a_verified_customer_account_on_both_approval_routes():void {
+  [$booking,$initial,$admin,$owner]=$this->fixture();
+  $this->actingAs($admin);$this->confirm($initial)->assertRedirect();
+  $treatment=$this->startStepNine($booking,$owner);
+  $owner->forceFill(['email_verified_at'=>null])->save();
+  $this->actingAs($admin);$this->confirm($treatment)->assertUnprocessable();
+  $booking->update(['deposit_status'=>'Pending Verification']);
+  $this->postJson(route('admin.payments.review',$treatment),[
+   'decision'=>'approved','confirmation'=>1,'funds_verified'=>1,
+   'notes'=>'Independent bank verification','verification_reference'=>'OTP-REQUIRED-TEST',
+  ])->assertUnprocessable();
+  $this->assertSame('pending',$treatment->fresh()->status);
+  $this->assertSame('Pending Payment',$booking->fresh()->status);
   $this->assertDatabaseCount('payment_reviews',1);
  }
  public function test_transaction_confirmation_requires_admin_and_explicit_bank_verification():void {
@@ -127,10 +142,11 @@ class AdminPaymentStagesTest extends TestCase
     $this->assertStringContainsString('booking deposit payment of **THB 60,000.00**',$body);
     $this->assertStringContainsString('used to confirm your booking',$body);
     $this->assertStringContainsString('Total Treatment Cost: **THB 650,000.00**',$body);
-    $this->assertStringContainsString('Initial Deposit Paid (Step 4): **THB 5,000.00**',$body);
+    $this->assertStringContainsString('Initial Deposit Paid: **THB 5,000.00**',$body);
     $this->assertStringContainsString('Booking Deposit Paid: **THB 60,000.00**',$body);
     $this->assertStringContainsString('Remaining Balance: **THB 585,000.00**',$body);
     $this->assertStringContainsString('The remaining balance of THB 585,000.00 can be paid directly to your selected hospital or clinic on your treatment date.',$body);
+    $this->assertStringNotContainsString('Step 4',$body);
     $this->assertStringNotContainsString('Step 9',$body);
     $this->assertStringNotContainsString('You do not need to make this payment again.',$body);
     $this->assertStringContainsString($booking->reference,$body);

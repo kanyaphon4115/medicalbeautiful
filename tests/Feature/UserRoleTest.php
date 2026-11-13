@@ -21,15 +21,17 @@ class UserRoleTest extends TestCase
             'password_confirmation'=>'SafePassword123','terms'=>'1','role'=>'admin'])->assertForbidden();
         $this->assertDatabaseMissing('users',['email'=>'register@example.test']);
     }
-    public function test_only_explicit_admin_role_grants_support_access(): void
+    public function test_admin_and_customer_support_roles_grant_chat_staff_access(): void
     {
         $user=User::factory()->create();
-        foreach(['user','hospital','ADMIN','staff','unknown'] as $role) {
+        foreach(['user','hospital','super_admin','ADMIN','staff','unknown'] as $role) {
             $user->forceFill(['role'=>$role])->save();
             $this->assertFalse($user->isChatSupport());
         }
         $user->forceFill(['role'=>'admin'])->save();
         $this->assertTrue($user->isAdmin());
+        $this->assertTrue($user->isChatSupport());
+        $user->forceFill(['role'=>'support'])->save();
         $this->assertTrue($user->isChatSupport());
     }
 

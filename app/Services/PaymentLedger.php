@@ -31,11 +31,11 @@ class PaymentLedger
         if ($payment->purpose !== 'treatment') return;
         $initial = $booking->paymentSubmissions()->where('purpose', 'initial')->where('status', 'approved')->get();
         abort_unless($initial->isNotEmpty() && $initial->sum('amount_satang') > 0 && $booking->treatmentRequest->payment_confirmed_at,
-            422, 'Step 4 must be approved before verifying Step 9.');
-        abort_unless($booking->user_id && $booking->user_id === $booking->treatmentRequest->user_id,
-            422, 'Account activation is required before verifying Step 9.');
+            422, 'Initial Deposit must be approved before verifying Booking Deposit.');
+        abort_unless(app(BookingChatAccess::class)->accountActivated($booking),
+            422, 'Account activation is required before verifying Booking Deposit.');
         $summary = (new DepositPayment)->treatmentSummary($booking);
         abort_unless($payment->amount_satang === $summary['additional_satang'],
-            422, 'The Step 9 amount must match the required deposit minus the approved Step 4 payment.');
+            422, 'The Booking Deposit amount must match the required deposit minus the approved Initial Deposit payment.');
     }
 }

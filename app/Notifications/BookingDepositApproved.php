@@ -28,7 +28,7 @@ class BookingDepositApproved extends Notification
             ->line('Booking Reference: **'.$this->bookingReference.'**')
             ->line('Payment Reference: **'.$this->paymentReference.'**')
             ->line('Total Treatment Cost: **'.$this->money($this->totalTreatmentCostSatang).'**')
-            ->line('Initial Deposit Paid (Step 4): **'.$this->money($this->initialDepositPaidSatang).'**')
+            ->line('Initial Deposit Paid: **'.$this->money($this->initialDepositPaidSatang).'**')
             ->line('Booking Deposit Paid: **'.$this->money($this->bookingDepositPaidSatang).'**')
             ->line('Remaining Balance: **'.$this->money($this->remainingBalanceSatang).'**')
             ->line('The remaining balance of '.$this->money($this->remainingBalanceSatang).' can be paid directly to your selected hospital or clinic on your treatment date.')

@@ -94,6 +94,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+ Route::get('/chat/access',[\App\Http\Controllers\ChatController::class,'access'])->name('chat.access');
  Route::get('/chat/session',[\App\Http\Controllers\ChatController::class,'session'])->name('chat.session');
  Route::get('/chat/bookings',[\App\Http\Controllers\BookingChatController::class,'index'])->name('chat.bookings.index');
  Route::get('/chat/bookings/{booking}/messages',[\App\Http\Controllers\BookingChatController::class,'messages'])->name('chat.bookings.messages');
