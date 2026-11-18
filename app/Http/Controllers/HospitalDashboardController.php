@@ -10,13 +10,19 @@ class HospitalDashboardController extends Controller
     public function index(Request $request) {
         abort_unless($request->user()->isHospital(),403);
         $id = $request->user()->id;
-        $requests = TreatmentRequest::availableToHospital($id)->with(['customer','photos','booking','quotations'=>fn($q)=>$q->where('hospital_id',$id)])->latest()->get();
-        $quotations = Quotation::where('hospital_id',$id)->with('treatmentRequest.booking')->latest()->get();
-        $bookings = Booking::bookingEligible()->where('hospital_id',$id)->with(['treatmentRequest','quotation'])->latest()->get();
-        $stats = ['New Requests'=>$requests->filter(fn($r)=>$r->quotations->isEmpty() && !$r->selected_hospital_id)->count(),
-            'Quotations Sent'=>$quotations->whereNull('withdrawn_at')->count(), 'Confirmed Bookings'=>$bookings->where('status','Confirmed')->count(),
-            'Completed Bookings'=>$bookings->where('status','Completed')->count()];
-        return response()->view('hospital.dashboard',compact('requests','quotations','bookings','stats'))->header('Cache-Control','private, no-store');
+        $requestQuery = TreatmentRequest::availableToHospital($id);
+        $quotationQuery = Quotation::where('hospital_id',$id);
+        $bookingQuery = Booking::bookingEligible()->where('hospital_id',$id);
+        $stats = ['New Requests'=>(clone $requestQuery)->whereDoesntHave('quotations',fn($q)=>$q->where('hospital_id',$id))->whereNull('selected_hospital_id')->count(),
+            'Quotations Sent'=>(clone $quotationQuery)->whereNull('withdrawn_at')->count(),
+            'Confirmed Bookings'=>(clone $bookingQuery)->where('status','Confirmed')->count(),
+            'Completed Bookings'=>(clone $bookingQuery)->where('status','Completed')->count()];
+        $requestTotal=(clone $requestQuery)->count();$bookingTotal=(clone $bookingQuery)->count();
+        $respondedTotal=(clone $requestQuery)->whereHas('quotations',fn($q)=>$q->where('hospital_id',$id))->count();
+        $requests = $requestQuery->with(['customer','photos','booking','quotations'=>fn($q)=>$q->where('hospital_id',$id)])->latest()->paginate(5,['*'],'requests_page')->withQueryString();
+        $quotations = $quotationQuery->with('treatmentRequest.booking')->latest()->paginate(5,['*'],'quotations_page')->withQueryString()->appends(['section'=>'My Quotations']);
+        $bookings = $bookingQuery->with(['treatmentRequest','quotation'])->latest()->paginate(5,['*'],'bookings_page')->withQueryString()->appends(['section'=>'Bookings']);
+        return response()->view('hospital.dashboard',compact('requests','quotations','bookings','stats','requestTotal','bookingTotal','respondedTotal'))->header('Cache-Control','private, no-store');
     }
 
     public function quote(Request $request, TreatmentRequest $treatmentRequest) {

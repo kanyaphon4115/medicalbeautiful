@@ -79,7 +79,7 @@ function renderMessages(messages, forceScroll = false) {
         text.textContent = message.body;
         const stamp = document.createElement('small');
         stamp.textContent = chatSenderLabel({channel,senderType:message.sender_type,own,hospitalName:eligible.find(item=>String(item.id)===select.value)?.hospital_name})
-            + ' - ' + new Date(message.sent_at).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+            + ' - ' + new Date(message.sent_at).toLocaleTimeString(document.documentElement?.lang||'en', {hour:'2-digit', minute:'2-digit'});
         bubble.append(text, stamp);
         attachMessageTranslation(bubble,message);
         list.append(bubble);

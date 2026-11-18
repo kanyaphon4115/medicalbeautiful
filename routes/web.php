@@ -6,6 +6,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TreatmentRequestController;
 
 Route::view('/', 'home')->name('home');
+Route::get('/patient-reviews',[\App\Http\Controllers\PatientReviewController::class,'index'])->name('reviews.index');
+Route::get('/patient-reviews/write',[\App\Http\Controllers\PatientReviewController::class,'create'])->middleware('auth')->name('reviews.create');
+Route::post('/patient-reviews',[\App\Http\Controllers\PatientReviewController::class,'store'])->middleware(['auth','throttle:5,1,patient-review'])->name('reviews.store');
+Route::post('/patient-review-photos',[\App\Http\Controllers\PatientReviewController::class,'upload'])->middleware(['auth','throttle:120,1,review-photos'])->name('reviews.upload');
+Route::get('/patient-reviews/{review}/gallery/{photo}',[\App\Http\Controllers\PatientReviewController::class,'galleryPhoto'])->name('reviews.gallery-photo');
+Route::get('/admin/patient-reviews/{review}/gallery/{photo}',[\App\Http\Controllers\PatientReviewController::class,'moderationGalleryPhoto'])->middleware('auth')->name('reviews.moderation-gallery-photo');
+Route::get('/patient-reviews/{review}/photos/{side}',[\App\Http\Controllers\PatientReviewController::class,'photo'])->name('reviews.photo');
+Route::get('/patient-reviews/{review}',[\App\Http\Controllers\PatientReviewController::class,'show'])->name('reviews.show');
+Route::get('/admin/patient-reviews',[\App\Http\Controllers\PatientReviewController::class,'moderation'])->middleware('auth')->name('reviews.moderation');
+Route::post('/admin/patient-reviews/{review}',[\App\Http\Controllers\PatientReviewController::class,'moderate'])->middleware(['auth','throttle:30,1,review-moderation'])->name('reviews.moderate');
+Route::get('/admin/patient-reviews/{review}/photos/{side}',[\App\Http\Controllers\PatientReviewController::class,'moderationPhoto'])->middleware('auth')->name('reviews.moderation-photo');
 Route::get('/guest-booking/resume',[\App\Http\Controllers\GuestTreatmentRequestController::class,'resume'])->middleware('throttle:30,1')->name('guest.booking.resume');
 Route::prefix('guest-requests')->name('guest.requests.')->group(function () {
  $controller=\App\Http\Controllers\GuestTreatmentRequestController::class;
@@ -61,6 +72,11 @@ foreach (\App\Http\Controllers\AdminPortalController::PAGES as $slug => $label) 
 
 Route::middleware('auth')->group(function () {
     Route::get('/hospital/dashboard', [\App\Http\Controllers\HospitalDashboardController::class,'index'])->name('hospital.dashboard');
+    Route::get('/hospital/profile',[\App\Http\Controllers\HospitalProfileController::class,'index'])->name('hospital.profile');
+    Route::post('/hospital/profile',[\App\Http\Controllers\HospitalProfileController::class,'update'])->middleware('throttle:20,1,hospital-profile')->name('hospital.profile.update');
+    Route::get('/hospital/profiles/{profile}/media/{kind}/{file?}',[\App\Http\Controllers\HospitalProfileController::class,'media'])->name('hospital.profile.media');
+    Route::get('/admin/hospital-verifications',[\App\Http\Controllers\HospitalProfileController::class,'approvals'])->name('hospital.verifications');
+    Route::post('/admin/hospital-verifications/{change}',[\App\Http\Controllers\HospitalProfileController::class,'decide'])->name('hospital.verifications.decide');
     Route::post('/hospital/requests/{treatmentRequest}/quotation', [\App\Http\Controllers\HospitalDashboardController::class,'quote'])->middleware('throttle:20,1')->name('hospital.quote');
     Route::post('/hospital/quotations/{quotation}/withdraw', [\App\Http\Controllers\HospitalDashboardController::class,'withdraw'])->middleware('throttle:20,1')->name('hospital.quotations.withdraw');
     Route::post('/hospital/bookings/{booking}/complete', [\App\Http\Controllers\HospitalDashboardController::class,'complete'])->name('hospital.complete');

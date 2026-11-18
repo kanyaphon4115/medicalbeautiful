@@ -26,7 +26,7 @@ class TreatmentDepositWorkflowTest extends TestCase {
   $this->postJson(route('bookings.treatment-deposit',$booking),['confirm_treatment'=>true])->assertOk()->assertJsonPath('deposit_satang',6000000);
   $this->postJson(route('bookings.treatment-deposit',$booking),['confirm_treatment'=>true])->assertOk()->assertJsonPath('deposit_satang',6000000);
   $this->assertDatabaseCount('bookings',1);$this->assertDatabaseCount('payment_submissions',2);
-  $this->get('/my-requests')->assertOk()->assertSee('Account Activated')->assertSee('Pending Booking Deposit')->assertSee('Treatment Deposit')->assertDontSee('Booking &amp; Payment Status',false)->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='pending_booking_deposit' && $rows->first()['treatment_deposit']['initial_satang']===500000);
+  $this->get('/my-requests')->assertOk()->assertSee('In Progress')->assertSee('Treatment Deposit')->assertDontSee('Booking &amp; Payment Status',false)->assertViewHas('requests',fn($rows)=>$rows->first()['status']==='pending_booking_deposit' && $rows->first()['treatment_deposit']['initial_satang']===500000);
   $item=$booking->treatmentRequest;
   $this->post(route('guest.requests.payment-claim',$item->reference),['transaction_reference'=>'STEP9-TEST'])->assertRedirect();
   $this->post(route('guest.requests.payment-claim',$item->reference),['transaction_reference'=>'STEP9-TEST'])->assertRedirect();
@@ -56,7 +56,8 @@ class TreatmentDepositWorkflowTest extends TestCase {
    $this->assertSame($status,$item->fresh()->customer_status);
   }
   $response=$this->actingAs($owner)->get('/my-requests')->assertOk()->assertSee('data-filter-count="all">7</span>',false);
-  foreach(['pending','quotes_received','account_activated','pending_booking_deposit','confirmed','completed','cancelled'] as $status)$response->assertSee('data-filter-count="'.$status.'">1</span>',false);
+  $response->assertSee('data-filter-count="in_progress">4</span>',false);
+  foreach(['confirmed','completed','cancelled'] as $status)$response->assertSee('data-filter-count="'.$status.'">1</span>',false);
  }
  public function test_hospital_policy_is_admin_only_and_snapshotted():void {
   $booking=$this->booking();$hospital=$booking->hospital;

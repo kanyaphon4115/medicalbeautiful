@@ -8,4 +8,4 @@
          data-customer-requests-url="{{ route('requests.index') }}"
          @if($guestResume) data-real-resume-url="{{ $guestResume }}" @endif
          data-assets="{{ asset('images') }}"
-         data-no-translate lang="en" hidden aria-label="Guest treatment request"></section>
+         hidden aria-label="Guest treatment request"></section>

@@ -35,10 +35,10 @@ class AdminDashboardTest extends TestCase
         User::factory()->create(['email' => 'hidden-patient@example.test']);
         foreach (['en', 'th', 'ko'] as $locale) {
             foreach (\App\Http\Controllers\AdminPortalController::PAGES as $page => $label) {
-                $this->get('/admin/'.$page.'?lang='.$locale)->assertOk()
+                $response=$this->get('/admin/'.$page.'?lang='.$locale)->assertOk()
                     ->assertSee('<html lang="'.$locale.'">', false)
-                    ->assertSee('data-page="'.$page.'"', false)
-                    ->assertDontSee('hidden-patient@example.test');
+                    ->assertSee('data-page="'.$page.'"', false);
+                if($page==='customers')$response->assertSee('hidden-patient@example.test');else $response->assertDontSee('hidden-patient@example.test');
             }
         }
     }

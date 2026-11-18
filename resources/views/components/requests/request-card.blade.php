@@ -15,6 +15,5 @@
             <p class="deposit-hospital-note">Remaining amount to be paid directly to the hospital or clinic on the treatment date.</p>
             <button type="button" class="button button-gold" data-pay-treatment>Pay Booking Deposit</button><p data-treatment-error role="alert" hidden></p>
         </div>
-        <p class="treatment-deposit-info"><span aria-hidden="true">?</span><span>Once payment is verified by our admin, the status will be changed to <strong>Confirmed.</strong></span></p>
     </section>
 </article>

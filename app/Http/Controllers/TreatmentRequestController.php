@@ -25,18 +25,34 @@ class TreatmentRequestController extends Controller {
  public function index(Request $request) {
   $images = ['Eye Surgery'=>'eye.jpg','Rhinoplasty'=>'nose.jpg','Lip Surgery'=>'lips.jpg','Facial Contouring'=>'contour.jpg','Face Lifting'=>'lifting.jpg','Liposuction'=>'body.jpg','Breast Surgery'=>'breast.jpg','Other Procedures'=>'other.jpg','Chin Surgery'=>'contour.jpg','Facial Fat Reduction'=>'lifting.jpg','Skin Treatments'=>'other.jpg'];
   $hospitalCount = \App\Models\User::where('role','hospital')->count();
-  $requests = TreatmentRequest::where('user_id',$request->user()->id)->with(['photos','quotations','booking'])->latest()->get()->map(fn ($item) => [
+  $filters=$request->validate(['filter'=>'nullable|in:all,in_progress,confirmed,completed,cancelled','sort'=>'nullable|in:newest,oldest','page'=>'nullable|integer|min:1']);
+  $base=TreatmentRequest::where('treatment_requests.user_id',$request->user()->id)->leftJoin('bookings as list_booking','list_booking.treatment_request_id','=','treatment_requests.id')->select('treatment_requests.*');
+  $eligible=\App\Models\Booking::paymentEligible()->select('bookings.id');
+  $base->selectRaw("CASE WHEN treatment_requests.status = 'cancelled' THEN 'cancelled'
+    WHEN list_booking.id IN (".$eligible->toSql().") THEN CASE
+      WHEN list_booking.status = 'Cancelled' THEN 'cancelled'
+      WHEN list_booking.deposit_phase = 'treatment' AND list_booking.deposit_status = 'Paid' AND list_booking.payment_verified_at IS NOT NULL AND list_booking.is_test = 0 AND list_booking.payment_is_simulated = 0 THEN CASE WHEN list_booking.status = 'Completed' THEN 'completed' ELSE 'confirmed' END
+      ELSE 'in_progress' END
+    WHEN treatment_requests.status = 'completed' THEN 'completed'
+    ELSE 'in_progress' END as list_status",$eligible->getBindings());
+  $query=TreatmentRequest::query()->fromSub($base,'treatment_requests');
+  $filterCounts=(clone $query)->selectRaw('list_status, COUNT(*) as aggregate')->groupBy('list_status')->pluck('aggregate','list_status')->all();
+  $filterCounts['all']=array_sum($filterCounts);
+  if(($filters['filter']??'all')!=='all')$query->where('list_status',$filters['filter']);
+  $requestPage=$query->with(['photos','quotations.hospital','booking'])->orderBy('created_at',($filters['sort']??'newest')==='oldest'?'asc':'desc')->orderBy('id',($filters['sort']??'newest')==='oldest'?'asc':'desc')->paginate(5)->withQueryString();
+  $hospitalProfiles=\App\Models\HospitalProfile::whereIn('hospital_id',$requestPage->getCollection()->flatMap(fn($item)=>$item->quotations->pluck('hospital_id')))->get()->keyBy('hospital_id');
+  $requests = $requestPage->getCollection()->map(fn ($item) => [
    'id'=>sprintf('REQ-%s-%06d',$item->created_at->format('Y'),$item->id), 'procedure_name'=>$item->procedure_label, 'procedures'=>$item->procedure_names, 'procedure_image'=>$images[$item->procedure] ?? 'other.jpg',
    'submitted_at'=>$item->created_at->format('Y-m-d'), 'preferred_date'=>$item->preferred_period, 'preferred_period_label'=>$item->preferred_period_label,
    'treatment_deposit'=>$item->booking && $item->booking->is_payment_eligible && $item->user_id && $item->payment_confirmed_at ? (new \App\Services\DepositPayment)->treatmentSummary($item->booking) : null,
    'selected_quotation_id'=>$item->booking?->quotation_id,
    'status'=>$item->customer_status,'payment_is_simulated'=>(bool)$item->booking?->payment_is_simulated, 'hospitals_contacted'=>max($item->quotations->count(), $item->selected_hospital_id ? 1 : ($item->selected_hospital_name ? 0 : $hospitalCount)),
-   'hospital_responses'=>$item->quotations->map(fn($q)=>['quotation_id'=>$q->id,'response_status'=>'quote_received','quotation_amount'=>(float)$q->amount,'responded_at'=>$q->updated_at->format('Y-m-d'),'details'=>$q->details,'valid_until'=>$q->valid_until?->format('Y-m-d'),'payment_url'=>$item->booking?->quotation_id===$q->id && $item->booking->is_payment_eligible && $item->booking->status!=='Awaiting Acceptance' ? route('bookings.deposit',$item->booking) : null,'accept_url'=>(!$item->booking || ($item->booking->status==='Awaiting Acceptance' && $item->booking->deposit_status==='Pending' && $item->booking->quotation_id===$q->id)) && !$item->payment_confirmed_at && !$item->selected_hospital_id && !$item->selected_hospital_name && $item->status!=='cancelled' && (!$q->valid_until || !$q->valid_until->endOfDay()->isPast()) ? route('quotations.accept',$q) : null])->values(), 'name'=>$item->name, 'email'=>$item->email,
+   'hospital_responses'=>$item->quotations->map(fn($q)=>['hospital_name'=>(($hospitalProfiles[$q->hospital_id] ?? null)?->name) ?: $q->hospital?->name, 'hospital_profile'=>collect(($hospitalProfiles[$q->hospital_id] ?? null)?->only(['short_description','address','city','country','phone','email','website','operating_hours']) ?? [])->all(), 'quotation_id'=>$q->id,'response_status'=>'quote_received','quotation_amount'=>(float)$q->amount,'responded_at'=>$q->updated_at->format('Y-m-d'),'details'=>$q->details,'valid_until'=>$q->valid_until?->format('Y-m-d'),'payment_url'=>$item->booking?->quotation_id===$q->id && $item->booking->is_payment_eligible && $item->booking->status!=='Awaiting Acceptance' ? route('bookings.deposit',$item->booking) : null,'accept_url'=>(!$item->booking || ($item->booking->status==='Awaiting Acceptance' && $item->booking->deposit_status==='Pending' && $item->booking->quotation_id===$q->id)) && !$item->payment_confirmed_at && !$item->selected_hospital_id && !$item->selected_hospital_name && $item->status!=='cancelled' && (!$q->valid_until || !$q->valid_until->endOfDay()->isPast()) ? route('quotations.accept',$q) : null])->values(), 'name'=>$item->name, 'email'=>$item->email,
    'date_of_birth'=>$item->date_of_birth,'additional_notes'=>$item->additional_notes,'line_id'=>$item->line_id,'phone_number'=>$item->phone_number,'age'=>$item->age,'gender'=>$item->gender, 'goals'=>$item->goals, 'medical_information'=>$item->medical_information,
    'photos'=>$item->photos->map(fn ($photo)=>['url'=>route('requests.photos.show',$photo),'name'=>$photo->original_name])->values(),
   ])->values();
-  $customerBookings=\App\Models\Booking::bookingEligible()->where('user_id',$request->user()->id)->with(['hospital','quotation','treatmentRequest'])->latest()->get();
-  return response()->view('requests.index',compact('requests','customerBookings'))->header('Cache-Control','private, no-store');
+  $customerBookings=collect();
+  return response()->view('requests.index',compact('requests','customerBookings','requestPage','filterCounts','filters'))->header('Cache-Control','private, no-store');
  }
  public function store(Request $request) {
   app()->setLocale('en');

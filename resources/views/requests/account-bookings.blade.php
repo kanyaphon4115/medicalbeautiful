@@ -1,5 +1,5 @@
 <section class="real-guest-request container" data-no-translate lang="en">
- <article class="real-guest-panel" id="my-bookings"><h2>My Bookings</h2>
+ <article class="real-guest-panel" data-paginate="section" id="my-bookings"><h2>My Bookings</h2>
  @forelse($customerBookings as $booking)
  <section class="real-guest-quote"><h3>{{ $booking->reference }} · {{ $booking->status }}</h3>
  <p>{{ $booking->treatmentRequest->procedure_label }} · {{ $booking->hospital?->name }}</p>
@@ -12,7 +12,7 @@
  </section>
  @empty<p>No bookings yet. Your requests and quotations remain available above.</p>@endforelse
  </article>
- <article class="real-guest-panel" id="payments"><h2>Payments</h2>
+ <article class="real-guest-panel" data-paginate="section" id="payments"><h2>Payments</h2>
  @forelse($customerBookings as $booking)<section class="real-guest-quote">
  <h3>{{ $booking->reference }}</h3><p>Deposit: {{ $booking->deposit_amount_satang===null?'Not recorded':'THB '.number_format($booking->deposit_amount_satang/100,2) }} · {{ $booking->payment_status }}</p>
  <p>Approved: {{ $booking->payment_verified_at?->format('M j, Y H:i') ?? 'Not approved' }}</p>

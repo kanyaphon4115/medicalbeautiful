@@ -1,3 +1,4 @@
+import './pagination.js';
 import {initializeCustomerAccess} from './customer-access.js';
 import {openCustomerRequestForm} from './customer-request-form.js';
 import {translateText} from './i18n';
@@ -135,3 +136,5 @@ document.querySelectorAll('[data-guest-support]').forEach(button=>button.addEven
 document.querySelectorAll('[data-customer-booking-chat]').forEach(button=>button.addEventListener('click',()=>{if(document.querySelector('.chat-panel')?.hidden)document.querySelector('.chat-launcher')?.click();document.querySelector('[data-chat-channel="hospital"]')?.click();}));
 
 if(document.querySelector('[data-guest-otp-dialog]'))import('./guest-verification.js').then(module=>module.initializeGuestVerification(document.querySelector('[data-guest-otp-dialog]')));
+
+if(document.querySelector('[data-review-filters], [data-review-dialog]')) import('./patient-reviews.js');

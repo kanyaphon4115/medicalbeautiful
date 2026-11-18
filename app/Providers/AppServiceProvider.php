@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::defaultView('pagination.numbers');
+        \Illuminate\Pagination\Paginator::defaultSimpleView('pagination.numbers');
         \Illuminate\Support\Facades\Gate::policy(\App\Models\ChatMessage::class, \App\Policies\ChatMessagePolicy::class);
     }
 }

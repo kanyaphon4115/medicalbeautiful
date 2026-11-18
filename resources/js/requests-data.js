@@ -13,6 +13,9 @@ export function quotationStats(request) {
  const received = request.hospital_responses.filter(response => response.response_status === 'quote_received').length;
  return {received, total: request.hospitals_contacted, percent: request.hospitals_contacted ? received / request.hospitals_contacted * 100 : 0};
 }
+export function matchesRequestStatus(request, status) {
+ return status === 'all' || (status === 'in_progress' ? ['pending','quotes_received','account_activated','pending_payment','pending_booking_deposit'].includes(request.status) : request.status === status);
+}
 export function selectRequests(requests, status, sort) {
- return requests.filter(request => status === 'all' || request.status === status).sort((a,b) => sort === 'oldest' ? a.submitted_at.localeCompare(b.submitted_at) : b.submitted_at.localeCompare(a.submitted_at));
+ return requests.filter(request => matchesRequestStatus(request, status)).sort((a,b) => sort === 'oldest' ? a.submitted_at.localeCompare(b.submitted_at) : b.submitted_at.localeCompare(a.submitted_at));
 }

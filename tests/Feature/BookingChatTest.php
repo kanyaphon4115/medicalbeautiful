@@ -17,6 +17,28 @@ class BookingChatTest extends TestCase {
   return $booking;
  }
  private function url(Booking $booking):string{return route('chat.bookings.messages',$booking);}
+ public function test_completed_booking_retains_customer_and_hospital_chat_with_support_read_only():void {
+  $booking=$this->booking();$customer=$booking->customer;$hospital=$booking->hospital;
+  $this->actingAs($customer)->postJson(route('chat.store'),['channel'=>'hospital','treatment_request_id'=>$booking->treatment_request_id,'body'=>'Before completion'])->assertCreated();
+  $booking->update(['status'=>'Completed']);$booking->treatmentRequest->update(['status'=>'completed']);
+  $this->getJson(route('chat.access'))->assertJsonPath('hospital_requests.0.unlocked',true)->assertJsonPath('hospital_requests.0.booking_confirmed',true);
+  $this->getJson(route('chat.index',['channel'=>'hospital','treatment_request_id'=>$booking->treatment_request_id]))->assertOk()->assertJsonCount(1,'messages');
+  $this->postJson(route('chat.store'),['channel'=>'hospital','treatment_request_id'=>$booking->treatment_request_id,'body'=>'Aftercare question'])->assertCreated();
+  $this->postJson(route('chat.store'),['channel'=>'support','body'=>'Support remains available'])->assertCreated();
+  $this->actingAs($hospital)->getJson($this->url($booking))->assertOk()->assertJsonCount(2,'messages');
+  $this->postJson($this->url($booking),['body'=>'Aftercare reply'])->assertCreated();
+  $this->actingAs(User::factory()->create(['role'=>'support']))->getJson($this->url($booking))->assertOk()->assertJsonCount(3,'messages');
+  $this->postJson($this->url($booking),['body'=>'Support cannot reply here'])->assertForbidden();
+  $this->actingAs(User::factory()->create(['role'=>'hospital']))->getJson($this->url($booking))->assertNotFound();
+ }
+ public function test_completed_status_cannot_bypass_payment_verification_or_cancellation():void {
+  $booking=$this->booking();$booking->update(['status'=>'Completed']);$this->actingAs($booking->customer);
+  $payment=$booking->paymentSubmissions()->where('purpose','treatment')->firstOrFail();$payment->update(['status'=>'rejected']);
+  $this->getJson(route('chat.access'))->assertJsonPath('hospital_requests.0.unlocked',false);
+  $this->postJson(route('chat.store'),['channel'=>'hospital','treatment_request_id'=>$booking->treatment_request_id,'body'=>'Blocked'])->assertForbidden();
+  $payment->update(['status'=>'approved']);$booking->update(['status'=>'Cancelled']);
+  $this->getJson(route('chat.index',['channel'=>'hospital','treatment_request_id'=>$booking->treatment_request_id]))->assertForbidden();
+ }
  public function test_admin_and_hospital_share_real_customer_messages_and_replies():void {
   $booking=$this->booking();$owner=$booking->customer;$hospital=$booking->hospital;$admin=User::factory()->create(['role'=>'support']);
   $this->actingAs($owner)->postJson(route('chat.store'),['channel'=>'hospital','treatment_request_id'=>$booking->treatment_request_id,'body'=>'Customer question'])->assertCreated();
@@ -61,6 +83,6 @@ class BookingChatTest extends TestCase {
  }
  public function test_admin_page_and_hospital_dashboard_use_live_booking_chat_configuration():void {
   $booking=$this->booking();$this->actingAs(User::factory()->create(['role'=>'support']))->get(route('admin.booking-chats'))->assertOk()->assertSee('bookingChatEndpoint')->assertDontSee('class="ap-demo"',false)->assertDontSee('Sarah Kim');
-  $this->actingAs($booking->hospital)->get(route('hospital.dashboard'))->assertOk()->assertSee('hospital-chat-config')->assertSee('Open Booking Chat')->assertDontSee('Hospital booking chat is not connected yet.');
+  $this->actingAs($booking->hospital)->get(route('hospital.dashboard'))->assertOk()->assertSee('hospital-chat-config')->assertSee('Booking Chat')->assertDontSee('Hospital booking chat is not connected yet.');
  }
 }

@@ -38,7 +38,7 @@ class AdminPaymentController extends Controller {
   if($filters['from']??null)$rows->whereDate($date,'>=',$filters['from']);
   if($filters['to']??null)$rows->whereDate($date,'<=',$filters['to']);
   $real=(clone $payments)->where('payment_is_simulated',false)->where('is_test',false);
-  $bookings=$rows->latest()->paginate((int)($filters['size']??5));if(!$paymentReviewReady)foreach($bookings as $booking)$booking->setRelation('paymentSubmissions',collect());
+  $bookings=$rows->latest()->paginate(5);if(!$paymentReviewReady)foreach($bookings as $booking)$booking->setRelation('paymentSubmissions',collect());
   $transactionData=[];
   if(!$isBookings && $paymentReviewReady){
    $transactionBookings=Booking::where(fn($q)=>$q->paymentEligible()->orWhereHas('paymentSubmissions'));

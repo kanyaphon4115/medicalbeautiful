@@ -32,7 +32,8 @@ class BookingChatAccess {
   $due=max(0,intdiv($total*$percentage+50,100)-$initialAmount);
   $stepNine=$percentage>=10 && $percentage<=20 && $due>0 && $booking->deposit_amount_satang===$due && $booking->deposit_phase==='treatment' && $booking->deposit_status==='Paid' && $booking->payment_verified_at
    && !$booking->is_test && !$booking->payment_is_simulated && $this->approvedAmount($booking,'treatment')>=$due;
-  $confirmed=$booking->status==='Confirmed';
+  // Completing treatment retains the chat access granted when the booking was confirmed.
+  $confirmed=in_array($booking->status,['Confirmed','Completed'],true);
   $valid=$item && $item->status!=='cancelled' && filled($item->procedure) && filled($item->selected_hospital_name) && $item->hospital_approved_at
    && $item->selected_hospital_id===$booking->hospital_id && $booking->hospital?->isHospital()
    && $booking->quotation?->hospital_id===$booking->hospital_id && $booking->quotation?->treatment_request_id===$item->id;

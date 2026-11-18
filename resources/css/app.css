@@ -1,5 +1,7 @@
+@import './pagination.css';
 @import 'tailwindcss';
 @import './requests.css';
+@import './patient-reviews.css';
 @import './chat.css';
 @import './partner-hospitals.css';
 @source '../**/*.blade.php';
@@ -58,3 +60,4 @@ html[lang=ko] body{font-family:'Noto Sans KR','Malgun Gothic',sans-serif}html[la
 
 @import './real-guest-request.css';
 .quote-profile-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.quote-profile-heading h2{margin-bottom:0}.quote-profile-badge{padding:7px 11px;border-radius:20px;background:#e9f9ee;color:#27854c;font-size:10px;white-space:nowrap}.quote-personal{border:1px solid #eee7dc;background:#faf8f5;border-radius:10px;padding:16px}.quote-personal-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.quote-personal-heading h3{margin:0;font-size:13px;font-weight:600}.quote-personal-heading small{font-size:10px;font-weight:400;color:#82796e}.quote-profile-edit{border:0;background:transparent;color:#a67c3d;font-size:12px;padding:6px;cursor:pointer}.quote-profile-summary{margin:0}.quote-profile-summary>div{display:grid;grid-template-columns:100px minmax(0,1fr);gap:12px;margin:7px 0;font-size:12px;line-height:1.6}.quote-profile-summary dt{color:#817465}.quote-profile-summary dd{margin:0;overflow-wrap:anywhere}.quote-profile-note{background:#faf3e7;border-radius:8px;text-align:center;font-size:11px;line-height:1.8;padding:13px;color:#827052}.quote-personal [hidden]{display:none!important}
+.request-quotation .request-hospital-name{font-size:17px;font-weight:600;line-height:1.4;margin:0 0 9px;color:#263144;overflow-wrap:anywhere}.request-quotation .request-hospital-description,.request-quotation .request-hospital-address{font-size:12px;line-height:1.6;color:#82715d;margin:0 0 9px;white-space:pre-wrap;overflow-wrap:anywhere}.request-hospital-profile{background:#faf5ed;border:1px solid #ebdcc8;border-radius:12px;padding:18px;margin:18px 0}.request-hospital-profile h3{font:600 27px 'Cormorant Garamond',Georgia,serif;margin:0 0 10px}.request-hospital-profile p{white-space:pre-wrap}.request-hospital-profile dl{display:grid;grid-template-columns:130px minmax(0,1fr);gap:9px 15px;font-size:13px;margin-top:14px}.request-hospital-profile dt{color:#9b753c}.request-hospital-profile dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}@media(max-width:550px){.request-hospital-profile dl{grid-template-columns:1fr;gap:5px}.request-hospital-profile dd{margin-bottom:8px}}

@@ -11,3 +11,5 @@
 </tr>
 @empty<tr><td colspan="6" class="hd-empty">{{ __('No patient requests available.') }}</td></tr>@endforelse
 </tbody></table></div>
+
+{{ $requests->appends(['section'=>request('section','Dashboard')])->links() }}

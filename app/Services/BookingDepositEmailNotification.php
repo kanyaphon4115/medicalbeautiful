@@ -27,7 +27,7 @@ class BookingDepositEmailNotification
 
                 $deposit=(new DepositPayment)->treatmentSummary($row);
                 Notification::route('mail',$row->treatmentRequest->email)->notify(new BookingDepositApproved(
-                    $row->reference, $payment->reference, $payment->amount_satang, route('requests.index').'#my-bookings',
+                    $row->reference, $payment->reference, $payment->amount_satang, route('requests.index').'#my-requests',
                     $deposit['total_satang'], $deposit['initial_satang'], $deposit['booking_paid_satang'], $deposit['remaining_satang']
                 ));
                 Cache::forever($key, now()->toIso8601String());

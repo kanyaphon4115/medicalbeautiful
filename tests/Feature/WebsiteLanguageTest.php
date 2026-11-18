@@ -32,4 +32,21 @@ class WebsiteLanguageTest extends TestCase {
   $this->actingAs(User::factory()->create())->patchJson('/account/settings',['notifications'=>['requests'=>true,'quotations'=>true,'messages'=>true],'language'=>'invalid'])->assertUnprocessable();
   $this->assertSame('en',auth()->user()->fresh()->preferred_language);
  }
+ public function test_admin_language_selection_is_shared_with_customer_pages_and_can_be_switched_back():void {
+  $admin=User::factory()->create(['role'=>'admin']);$this->actingAs($admin);
+  $this->get('/admin/customers?lang=th')->assertOk()->assertSee('<html lang="th">',false)->assertSessionHas('website_locale','th')->assertSee('ดูบัญชีลูกค้า');
+  $this->get('/admin/chat-management')->assertOk()->assertSee('<html lang="th">',false)->assertSee('จัดการแชท');
+  $this->get('/patient-reviews')->assertOk()->assertSee('<html lang="th">',false);
+  $this->get('/admin/payments?lang=ko')->assertOk()->assertSee('<html lang="ko">',false)->assertSee('name="lang" value="ko"',false)->assertDontSee('data-no-translate lang="en"',false);
+  $this->get('/admin/bookings')->assertOk()->assertSee('<html lang="ko">',false);
+  $this->get('/admin/customers?lang=en')->assertOk()->assertSee('<html lang="en">',false);
+  $this->get('/patient-reviews')->assertSee('<html lang="en">',false);
+ }
+ public function test_review_validation_errors_use_the_selected_language():void {
+  $customer=User::factory()->create();$this->actingAs($customer);
+  foreach(['th'=>'คะแนน','ko'=>'평점'] as $locale=>$label){
+   $this->get('/patient-reviews?lang='.$locale)->assertOk();
+   $this->postJson(route('reviews.store'),['rating'=>7,'privacy_consent'=>1])->assertUnprocessable()->assertJsonValidationErrors('rating')->assertJsonPath('errors.rating.0',fn($text)=>str_contains($text,$label));
+  }
+ }
 }

@@ -1,10 +1,10 @@
-<div class="request-record-details" data-no-translate lang="en">
+<div class="request-record-details">
     <dl>
-        <dt>Full Name</dt><dd>{{ trim((string)$item->name) ?: (trim((string)$item->customer?->name) ?: 'Name not provided') }}</dd>
-        <dt>Email Address</dt><dd>{{ $item->email }}</dd>
-        <dt>LINE ID</dt><dd>{{ $item->line_id ?: 'Not provided' }}</dd>
-        <dt>Phone Number</dt><dd>{{ $item->phone_number ?: 'Not provided' }}</dd>
-        <dt>Date of Birth</dt><dd>{{ $item->date_of_birth ?: 'Not provided' }}</dd><dt>Age</dt><dd>{{ $item->age ?? 'Not provided' }}</dd>
+        <dt>Full Name</dt><dd data-user-content>{{ trim((string)$item->name) ?: (trim((string)$item->customer?->name) ?: 'Name not provided') }}</dd>
+        <dt>Email Address</dt><dd data-user-content>{{ $item->email }}</dd>
+        <dt>LINE ID</dt><dd data-user-content>{{ $item->line_id ?: 'Not provided' }}</dd>
+        <dt>Phone Number</dt><dd data-user-content>{{ $item->phone_number ?: 'Not provided' }}</dd>
+        <dt>Date of Birth</dt><dd data-user-content>{{ $item->date_of_birth ?: 'Not provided' }}</dd><dt>Age</dt><dd>{{ $item->age ?? 'Not provided' }}</dd>
         <dt>Gender</dt><dd>{{ $item->gender ?: 'Not provided' }}</dd>
         <dt>Country / Region</dt><dd>{{ $item->customer?->country_code ?: 'Not provided' }}</dd>
         <dt>Preferred Surgery Month / Year</dt><dd>{{ $item->preferred_period_label }}</dd>

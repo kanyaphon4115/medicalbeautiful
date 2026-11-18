@@ -1,14 +1,29 @@
 import thai from './translations-th.js';
 import korean, {koreanDynamic} from './translations-ko.js';
+import admin from '../../lang/admin-portal.json' with {type:'json'};
+import ui from '../../lang/interface.json' with {type:'json'};
+const normalize=value=>value.toLowerCase().replace(/…/g,'...').replace(/\s+/g,' ').trim();
 
-const catalogs = Object.fromEntries(Object.entries({th:thai,ko:korean}).map(([locale,entries])=>[locale,new Map(Object.entries(entries).map(([key,value])=>[key.toLowerCase().replace(/\s+/g,' ').trim(),value]))]));
+const catalogs = Object.fromEntries(Object.entries({th:thai,ko:korean}).map(([locale,entries])=>{
+ const convert=values=>Object.fromEntries(Object.entries(values).map(([key,translations])=>[key,translations[locale==='th'?0:1]]));
+ return [locale,new Map(Object.entries({...convert(admin),...entries,...convert(ui)}).map(([key,value])=>[normalize(key),value]))];
+}));
 export function translateText(value, locale = 'en') {
     if (!catalogs[locale] || typeof value !== 'string') return value;
     const catalog=catalogs[locale];
     const leading = value.match(/^\s*/)[0], trailing = value.match(/\s*$/)[0];
     const source = value.trim().replace(/\s+/g, ' ');
-    let translated = catalog.get(source.toLowerCase());
+    let translated = catalog.get(normalize(source));
     if (!translated && locale === 'ko') translated=koreanDynamic(source);
+    if(!translated){
+        const count=source.match(/^Showing (\d+)[–-](\d+) of (\d+) (customers|payments|bookings|requests)([\s\S]*)$/);
+        if(count){const noun=translateText(count[4][0].toUpperCase()+count[4].slice(1),locale);const tail=count[5].replace(/^\.\s*/,'');const suffix=tail?' '+translateText(tail,locale):'';translated=(locale==='th'?`แสดง ${count[1]}–${count[2]} จาก ${count[3]} ${noun}`:`${noun} ${count[3]}개 중 ${count[1]}–${count[2]}`)+suffix;}
+        const page=source.match(/^(\d+) \/ page$/);if(page)translated=locale==='th'?`${page[1]} / หน้า`:`페이지당 ${page[1]}개`;
+        const stars=source.match(/^(\d+) stars?$/);if(stars)translated=locale==='th'?`${stars[1]} ดาว`:`별 ${stars[1]}개`;
+        const label=source.match(/^([^:]+): (.+)$/);if(!translated&&label){const key=catalog.get(label[1].toLowerCase());if(key)translated=key+': '+translateText(label[2],locale);}
+        if(!translated&&/^[a-z]+(?:_[a-z]+)+$/.test(source)){translated=catalog.get(source.replaceAll('_',' '));}
+        const numbered=source.match(/^(\d+) (requests|stars)$/);if(!translated&&numbered)translated=numbered[1]+' '+translateText(numbered[2],locale);
+    }
     if (!translated && locale === 'th') {
         const patterns = [
             [/^Hello, (.+)$/, match => `สวัสดี ${match[1]}`],
@@ -40,7 +55,7 @@ export function translateText(value, locale = 'en') {
 // names, and typed form values are never sent to a translation provider or edited.
 if (typeof document !== 'undefined' && ['th','ko'].includes(document.documentElement.lang)) {
     const locale=document.documentElement.lang;
-    const skip = 'script,style,template,code,[data-no-translate],.chat-bubble p,.account-profile-fields dd,.request-sensitive-text,.request-private-photos,.settings-session-list span,[data-response-name],.hospital-body h3';
+    const skip = 'script,style,template,code,[data-no-translate],[data-user-content],.chat-bubble p,.ap-chat-bubble p,.ap-chat-bubble strong,.ap-chat-bubble time,.ap-conversation-list strong,.ap-conversation-list [data-message-preview],.account-profile-fields dd,.request-sensitive-text,.request-quotation-details,.request-private-photos,.settings-session-list span,[data-response-name],.hospital-body h3,[data-doctor-hospital]';
     const ignored = node => node.closest(skip) !== null;
     function translateDOM(root) {
         if (!(root instanceof Element) || ignored(root)) return;
@@ -48,6 +63,8 @@ if (typeof document !== 'undefined' && ['th','ko'].includes(document.documentEle
         let node;
         while ((node = walker.nextNode())) {
             if (!node.parentElement || ignored(node.parentElement) || node.parentElement.closest('textarea')) continue;
+            const option=node.parentElement.closest('option');
+            if(option && !option.hasAttribute('value'))option.setAttribute('value',option.value);
             const translated = translateText(node.data, locale);
             if (translated !== node.data) node.data = translated;
         }
@@ -70,7 +87,8 @@ if (typeof document !== 'undefined' && ['th','ko'].includes(document.documentEle
         observer.observe(document.body, options);
     });
     translateDOM(document.body);
-    document.title = translateText(document.title.replace(' - AESTHETIC', ''), locale) + ' - AESTHETIC';
+    const title=document.title.match(/^(.*?)(\s[-|—]\sAESTHETIC.*)?$/);
+    document.title=translateText(title[1],locale)+(title[2]||'');
     observer.observe(document.body, options);
     // Native validation popups are outside the document tree.
     document.addEventListener('invalid', event => {

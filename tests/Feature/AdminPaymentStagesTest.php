@@ -136,7 +136,7 @@ class AdminPaymentStagesTest extends TestCase
     $this->assertSame(58500000,$notification->remainingBalanceSatang);
     $mail=$notification->toMail($notifiable);
     $this->assertSame('Booking Confirmed | AESTHETIC',$mail->subject);
-    $this->assertSame(route('requests.index').'#my-bookings',$mail->actionUrl);
+    $this->assertSame(route('requests.index').'#my-requests',$mail->actionUrl);
     $body=implode(' ',$mail->introLines);
     $this->assertStringContainsString('THB 60,000.00',$body);
     $this->assertStringContainsString('booking deposit payment of **THB 60,000.00**',$body);

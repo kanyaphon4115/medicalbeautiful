@@ -22,7 +22,7 @@
  </form>
  @endif
  <h3>Verification History</h3>
- @forelse($payment->reviews as $review)<p class="ap-note">{{ $review->created_at->format('M j, Y H:i') }} - {{ $review->reviewer?->name ?? 'Former admin' }} - {{ ucfirst(str_replace('_',' ',$review->decision)) }}: {{ $review->notes }}</p>@empty<p class="ap-note">No reviews yet.</p>@endforelse
+ @forelse($payment->reviews as $review)<p class="ap-note">{{ $review->created_at->locale(app()->getLocale())->isoFormat('lll') }} - {{ $review->reviewer?->name ?? 'Former admin' }} - {{ ucfirst(str_replace('_',' ',$review->decision)) }}: {{ $review->notes }}</p>@empty<p class="ap-note">No reviews yet.</p>@endforelse
 @else
  <p class="ap-note">Legacy payment record. Recorded bank verification details are retained.</p>
 @endif

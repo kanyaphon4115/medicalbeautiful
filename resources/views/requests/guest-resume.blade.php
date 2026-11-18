@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title','Continue Your Request — AESTHETIC')
 @section('content')
-<section class="real-guest-request container" data-no-translate lang="en">
+<section class="real-guest-request container" data-paginate="article">
  <p class="eyebrow">YOUR SAVED REQUESTS</p><h1>Continue Your Request</h1>
  <p>Choose the request you want to continue. Each keeps its own booking and payment history.</p>
  @foreach($items as $item)<article class="real-guest-panel">

@@ -1,9 +1,9 @@
 @php
  $filters=$paymentFilters;
  $money=fn($value)=>$value===null?'Not recorded':'THB '.number_format($value/100,2);
- $paymentDate=fn($p)=>($p->reviewed_at ?? ($p->method!=='Not submitted'?$p->submitted_at:null))?->format('M j, Y H:i') ?? 'Not recorded';
+ $paymentDate=fn($p)=>($p->reviewed_at ?? ($p->method!=='Not submitted'?$p->submitted_at:null))?->locale(app()->getLocale())->isoFormat('lll') ??__('Not recorded');
 @endphp
-<div data-no-translate lang="en">
+<div>
 <section class="ap-panel">
  <nav class="ap-payment-stages" aria-label="Payment stage">
  @foreach(['all'=>'All Payments','initial'=>'Initial Deposit','treatment'=>'Booking Deposit'] as $stage=>$label)
@@ -11,13 +11,12 @@
  @endforeach
  </nav>
  <form method="GET" class="ap-filters">
-  <input type="hidden" name="lang" value="en"><input type="hidden" name="stage" value="{{ $filters['stage']??'all' }}">
+  <input type="hidden" name="lang" value="{{ app()->getLocale() }}"><input type="hidden" name="stage" value="{{ $filters['stage']??'all' }}">
   @if($filters['record']??null)<input type="hidden" name="record" value="{{ $filters['record'] }}">@endif
   <label class="ap-search"><input name="search" type="search" value="{{ $filters['search']??'' }}" placeholder="Search by name, payment ID, booking ID or email..." aria-label="Search"></label>
-  <select name="status" aria-label="Status"><option value="">All Status</option>@foreach(['Pending','Pending Verification','Rejected','Information Required','Paid','Failed','Expired','Refunded'] as $status)<option @selected(($filters['status']??'')===$status)>{{ $status }}</option>@endforeach</select>
+  <select name="status" aria-label="Status"><option value="">All Status</option>@foreach(['Pending','Pending Verification','Rejected','Information Required','Paid','Failed','Expired','Refunded'] as $status)<option value="{{ $status }}" @selected(($filters['status']??'')===$status)>{{ $status }}</option>@endforeach</select>
   <label class="ap-date-label">Payment date from<input name="from" type="date" value="{{ $filters['from']??'' }}"></label><label class="ap-date-label">Payment date to<input name="to" type="date" value="{{ $filters['to']??'' }}"></label>
-  <select name="size" aria-label="Page size">@foreach([5,10,25] as $size)<option value="{{ $size }}" @selected(($filters['size']??5)==$size)>{{ $size }} / page</option>@endforeach</select>
-  <button class="ap-button gold">Apply filters</button><a class="ap-button" href="{{ route('admin.payments',['lang'=>'en']) }}">Clear</a>
+  <button class="ap-button gold">Apply filters</button><a class="ap-button" href="{{ route('admin.payments',['lang'=>app()->getLocale()]) }}">Clear</a>
  </form>
  @if($errors->any())<p role="alert">{{ $errors->first() }}</p>@endif
  @if(session('status'))<p role="status">{{ session('status') }}</p>@endif
@@ -26,8 +25,8 @@
  @php($booking=$payment->booking)
  <tr>
   <td>{{ $payment->reference }} @if($booking->is_test)<span class="ap-badge gold">Test</span>@endif @if($booking->payment_is_simulated)<small>Simulated payment</small>@endif</td>
-  <td>{{ $booking->treatmentRequest?->name ?: $booking->customer?->name ?: 'Name not provided' }}</td>
-  <td>{{ $payment->stage_label }}</td><td>{{ $booking->hospital?->name ?: 'Not recorded' }}</td><td>{{ $money($payment->amount_satang) }}</td>
+  <td data-user-content>{{ $booking->treatmentRequest?->name ?: $booking->customer?->name ?:__('Name not provided') }}</td>
+  <td>{{ $payment->stage_label }}</td><td data-user-content>{{ $booking->hospital?->name ?:__('Not recorded') }}</td><td>{{ $money($payment->amount_satang) }}</td>
   <td><span class="ap-badge {{ $payment->status==='approved'?'green':'gold' }}">{{ $payment->display_status }}</span></td><td>{{ $paymentDate($payment) }}</td>
   <td><button type="button" class="ap-button" data-real-payment="{{ $payment->id>0?'tx-'.$payment->id:'legacy-'.$booking->id }}">View</button></td>
  </tr>
@@ -38,13 +37,13 @@
 </section>
 @foreach($paymentTransactions as $payment)
  @php($booking=$payment->booking)
- <dialog class="real-request-dialog ap-stage-payment-dialog" id="real-payment-{{ $payment->id>0?'tx-'.$payment->id:'legacy-'.$booking->id }}" data-no-translate lang="en" aria-labelledby="payment-title-{{ $payment->id }}">
+ <dialog class="real-request-dialog ap-stage-payment-dialog" id="real-payment-{{ $payment->id>0?'tx-'.$payment->id:'legacy-'.$booking->id }}" aria-labelledby="payment-title-{{ $payment->id }}">
   <button type="button" class="ap-button" data-close-real-payment>Close</button><h2 id="payment-title-{{ $payment->id }}">Payment Details</h2>
   <dl class="request-contact-details">
    <dt>Payment ID</dt><dd>{{ $payment->reference }}</dd>
    <dt>Request ID</dt><dd>{{ sprintf('REQ-%s-%06d',$booking->treatmentRequest->created_at->format('Y'),$booking->treatment_request_id) }}</dd>
-   <dt>Customer Name</dt><dd>{{ $booking->treatmentRequest->name ?: $booking->customer?->name }}</dd>
-   <dt>Hospital</dt><dd>{{ $booking->hospital?->name ?? 'Not recorded' }}</dd>
+   <dt>Customer Name</dt><dd data-user-content>{{ $booking->treatmentRequest->name ?: $booking->customer?->name }}</dd>
+   <dt>Hospital</dt><dd data-user-content>{{ $booking->hospital?->name ??__('Not recorded') }}</dd>
    <dt>Payment Stage</dt><dd>{{ $payment->stage_label }}</dd>
    <dt>Payment Status</dt><dd><span class="ap-badge {{ $payment->status==='approved'?'green':'gold' }}">{{ $payment->display_status }}</span></dd>
   </dl>

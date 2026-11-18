@@ -53,7 +53,7 @@ class AdminPaymentTransactions
         if(($filters['stage']??'all')!=='all')$rows->where('purpose',$filters['stage']);
         $transactions=$rows->with(['booking.customer','booking.hospital','booking.quotation','booking.treatmentRequest',
             'booking.paymentSubmissions','reviews.reviewer','reviewer'])->orderByDesc('created_at')->orderByDesc('id')
-            ->paginate((int)($filters['size']??5));
+            ->paginate(5);
         return ['paymentTransactions'=>$transactions,'paymentStageCounts'=>$counts];
     }
 }

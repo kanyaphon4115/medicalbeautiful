@@ -1,3 +1,4 @@
+import {createListPager} from './pagination.js';
 import {attachMessageTranslation} from './chat-translation.js';
 import {postChatMessage, refreshChatSession} from './chat-request.js';
 import {createChatPolling} from './chat-polling.js';
@@ -12,18 +13,19 @@ export function initBookingInbox({root, config, t=value=>value, esc}) {
     const current=()=>rooms.find(room=>String(room.id)===selected);
     const active=()=>!disposed&&!blocked&&!document.hidden&&root.isConnected&&!root.closest('[hidden]');
     function controls(){const locked=blocked||!current()?.unlocked||!canSend;input.disabled=locked;submit.disabled=locked||sending;}
+    const listPager=createListPager(find('#booking-chat-list'));
     function renderList(){
         const search=find('#booking-chat-search').value.trim().toLowerCase(), status=find('#booking-chat-status').value;
-        find('#booking-chat-list').innerHTML=rooms.filter(room=>`${room.booking_reference} ${room.request_reference} ${room.customer_name} ${room.hospital_name} ${room.procedure}`.toLowerCase().includes(search)&&(!status||(status==='active')===room.unlocked))
-            .map(room=>`<button type="button" data-booking-room="${room.id}" class="${String(room.id)===selected?'active':''}"><span class="ap-avatar">${esc((room.customer_name||'C')[0])}</span><span class="ap-booking-conversation-details"><strong>${esc(room.customer_name)}</strong><small class="ap-booking-conversation-id">${esc(room.booking_reference)}</small><small>${esc(room.hospital_name)}</small><small>${esc(room.procedure)}</small><small class="ap-booking-conversation-status">${esc(t(room.unlocked?'Active':'Locked'))}</small></span></button>`).join('')||`<p class="ap-empty">${esc(t('No records found.'))}</p>`;
+        const filtered=rooms.filter(room=>`${room.booking_reference} ${room.request_reference} ${room.customer_name} ${room.hospital_name} ${room.procedure}`.toLowerCase().includes(search)&&(!status||(status==='active')===room.unlocked));
+        find('#booking-chat-list').innerHTML=listPager.slice(filtered,renderList).map(room=>`<button type="button" data-booking-room="${room.id}" class="${String(room.id)===selected?'active':''}"><span class="ap-avatar">${esc((room.customer_name||'C')[0])}</span><span class="ap-booking-conversation-details"><strong>${esc(room.customer_name)}</strong><small class="ap-booking-conversation-id">${esc(room.booking_reference)}</small><small data-user-content>${esc(room.hospital_name)}</small><small>${esc(room.procedure)}</small><small class="ap-booking-conversation-status">${esc(t(room.unlocked?'Active':'Locked'))}</small></span></button>`).join('')||`<p class="ap-empty">${esc(t('No records found.'))}</p>`;
     }
-    function details(rows){return `<dl class="ap-details">${rows.map(([label,value])=>`<dt>${esc(t(label))}</dt><dd>${esc(value)}</dd>`).join('')}</dl>`;}
+    function details(rows){return `<dl class="ap-details">${rows.map(([label,value])=>`<dt>${esc(t(label))}</dt><dd${['Customer','Email','Hospital'].includes(label)?' data-user-content':' '}>${esc(value)}</dd>`).join('')}</dl>`;}
     function renderRoom(){
         const room=current(), signature=JSON.stringify([room,canSend]);
         if(signature===roomSignature){controls();return;}
         roomSignature=signature;
         find('#booking-chat-header').innerHTML=room?`<span class="ap-avatar">${esc((room.customer_name||'C')[0])}</span><div><strong>${esc(room.booking_reference)}</strong><small>${esc(room.request_reference)}</small></div><button type="button" class="ap-button" data-booking-customer>${esc(t('Customer information'))}</button><button type="button" class="ap-button" data-booking-details>${esc(t('Booking Details'))}</button>`:`<strong>${esc(t('Select a conversation'))}</strong>`;
-        find('#booking-chat-participants').innerHTML=room?`<span>${esc(t('Customer'))}: ${esc(room.customer_name)}</span><span>${esc(t('Hospital'))}: ${esc(room.hospital_name)}</span>`:'';
+        find('#booking-chat-participants').innerHTML=room?`<span>${esc(t('Customer'))}: <span data-user-content>${esc(room.customer_name)}</span></span><span>${esc(t('Hospital'))}: <span data-user-content>${esc(room.hospital_name)}</span></span>`:'';
         const unlocked=Boolean(room?.unlocked),canView=Boolean(room?.can_view??room?.unlocked);
         find('#booking-chat-compose').hidden=!unlocked||!canSend;find('#booking-chat-readonly').hidden=!canView||canSend;find('#booking-chat-history').hidden=!canView;find('#booking-chat-locked').hidden=unlocked;
         find('#booking-chat-locked').innerHTML=room?`<h2>${esc(t('Booking Chat is locked'))}</h2><p>Hospital chat will be available once your Initial Deposit and Booking Deposit payments have been verified and approved.</p>${details([['Hospital selection',room.hospital_selected?'Selected':'Pending'],['Approval',room.hospital_approved?'Approved':'Pending'],['Initial Deposit',room.step4_approved?'Approved':'Pending'],['Booking Deposit',room.step9_approved?'Approved':'Pending'],['Account',room.account_active?'Activated':'Pending'],['Booking Status',room.booking_status],['Deposit Status',room.deposit_status]])}`:`<p>${esc(t('No records found.'))}</p>`;
@@ -76,7 +78,7 @@ export function initBookingInbox({root, config, t=value=>value, esc}) {
         }
         if(event.target.closest('[data-booking-close]'))find('#booking-chat-info').close();
     });
-    find('#booking-chat-search').addEventListener('input',renderList);find('#booking-chat-status').addEventListener('change',renderList);
+    find('#booking-chat-search').addEventListener('input',()=>{listPager.reset();renderList();});find('#booking-chat-status').addEventListener('change',()=>{listPager.reset();renderList();});
     find('#booking-chat-compose').addEventListener('submit',async event=>{
         event.preventDefault();const body=input.value.trim(), target=selected;
         if(!body||sending||blocked||!canSend||!current()?.unlocked)return;sending=true;controls();feedback('');

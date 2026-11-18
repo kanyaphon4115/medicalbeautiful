@@ -69,6 +69,8 @@ class User extends Authenticatable
     {
         return $this->isAdmin() || $this->role === self::ROLE_SUPPORT;
     }
+    public function treatmentRequests(){return $this->hasMany(TreatmentRequest::class);}
+    public function bookings(){return $this->hasMany(Booking::class);}
     public function isAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;

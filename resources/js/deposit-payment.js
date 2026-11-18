@@ -12,7 +12,7 @@ export function openDepositPayment({request, response, showModal, back, onAccept
     const content = document.getElementById('modal-content');
     function show(title,html) {
         document.getElementById('demo-modal').classList.remove('booking-payment-dialog');
-        content.dataset.noTranslate='';content.lang='en';showModal(title,`<div class="deposit-payment">${html}</div>`);
+        delete content.dataset.noTranslate;content.lang=document.documentElement.lang;showModal(title,`<div class="deposit-payment">${html}</div>`);
     }
     function amounts(data) {
         const balanceLabel=data.total_paid_satang===undefined?'Balance After This Payment':'Remaining Balance &mdash; Pay at Hospital';

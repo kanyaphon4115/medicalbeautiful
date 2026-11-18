@@ -5,7 +5,7 @@
   <button type="button" class="guest-otp-close" data-close-guest-otp aria-label="Close verification">&times;</button>
   <div class="guest-otp-envelope" aria-hidden="true">&#9993;</div>
   <p class="eyebrow">AESTHETIC</p><h2 id="guest-otp-title">Verify Your Email</h2>
-  <p>Enter the 6-digit code sent to your email.</p><p class="guest-otp-address">{{ $item->email }}</p>
+  <p>Enter the 6-digit code sent to your email.</p><p data-user-content class="guest-otp-address">{{ $item->email }}</p>
   <form method="POST" action="{{ route('guest.requests.verify',$item->reference) }}" data-guest-otp-form>@csrf
    <div class="guest-otp-digits">
    @for($i=0;$i<6;$i++)<input name="digits[]" type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" required autocomplete="{{ $i===0?'one-time-code':'off' }}" aria-label="Digit {{ $i+1 }}" data-otp-digit>@endfor

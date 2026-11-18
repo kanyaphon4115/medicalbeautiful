@@ -1,3 +1,5 @@
+import '../pagination.js';
+import '../i18n.js';
 import {initSupportInbox} from './support-inbox.js';
 import {initBookingInbox} from '../booking-inbox.js';
 import {initPortalIcons} from './icons.js';

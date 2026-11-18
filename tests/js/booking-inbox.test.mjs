@@ -12,7 +12,7 @@ function harness(rooms,messages=[],role='hospital'){
  const document={hidden:false,addEventListener(){},removeEventListener(){},createElement(){const value=element();created.push(value);return value;},createDocumentFragment:element};
  const fetch=async(url,options={})=>{calls.push({url,options});return{ok:true,status:200,json:async()=>url==='/chat/bookings'?{rooms,role,can_send:role==='hospital'}:{messages}};};
  let posted;
- const context={document,location:{search:''},URLSearchParams,AbortController,fetch,attachMessageTranslation(){},
+ const context={createListPager:()=>({reset(){},slice:items=>items.slice(0,5)}),document,location:{search:''},URLSearchParams,AbortController,fetch,attachMessageTranslation(){},
   createChatPolling:({load})=>{pollLoad=load;return{start(){initial=load();},stop(){}};},
   refreshChatSession:async()=>({csrf_token:'test-token'}),
   postChatMessage:async args=>{posted=args;return{ok:true,status:201,json:async()=>({})};}};
