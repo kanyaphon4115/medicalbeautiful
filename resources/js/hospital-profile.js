@@ -1,5 +1,6 @@
 import './pagination.js';
-import './i18n.js';
+import {translateText} from './i18n.js';
+import './language-switcher.js';
 import {initHospitalIcons} from './hospital-workspace.js';
 initHospitalIcons();
 const sidebar=document.getElementById('hospital-sidebar'),toggle=document.querySelector('.hd-menu');
@@ -14,7 +15,7 @@ document.querySelectorAll('[data-profile-photo]').forEach(input=>{
   const setFiles=files=>{const transfer=new DataTransfer();files.forEach(file=>transfer.items.add(file));input.files=transfer.files;refresh();};
   for(const [index,file] of files.entries()){
    const figure=document.createElement('figure'),image=document.createElement('img'),remove=document.createElement('button'),replace=document.createElement('button'),picker=document.createElement('input');
-   image.src=URL.createObjectURL(file);urls.push(image.src);image.alt='Selected hospital image';remove.type=replace.type='button';remove.textContent='Remove';replace.textContent='Replace';picker.type='file';picker.accept=input.accept;picker.hidden=true;
+   image.src=URL.createObjectURL(file);urls.push(image.src);image.alt=translateText('Selected hospital image',document.documentElement.lang);remove.type=replace.type='button';remove.textContent=translateText('Remove',document.documentElement.lang);replace.textContent=translateText('Replace',document.documentElement.lang);picker.type='file';picker.accept=input.accept;picker.hidden=true;
    remove.addEventListener('click',()=>setFiles(files.filter((_,i)=>i!==index)));replace.addEventListener('click',()=>picker.click());
    picker.addEventListener('change',()=>{if(picker.files[0]){const updated=[...files];updated[index]=picker.files[0];setFiles(updated);}});
    figure.append(image,replace,remove,picker);host.append(figure);

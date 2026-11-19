@@ -21,19 +21,19 @@ class BookingDepositApproved extends Notification
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage)->subject('Booking Confirmed | AESTHETIC')
-            ->greeting('Dear Customer,')
-            ->line('Your booking deposit payment of **'.$this->money($this->amountSatang).'** has been verified and approved by our admin and used to confirm your booking.')
-            ->line('Your booking status is now **Confirmed**.')
-            ->line('Booking Reference: **'.$this->bookingReference.'**')
-            ->line('Payment Reference: **'.$this->paymentReference.'**')
-            ->line('Total Treatment Cost: **'.$this->money($this->totalTreatmentCostSatang).'**')
-            ->line('Initial Deposit Paid: **'.$this->money($this->initialDepositPaidSatang).'**')
-            ->line('Booking Deposit Paid: **'.$this->money($this->bookingDepositPaidSatang).'**')
-            ->line('Remaining Balance: **'.$this->money($this->remainingBalanceSatang).'**')
-            ->line('The remaining balance of '.$this->money($this->remainingBalanceSatang).' can be paid directly to your selected hospital or clinic on your treatment date.')
-            ->action('View My Bookings', $this->url)
-            ->line('Thank you for choosing AESTHETIC.');
+        return (new MailMessage)->subject(__('Booking Confirmed | AESTHETIC'))
+            ->greeting(__('Dear Customer,'))
+            ->line(__('Your booking deposit payment of **:amount** has been verified and approved by our admin and used to confirm your booking.', ['amount'=>$this->money($this->amountSatang)]))
+            ->line(__('Your booking status is now **Confirmed**.'))
+            ->line(__('Booking Reference').': **'.$this->bookingReference.'**')
+            ->line(__('Payment Reference').': **'.$this->paymentReference.'**')
+            ->line(__('Total Treatment Cost').': **'.$this->money($this->totalTreatmentCostSatang).'**')
+            ->line(__('Initial Deposit Paid').': **'.$this->money($this->initialDepositPaidSatang).'**')
+            ->line(__('Booking Deposit Paid').': **'.$this->money($this->bookingDepositPaidSatang).'**')
+            ->line(__('Remaining Balance').': **'.$this->money($this->remainingBalanceSatang).'**')
+            ->line(__('The remaining balance of :amount can be paid directly to your selected hospital or clinic on your treatment date.', ['amount'=>$this->money($this->remainingBalanceSatang)]))
+            ->action(__('View My Bookings'), $this->url)
+            ->line(__('Thank you for choosing AESTHETIC.'));
     }
 
     private function money(int $satang): string

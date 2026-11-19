@@ -52,7 +52,7 @@
  <form method="POST" action="{{ route('guest.requests.resend',$item->reference) }}">@csrf<button class="button button-outline">Email My Private Return Link</button></form>
  </article>@endif
  <article class="real-guest-panel" data-paginate="section"><h2>Hospital Quotations</h2><p>{{ $item->quotations->count() }} quotation(s) received</p>
- @forelse($item->quotations as $quotation)<section class="real-guest-quote"><h3>{{ $quotation->hospital?->name ?: 'Partner Hospital' }}</h3><p>{{ $item->procedure_label }}</p><strong class="real-guest-price">THB {{ number_format((float)$quotation->amount,2) }}</strong><p class="real-guest-text">{{ $quotation->details }}</p><small>Valid Until: {{ $quotation->valid_until?->format('M j, Y') }}</small>
+ @forelse($item->quotations as $quotation)<section class="real-guest-quote"><h3 data-user-content>{{ $quotation->hospital?->name ?: 'Partner Hospital' }}</h3><p>{{ $item->procedure_label }}</p><strong class="real-guest-price">THB {{ number_format((float)$quotation->amount,2) }}</strong><p class="real-guest-text">{{ $quotation->details }}</p><small>Valid Until: {{ $quotation->valid_until?->format('M j, Y') }}</small>
  @if(!$booking && $item->status!=='cancelled' && $quotation->hospital?->isHospital() && (!$quotation->valid_until || !$quotation->valid_until->endOfDay()->isPast()))
  @php([$whole,$fraction]=explode('.',$quotation->amount))
  @php($total=(int)$whole*100+(int)$fraction)

@@ -1,4 +1,5 @@
 import './pagination.js';
+import './language-switcher.js';
 import {initializeCustomerAccess} from './customer-access.js';
 import {openCustomerRequestForm} from './customer-request-form.js';
 import {translateText} from './i18n';

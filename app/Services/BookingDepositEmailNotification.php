@@ -26,10 +26,10 @@ class BookingDepositEmailNotification
                 if (!app()->runningUnitTests() && config('mail.default')!=='smtp') return 'failed';
 
                 $deposit=(new DepositPayment)->treatmentSummary($row);
-                Notification::route('mail',$row->treatmentRequest->email)->notify(new BookingDepositApproved(
+                Notification::route('mail',$row->treatmentRequest->email)->notify((new BookingDepositApproved(
                     $row->reference, $payment->reference, $payment->amount_satang, route('requests.index').'#my-requests',
                     $deposit['total_satang'], $deposit['initial_satang'], $deposit['booking_paid_satang'], $deposit['remaining_satang']
-                ));
+                ))->locale($row->customer?->preferredLocale() ?? 'en'));
                 Cache::forever($key, now()->toIso8601String());
                 return 'sent';
             });

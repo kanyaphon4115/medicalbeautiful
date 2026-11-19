@@ -38,7 +38,7 @@ class QuotationEmailNotification
                     ? URL::temporarySignedRoute('guest.requests.access', now()->addDays(7), ['reference'=>$item->reference])
                     : route('requests.index');
                 $reference = sprintf('REQ-%s-%06d', $item->created_at->format('Y'), $item->id);
-                Notification::route('mail', $item->email)->notify(new HospitalQuotationReceived($reference, $url, $guest));
+                Notification::route('mail', $item->email)->notify((new HospitalQuotationReceived($reference, $url, $guest))->locale($item->customer?->preferredLocale() ?? 'en'));
 
                 $quote->forceFill(['last_emailed_fingerprint'=>$fingerprint, 'customer_emailed_at'=>now()])->save();
                 return 'sent';

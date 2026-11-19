@@ -28,10 +28,11 @@ class HospitalDashboardController extends Controller
     public function quote(Request $request, TreatmentRequest $treatmentRequest) {
         abort_unless($request->user()->isHospital(),403);
         $data = $request->validate(['amount'=>['required','numeric','min:0.01','max:9999999999.99'],
-            'details'=>['required','string','max:5000'],'valid_until'=>['required','date_format:Y-m-d','after_or_equal:today']]);
+            'details'=>['required','string','max:5000'],'valid_until'=>['required','date_format:Y-m-d','after_or_equal:today']], [],
+            ['amount'=>__('Amount'),'details'=>__('Details'),'valid_until'=>__('Valid until')]);
         $quotation = DB::transaction(function () use ($request,$treatmentRequest,$data) {
             $item = TreatmentRequest::availableToHospital($request->user()->id)->lockForUpdate()->findOrFail($treatmentRequest->id);
-            abort_if($item->selected_hospital_id !== null,422,'This request already has a booking.');
+            abort_if($item->selected_hospital_id !== null,422,__('This request already has a booking.'));
             $quotation = Quotation::firstOrNew(['treatment_request_id'=>$item->id,'hospital_id'=>$request->user()->id]);
             if ($quotation->withdrawn_at) $quotation->last_emailed_fingerprint = null;
             $quotation->fill($data);
@@ -55,7 +56,7 @@ class HospitalDashboardController extends Controller
         DB::transaction(function () use ($quotation) {
             $item = TreatmentRequest::whereKey($quotation->treatment_request_id)->lockForUpdate()->firstOrFail();
             $quote = Quotation::whereKey($quotation->id)->lockForUpdate()->firstOrFail();
-            abort_if($item->booking()->exists() || $item->selected_hospital_id || $item->payment_confirmed_at,422,'A quotation cannot be withdrawn after a hospital has been selected.');
+            abort_if($item->booking()->exists() || $item->selected_hospital_id || $item->payment_confirmed_at,422,__('A quotation cannot be withdrawn after a hospital has been selected.'));
             if (!$quote->withdrawn_at) $quote->update(['withdrawn_at'=>now()]);
             if ($item->status !== 'cancelled') $item->update(['status'=>$item->quotations()->exists()?'quotes_received':'pending']);
         });
@@ -129,7 +130,7 @@ class HospitalDashboardController extends Controller
     public function complete(Request $request, Booking $booking) {
         abort_unless($request->user()->isHospital(),403);
         abort_unless($booking->hospital_id===$request->user()->id,404);
-        abort_unless($booking->status==='Confirmed' && $booking->deposit_status==='Paid',422,'The deposit must be paid before completion.');
+        abort_unless($booking->status==='Confirmed' && $booking->deposit_status==='Paid',422,__('The deposit must be paid before completion.'));
         $booking->update(['status'=>'Completed']);
         return back()->with('status','Booking completed.');
     }

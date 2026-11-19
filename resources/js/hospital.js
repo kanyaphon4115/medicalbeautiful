@@ -1,6 +1,7 @@
 import './pagination.js';
 import {initHospitalIcons} from './hospital-workspace.js';
-import './i18n.js';
+import {translateText} from './i18n.js';
+import './language-switcher.js';
 import {initBookingInbox} from './booking-inbox.js';
 initHospitalIcons();
 
@@ -9,8 +10,9 @@ toggle.addEventListener('click',()=>{toggle.setAttribute('aria-expanded',String(
 const dashboard=document.getElementById('hd-dashboard-panel'),panel=document.getElementById('hd-section-panel'),content=document.getElementById('hd-section-content');
 let disposeBookingChat;
 function section(name,room){
+ const url=new URL(location.href);url.searchParams.set('section',name);history.replaceState(history.state,'',url);
  disposeBookingChat?.();disposeBookingChat=null;
- dashboard.hidden=name!=='Dashboard';panel.hidden=name==='Dashboard';document.getElementById('hd-section-title').textContent=name;content.replaceChildren();
+ dashboard.hidden=name!=='Dashboard';panel.hidden=name==='Dashboard';document.getElementById('hd-section-title').textContent=translateText(name,document.documentElement.lang);content.replaceChildren();
  document.querySelectorAll('.hd-sidebar [data-hd-section]').forEach(button=>{if(button.dataset.hdSection===name)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
  if(name==='Patient Requests'){
   content.append(document.getElementById('hd-request-table').cloneNode(true));
@@ -21,7 +23,7 @@ function section(name,room){
   const host=document.createElement('div');content.append(host);
   const config=JSON.parse(document.getElementById('hospital-chat-config').textContent);config.initialRoom=room;
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  disposeBookingChat=initBookingInbox({root:host,config,esc});
+  disposeBookingChat=initBookingInbox({root:host,config,esc,t:value=>translateText(value,document.documentElement.lang)});
  }
  else if(name!=='Dashboard'){const p=document.createElement('p');p.className='hd-empty';p.textContent='No records available. This feature is not connected yet.';content.append(p);}
  sidebar.classList.remove('is-open');toggle.setAttribute('aria-expanded','false');

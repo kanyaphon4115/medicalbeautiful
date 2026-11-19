@@ -1,3 +1,5 @@
+import {languageUrl} from './language-switcher.js';
+
 export async function openAccountSettings(endpoint) {
  const modal=document.querySelector('#demo-modal');const content=document.querySelector('#modal-content');
  content.innerHTML='<p class="modal-eyebrow">YOUR ACCOUNT</p><h2 id="modal-title">Account Settings</h2><p role="status">Loading your settings...</p>';
@@ -20,7 +22,7 @@ export async function openAccountSettings(endpoint) {
   function deletionState(requested){$('#settings-deletion-form').hidden=requested;$('#settings-cancel-deletion').hidden=!requested;$('#settings-deletion-status').textContent=requested?'Your deletion request is pending review.':'No deletion request is pending.';}
   deletionState(Boolean(data.deletion_requested_at));
   async function action(button,task){button.disabled=true;feedback('Saving...');try{const result=await task();feedback(result.message);return true;}catch(error){feedback(error.message);return false;}finally{button.disabled=false;}}
-  $('#account-preferences-form').onsubmit=async event=>{event.preventDefault();const form=event.currentTarget;const notifications=data.notifications;if(await action(form.querySelector('button[type="submit"]'),()=>api(endpoint,'PATCH',{notifications,language:form.elements.language.value}))) window.location.reload();};
+  $('#account-preferences-form').onsubmit=async event=>{event.preventDefault();const form=event.currentTarget;const notifications=data.notifications;if(await action(form.querySelector('button[type="submit"]'),()=>api(endpoint,'PATCH',{notifications,language:form.elements.language.value}))) window.location.assign(languageUrl(window.location.href,form.elements.language.value));};
   $('#settings-signout-others').onclick=async event=>{if(await action(event.currentTarget,()=>api(base+'/sessions/sign-out-others','POST',{}))){sessions.replaceChildren();const li=document.createElement('li');li.textContent='This device is the only active session.';sessions.append(li);}};
   $('#settings-deletion-form').onsubmit=async event=>{event.preventDefault();if(await action(event.currentTarget.querySelector('button'),()=>api(base+'/deletion-request','POST',{confirmation:$('#settings-delete-confirm').value})))deletionState(true);};
   $('#settings-cancel-deletion').onclick=async event=>{if(await action(event.currentTarget,()=>api(base+'/deletion-request','DELETE',{})))deletionState(false);};

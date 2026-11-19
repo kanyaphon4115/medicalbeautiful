@@ -3,9 +3,9 @@
 </tr></thead><tbody>
 @forelse($requests as $item)
 <tr><td>{{ $reference($item) }}</td>
-    <td><div class="hd-procedure"><img src="{{ asset('images/'.($images[$item->procedure] ?? 'other').'.jpg') }}" alt="{{ $item->procedure_label }}"><div><strong>{{ $item->procedure_label }}</strong><small>{{ \Illuminate\Support\Str::limit($item->goals ?: __('Not specified'),100) }}</small></div></div></td>
-    <td>{{ $item->preferred_period_label }}</td>
-    <td>{{ trim((string) $item->name) ?: (trim((string) $item->customer?->name) ?: 'Name not provided') }}</td>
+    <td><div class="hd-procedure"><img src="{{ asset('images/'.($images[$item->procedure] ?? 'other').'.jpg') }}" alt="{{ $item->procedure_label }}"><div><strong>{{ $item->procedure_label }}</strong><small data-user-content>{{ \Illuminate\Support\Str::limit($item->goals ?: __('Not specified'),100) }}</small></div></div></td>
+    <td>{{ $item->preferred_period ? \Carbon\Carbon::createFromFormat('!Y-m',$item->preferred_period)->locale(app()->getLocale())->translatedFormat('F Y') : __('Not specified') }}</td>
+    <td data-user-content>{{ trim((string) $item->name) ?: (trim((string) $item->customer?->name) ?: 'Name not provided') }}</td>
     <td><span class="hd-badge {{ $item->quotations->isNotEmpty()?'green':'yellow' }}">{{ __($item->selected_hospital_id ? ($item->booking?->status ?? 'Pending Payment') : ($item->quotations->isNotEmpty() ? 'Quotation Sent' : 'New Request')) }}</span></td>
     <td><button type="button" class="hd-view" data-hd-request="{{ $item->id }}">{{ __('View Details') }}</button></td>
 </tr>

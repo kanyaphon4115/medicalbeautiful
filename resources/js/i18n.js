@@ -16,6 +16,17 @@ export function translateText(value, locale = 'en') {
     let translated = catalog.get(normalize(source));
     if (!translated && locale === 'ko') translated=koreanDynamic(source);
     if(!translated){
+        const procedures=['Eye Surgery','Rhinoplasty','Lip Surgery','Facial Contouring','Face Lifting','Liposuction','Breast Surgery','Other Procedures','Chin Surgery','Facial Fat Reduction','Skin Treatments'];
+        const parts=source.split(/,\s*/);
+        if(parts.length>1&&parts.every(part=>procedures.includes(part)))translated=parts.map(part=>translateText(part,locale)).join(', ');
+        const savedName=source.match(/^(Save|View profile for) (.+)$/);
+        if(savedName)translated=locale==='th'?(savedName[1]==='Save'?'บันทึก ':'ดูโปรไฟล์ ')+savedName[2]:(savedName[1]==='Save'?'저장: ':'프로필 보기: ')+savedName[2];
+        const experience=source.match(/^(\d+) Years Experience$/);
+        if(experience)translated=locale==='th'?`ประสบการณ์ ${experience[1]} ปี`:`경력 ${experience[1]}년`;
+        const requestQuote=source.match(/^Request a quote for (.+)$/);
+        if(requestQuote)translated=translateText('Request a quote for',locale)+' '+translateText(requestQuote[1],locale);
+        const copyright=source.match(/^© (\d+) AESTHETIC\. All rights reserved\. · Frontend demonstration\.$/);
+        if(copyright)translated=locale==='th'?`© ${copyright[1]} AESTHETIC สงวนลิขสิทธิ์ · เว็บไซต์สาธิต`:`© ${copyright[1]} AESTHETIC. 모든 권리 보유 · 데모 웹사이트.`;
         const count=source.match(/^Showing (\d+)[–-](\d+) of (\d+) (customers|payments|bookings|requests)([\s\S]*)$/);
         if(count){const noun=translateText(count[4][0].toUpperCase()+count[4].slice(1),locale);const tail=count[5].replace(/^\.\s*/,'');const suffix=tail?' '+translateText(tail,locale):'';translated=(locale==='th'?`แสดง ${count[1]}–${count[2]} จาก ${count[3]} ${noun}`:`${noun} ${count[3]}개 중 ${count[1]}–${count[2]}`)+suffix;}
         const page=source.match(/^(\d+) \/ page$/);if(page)translated=locale==='th'?`${page[1]} / หน้า`:`페이지당 ${page[1]}개`;
@@ -55,7 +66,7 @@ export function translateText(value, locale = 'en') {
 // names, and typed form values are never sent to a translation provider or edited.
 if (typeof document !== 'undefined' && ['th','ko'].includes(document.documentElement.lang)) {
     const locale=document.documentElement.lang;
-    const skip = 'script,style,template,code,[data-no-translate],[data-user-content],.chat-bubble p,.ap-chat-bubble p,.ap-chat-bubble strong,.ap-chat-bubble time,.ap-conversation-list strong,.ap-conversation-list [data-message-preview],.account-profile-fields dd,.request-sensitive-text,.request-quotation-details,.request-private-photos,.settings-session-list span,[data-response-name],.hospital-body h3,[data-doctor-hospital]';
+    const skip = 'script,style,template,code,[data-no-translate],[data-user-content],.chat-bubble p,.ap-chat-bubble p,.ap-chat-bubble strong,.ap-chat-bubble time,.ap-conversation-list strong,.ap-conversation-list [data-message-preview],.account-profile-fields dd,.request-sensitive-text,.request-quotation-details,.request-private-photos,.real-guest-text,.settings-session-list span,[data-response-name],.hospital-body h3,[data-doctor-hospital]';
     const ignored = node => node.closest(skip) !== null;
     function translateDOM(root) {
         if (!(root instanceof Element) || ignored(root)) return;
@@ -91,11 +102,25 @@ if (typeof document !== 'undefined' && ['th','ko'].includes(document.documentEle
     document.title=translateText(title[1],locale)+(title[2]||'');
     observer.observe(document.body, options);
     // Native validation popups are outside the document tree.
+    const localizedValidity = new WeakSet();
     document.addEventListener('invalid', event => {
         const field = event.target;
         if (field.validationMessage && typeof field.setCustomValidity === 'function') {
-            const translated = translateText(field.validationMessage, locale);
+            const source = field.validity?.valueMissing
+                ? (field.type === 'checkbox' ? 'Please check this box if you want to proceed.' : field.tagName === 'SELECT' ? 'Please select an item in the list.' : 'Please fill out this field.')
+                : field.validity?.typeMismatch && field.type === 'email' ? 'Please enter a valid email address.'
+                : field.validity?.patternMismatch ? 'Please match the requested format.' : field.validationMessage;
+            const translated = translateText(source, locale);
             if (translated !== field.validationMessage) field.setCustomValidity(translated);
+            if (translated !== source || translated !== field.validationMessage) localizedValidity.add(field);
         }
     }, true);
+    const clearLocalizedValidity = event => {
+        if (localizedValidity.has(event.target)) {
+            event.target.setCustomValidity('');
+            localizedValidity.delete(event.target);
+        }
+    };
+    document.addEventListener('input', clearLocalizedValidity, true);
+    document.addEventListener('change', clearLocalizedValidity, true);
 }

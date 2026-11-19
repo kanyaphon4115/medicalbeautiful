@@ -13,14 +13,11 @@
  <form method="GET" class="ap-filters">
   <input type="hidden" name="lang" value="{{ app()->getLocale() }}">
   <label class="ap-search"><input name="search" type="search" value="{{ $filters['search']??'' }}" placeholder="Search by name, ID or email..." aria-label="Search"></label>
-  @if($isBooking)<label>Hospital<input name="hospital" value="{{ $filters['hospital']??'' }}"></label>@endif
-  @if(!$isBooking)<select name="method" aria-label="Payment method"><option value="">All payment methods</option><option value="unrecorded" @selected(($filters['method']??'')==='unrecorded')>Not recorded</option></select>@endif
+  @if(!$isBooking)
+  <select name="method" aria-label="Payment method"><option value="">All payment methods</option><option value="unrecorded" @selected(($filters['method']??'')==='unrecorded')>Not recorded</option></select>
   <select name="status" aria-label="Status"><option value="">All Status</option>@foreach($page==='payments'?['Pending','Pending Verification','Rejected','Information Required','Paid','Failed','Expired','Refunded']:['Pending Payment','Awaiting Hospital Confirmation','Confirmed','Completed','Cancelled'] as $status)<option value="{{ $status }}" @selected(($filters['status']??'')===$status)>{{ $status }}</option>@endforeach</select>
-  @if($isBooking)
-  <label class="ap-date-label">Booking created from<input name="from" type="date" value="{{ $filters['from']??'' }}"></label><label class="ap-date-label">Booking created to<input name="to" type="date" value="{{ $filters['to']??'' }}"></label>
-  @if($paymentLocal)<select name="records" aria-label="Record type">@foreach(['all'=>'All database records','real'=>'Real records only','test'=>'Test records only'] as $value=>$label)<option value="{{ $value }}" @selected(($filters['records']??'all')===$value)>{{ $label }}</option>@endforeach</select>@endif
-  @endif
   <button class="ap-button gold">Apply filters</button><a class="ap-button" href="{{ route('admin.'.$page,['lang'=>app()->getLocale()]) }}">Clear</a>
+  @endif
  </form>
  @if($errors->any())<p role="alert">{{ $errors->first() }}</p>@endif
  @if(session('status'))<p role="status">{{ session('status') }}</p>@endif
@@ -44,7 +41,7 @@
  <td><button type="button" class="ap-button" data-real-payment="{{ $booking->id }}">View</button></td>
  </tr>@empty<tr><td colspan="10">No records found.</td></tr>@endforelse
  </tbody></table></div>
- <p class="ap-note">Showing {{ $realBookings->firstItem()??0 }}?{{ $realBookings->lastItem()??0 }} of {{ $realBookings->total() }} records. Date filters use {{ $isBooking?'booking creation dates':'recorded payment verification dates; undated pending payments are excluded when filtering by date' }}.</p>
+ <p class="ap-note">Showing {{ $realBookings->firstItem()??0 }}–{{ $realBookings->lastItem()??0 }} of {{ $realBookings->total() }} records.@if(!$isBooking) Date filters use recorded payment verification dates; undated pending payments are excluded when filtering by date.@endif</p>
  {{ $realBookings->withQueryString()->links() }}
 </section>
 @foreach($realBookings as $booking)

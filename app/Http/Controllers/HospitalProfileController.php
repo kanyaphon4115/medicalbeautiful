@@ -47,7 +47,15 @@ class HospitalProfileController extends Controller
             'remove_logo' => 'sometimes|boolean', 'remove_main' => 'sometimes|boolean', 'remove_gallery' => 'nullable|array', 'remove_gallery.*' => 'uuid',
             'registered_name' => 'nullable|string|max:255', 'license_number' => 'nullable|string|max:150', 'license_documents' => 'nullable|array|max:5',
             'license_documents.*' => 'file|mimes:pdf,jpg,jpeg,png|max:10240', 'remove_documents' => 'nullable|array', 'remove_documents.*' => 'uuid',
-        ]);
+        ], [], array_map(fn ($label) => __($label), [
+            'name'=>'Hospital Name', 'short_description'=>'Short Description', 'description'=>'Full Description',
+            'address'=>'Hospital Address', 'city'=>'City / Province', 'country'=>'Country', 'contact_person'=>'Contact Person',
+            'phone'=>'Phone Number', 'email'=>'Email Address', 'website'=>'Website', 'maps_url'=>'Google Maps Location',
+            'operating_hours'=>'Operating Hours', 'treatments'=>'Treatments & Specialties', 'specialties'=>'Hospital Specialties',
+            'treatment_description'=>'Treatment Descriptions', 'logo'=>'Hospital Logo', 'main'=>'Main Profile Image',
+            'gallery'=>'Gallery Photos', 'gallery.*'=>'Gallery Photos', 'registered_name'=>'Registered Hospital Name',
+            'license_number'=>'Hospital License Number', 'license_documents'=>'License Documents', 'license_documents.*'=>'License Documents',
+        ]));
         $written = [];
         try {
             DB::transaction(function () use ($request, $data, &$written) {

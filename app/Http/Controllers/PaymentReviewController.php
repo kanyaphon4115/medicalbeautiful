@@ -63,7 +63,7 @@ class PaymentReviewController extends Controller {
   try{
    $url=\Illuminate\Support\Facades\URL::temporarySignedRoute('guest.requests.access',now()->addDays(7),['reference'=>$item->reference]);
    if(!app()->runningUnitTests()&&config('mail.default')!=='smtp')throw new \RuntimeException('SMTP is not configured.');
-   \Illuminate\Support\Facades\Notification::route('mail',$item->email)->notify(new \App\Notifications\PaymentEvidenceRequested($url,$data['notes']));
+   \Illuminate\Support\Facades\Notification::route('mail',$item->email)->notify((new \App\Notifications\PaymentEvidenceRequested($url,$data['notes']))->locale($item->customer?->preferredLocale() ?? 'en'));
    $message='Payment evidence requested. Private return link emailed to the customer.';
   }catch(\Throwable $e){$message='Evidence request saved. Email delivery failed; the request is visible on the customer?s private booking page.';}
   return back()->with('status',$message);

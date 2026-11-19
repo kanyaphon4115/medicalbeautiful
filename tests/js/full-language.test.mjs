@@ -4,6 +4,35 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {translateText} from '../../resources/js/i18n.js';
 const json=file=>JSON.parse(readFileSync(new URL('../../lang/'+file,import.meta.url),'utf8'));
+test('Thai hospital menu and interface translations contain real Unicode instead of lost characters',()=>{
+ const thai=json('th.json'),ui=json('interface.json');
+ assert.equal(thai['Hospital Verification'],'ตรวจสอบโรงพยาบาล');
+ assert.equal(ui['Hospital Verification'][0],thai['Hospital Verification']);
+ for(const [key,value] of Object.entries(thai))assert.ok(!/\?{2,}/.test(value),key);
+ for(const [key,values] of Object.entries(ui))assert.ok(!/\?{2,}/.test(values[0]),key);
+});
+
+test('customer language dictionaries have no damaged Korean entries or missing customer menu labels',()=>{
+ const korean=json('ko.json'),ui=json('interface.json');
+ for(const [key,value] of Object.entries(korean))assert.ok(!/\?{2,}/.test(value),key);
+ for(const [key,values] of Object.entries(ui))assert.ok(!/\?{2,}/.test(values[1]),key);
+ for(const locale of ['th','ko'])for(const label of ['My Dashboard','My Quotations','My Chats','Direct Communication,','Various Opinions & Comparison','Booking Chat','Verify Your Email','View My Bookings'])assert.notEqual(translateText(label,locale),label,`${locale}: ${label}`);
+});
+
+test('native validation uses the selected language and clears its custom error when the field is edited',()=>{
+ const source=readFileSync(new URL('../../resources/js/i18n.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace('export function','function');
+ for(const locale of ['th','ko']){
+  const handlers={};
+  class Element{closest(){return null;}querySelectorAll(){return [];}getAttribute(){return null;}}
+  const body=new Element();
+  vm.runInNewContext(source,{thai:json('th.json'),korean:json('ko.json'),admin:json('admin-portal.json'),ui:json('interface.json'),koreanDynamic:()=>undefined,Element,NodeFilter:{SHOW_TEXT:4},MutationObserver:class{observe(){}disconnect(){}},document:{documentElement:{lang:locale},body,title:'AESTHETIC',addEventListener(name,handler){handlers[name]=handler;},createTreeWalker(){return {nextNode:()=>null};}}});
+  const field={type:'text',tagName:'INPUT',validity:{valueMissing:true},validationMessage:'Please fill out this field.',value:'',setCustomValidity(message){this.validationMessage=message;}};
+  handlers.invalid({target:field});
+  assert.equal(field.validationMessage,json(locale+'.json')['Please fill out this field.']);
+  field.value='My own text';handlers.input({target:field});
+  assert.equal(field.validationMessage,'');assert.equal(field.value,'My own text');
+ }
+});
 
 test('new admin, payment, chat and review interfaces are translated in both supported languages',()=>{
  for(const locale of ['th','ko'])for(const label of ['Chat Management','Customer Support Chats','Hospital Chats (Read Only)','Database records','Pending verification','Initial Deposit','Booking Deposit','Amount to Verify (not yet paid)','Overall Rating','Public Review','+ Add Photos','Submit Review','Review posted','Apply filters']){

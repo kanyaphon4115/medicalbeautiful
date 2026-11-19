@@ -18,7 +18,6 @@
         <a href="{{ route('admin.'.$slug, ['lang'=>$locale]) }}" @if($slug===$page) aria-current="page" @endif><span data-ap-icon="{{ $slug }}"></span>{{ $catalog[$label] }}</a>
         @endforeach
         @if(auth()->user()->isChatSupport())<a href="{{ route('reviews.moderation') }}"><span data-ap-icon="requests"></span>Review Moderation</a>@endif
-        @if(auth()->user()->isChatSupport())<a href="{{ route('hospital.verifications') }}"><span data-ap-icon="hospitals"></span>{{ __('Hospital Verification') }}</a>@endif
     </nav>
     <div class="ap-sidebar-bottom"><span>{{ in_array($page,['customers','payments','bookings','booking-chats','support','chat-management']) ? 'Database records' : $catalog['Frontend demo'] }}</span><a href="{{ route('home') }}">{{ $catalog['Back to website'] }} ↗</a></div>
 </aside>

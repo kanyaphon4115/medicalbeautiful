@@ -1,4 +1,5 @@
 {
+  "Start Now": ["เริ่มต้นเลย", "지금 시작하기"],
   "Chat Management": [
     "จัดการแชท",
     "채팅 관리"
@@ -148,12 +149,12 @@
     "희망 월 / 연도"
   ],
   "Preferred Surgery Month / Year": [
-    "เดือน / ปีที่ต้องการรับการรักษา",
+    "เดือน / ปีที่ต้องการผ่าตัด",
     "희망 시술 월 / 연도"
   ],
   "Your Beauty Goals": [
     "เป้าหมายความงามของคุณ",
-    "원하는 미용 목표"
+    "원하는 시술 목표"
   ],
   "Additional Notes": [
     "หมายเหตุเพิ่มเติม",
@@ -164,16 +165,16 @@
     "의료 정보"
   ],
   "Uploaded Photos": [
-    "รูปที่อัปโหลด",
+    "รูปภาพที่อัปโหลด",
     "업로드한 사진"
   ],
   "No photos uploaded.": [
-    "ยังไม่มีรูปที่อัปโหลด",
-    "업로드된 사진이 없습니다."
+    "ยังไม่มีรูปภาพที่อัปโหลด",
+    "업로드한 사진이 없습니다."
   ],
   "Private submitted photo": [
-    "รูปส่วนตัวที่ส่งมา",
-    "제출된 비공개 사진"
+    "รูปภาพส่วนตัวที่ส่ง",
+    "제출한 비공개 사진"
   ],
   "Customer Requests": [
     "คำขอของลูกค้า",
@@ -217,11 +218,11 @@
   ],
   "Initial Deposit": [
     "เงินมัดจำเริ่มต้น",
-    "초기 보증금"
+    "초기 예약금"
   ],
   "Booking Deposit": [
     "เงินมัดจำการจอง",
-    "예약 보증금"
+    "예약 확정금"
   ],
   "Initial Deposit Amount": [
     "ยอดเงินมัดจำเริ่มต้น",
@@ -292,7 +293,7 @@
     "예약 상세"
   ],
   "Booking Reference": [
-    "รหัสอ้างอิงการจอง",
+    "เลขอ้างอิงการจอง",
     "예약 참조 번호"
   ],
   "Customer Name": [
@@ -317,11 +318,11 @@
   ],
   "Initial Deposit Paid": [
     "เงินมัดจำเริ่มต้นที่ชำระแล้ว",
-    "납부한 초기 보증금"
+    "결제한 초기 예약금"
   ],
   "Booking Deposit Paid": [
     "เงินมัดจำการจองที่ชำระแล้ว",
-    "납부한 예약 보증금"
+    "결제한 예약 확정금"
   ],
   "Total Deposit Paid": [
     "เงินมัดจำที่ชำระแล้วทั้งหมด",
@@ -360,8 +361,8 @@
     "읽기 전용"
   ],
   "Read Only: Customer Support can view this conversation. Only the customer and selected hospital can send messages.": [
-    "อ่านอย่างเดียว: ฝ่ายบริการลูกค้าดูการสนทนานี้ได้ เฉพาะลูกค้าและโรงพยาบาลที่เลือกเท่านั้นที่ส่งข้อความได้",
-    "읽기 전용: 고객 지원팀은 대화를 확인할 수 있습니다. 고객과 선택한 병원만 메시지를 보낼 수 있습니다."
+    "อ่านอย่างเดียว: ฝ่ายบริการลูกค้าสามารถดูการสนทนานี้ได้ เฉพาะลูกค้าและโรงพยาบาลที่เลือกเท่านั้นที่ส่งข้อความได้",
+    "읽기 전용: 고객 지원팀은 이 대화를 확인할 수 있습니다. 고객과 선택한 병원만 메시지를 보낼 수 있습니다."
   ],
   "Search conversations...": [
     "ค้นหาการสนทนา...",
@@ -369,11 +370,11 @@
   ],
   "Type a message...": [
     "พิมพ์ข้อความ...",
-    "메시지 입력..."
+    "메시지를 입력하세요..."
   ],
   "Select a conversation": [
     "เลือกการสนทนา",
-    "대화 선택"
+    "대화를 선택하세요"
   ],
   "Select a customer conversation": [
     "เลือกการสนทนาของลูกค้า",
@@ -408,8 +409,8 @@
     "활성화됨"
   ],
   "Hospital chat will be available once your Initial Deposit and Booking Deposit payments have been verified and approved.": [
-    "แชทโรงพยาบาลจะเปิดใช้งานเมื่อเงินมัดจำเริ่มต้นและเงินมัดจำการจองได้รับการตรวจสอบและอนุมัติแล้ว",
-    "초기 보증금과 예약 보증금이 확인 및 승인되면 병원 채팅을 이용할 수 있습니다."
+    "แชทกับโรงพยาบาลจะเปิดใช้งานเมื่อเงินมัดจำเริ่มต้นและเงินมัดจำการจองได้รับการตรวจสอบและอนุมัติแล้ว",
+    "초기 예약금과 예약 확정금이 확인 및 승인되면 병원 채팅을 이용할 수 있습니다."
   ],
   "Hospital Chat Locked": [
     "แชทโรงพยาบาลยังไม่เปิดใช้งาน",
@@ -769,7 +770,7 @@
   ],
   "Initial Deposit — Approved": [
     "เงินมัดจำเริ่มต้น — อนุมัติแล้ว",
-    "초기 보증금 — 승인됨"
+    "초기 예약금 — 승인됨"
   ],
   "Initial Deposit must be approved before Booking Deposit can be confirmed.": [
     "ต้องอนุมัติเงินมัดจำเริ่มต้นก่อนยืนยันเงินมัดจำการจอง",
@@ -932,19 +933,19 @@
     "읽음 상태를 저장하지 못했습니다."
   ],
   "Message could not be sent.": [
-    "ส่งข้อความไม่สำเร็จ",
-    "메시지를 보내지 못했습니다."
+    "ไม่สามารถส่งข้อความได้",
+    "메시지를 전송할 수 없습니다."
   ],
   "Your account changed or session expired. Please reload and sign in again.": [
-    "บัญชีเปลี่ยนหรือเซสชันหมดอายุ กรุณาโหลดหน้าใหม่และเข้าสู่ระบบอีกครั้ง",
-    "계정이 변경되었거나 세션이 만료되었습니다. 새로고침하고 다시 로그인해 주세요."
+    "บัญชีมีการเปลี่ยนแปลงหรือเซสชันหมดอายุ กรุณาโหลดหน้าใหม่และเข้าสู่ระบบอีกครั้ง",
+    "계정이 변경되었거나 세션이 만료되었습니다. 새로고침 후 다시 로그인하세요."
   ],
   "Conversation could not be loaded.": [
-    "โหลดการสนทนาไม่สำเร็จ",
-    "대화를 불러오지 못했습니다."
+    "ไม่สามารถโหลดการสนทนาได้",
+    "대화를 불러올 수 없습니다."
   ],
   "Your signed-in account changed. Please reload.": [
-    "บัญชีที่เข้าสู่ระบบเปลี่ยน กรุณาโหลดหน้าใหม่",
+    "บัญชีที่เข้าสู่ระบบเปลี่ยนไป กรุณาโหลดหน้าใหม่",
     "로그인 계정이 변경되었습니다. 새로고침해 주세요."
   ],
   "Message could not be sent. Please try again.": [
@@ -964,203 +965,1123 @@
     "보증금 기록이 없습니다."
   ],
   "Deposit Payment & Booking Confirmation": [
-    "????????????????????????????",
-    "??? ?? ? ?? ??"
+    "ชำระเงินมัดจำและยืนยันการจอง",
+    "예약금 결제 및 예약 확정"
   ],
   "After selecting their preferred hospital or clinic, customers make an initial deposit of THB 2,000?5,000 via QR Code payment to proceed. To confirm the reservation, an additional deposit of 10?20% of the total treatment cost is required. All payments must be verified and approved by Admin. The remaining balance will be paid directly to the selected hospital or clinic upon arrival.": [
-    "????????????????????????????????????????? ??????????????????????????? 2,000?5,000 ??????? QR Code ????????????????? ????????????????????????????????????????? 10?20% ?????????????????? ???????????????????????????????????????????????????????????????? ???????????????????????????????????????????????????????????????????????",
-    "??? ?? ?? ???? ??? ? QR ?? ??? ?? ??? 2,000?5,000??? ???? ?? ??? ?????. ??? ????? ? ?? ??? 10?20%? ???? ?? ???? ?????. ?? ??? ???? ?? ? ??? ??? ???. ??? ?? ? ??? ?? ?? ???? ?? ?????."
+    "หลังเลือกโรงพยาบาลหรือคลินิกที่ต้องการ ลูกค้าชำระเงินมัดจำเริ่มต้น 2,000–5,000 บาทผ่าน QR Code เพื่อดำเนินการต่อ และชำระเงินมัดจำเพิ่มเติม 10–20% ของค่ารักษาทั้งหมดเพื่อยืนยันการจอง การชำระเงินทั้งหมดต้องได้รับการตรวจสอบและอนุมัติจากผู้ดูแลระบบ ส่วนยอดคงเหลือชำระโดยตรงกับโรงพยาบาลหรือคลินิกเมื่อเข้ารับบริการ",
+    "희망 병원이나 클리닉을 선택한 후 QR 코드로 초기 예약금 2,000–5,000바트를 결제합니다. 예약 확정을 위해 총 시술 비용의 10–20%를 추가 예약금으로 결제해야 합니다. 모든 결제는 관리자의 확인 및 승인이 필요합니다. 잔액은 방문 시 선택한 병원이나 클리닉에 직접 결제합니다."
   ],
   "Hospital Profile": [
-    "????????????????",
-    "?? ???"
+    "โปรไฟล์โรงพยาบาล",
+    "병원 프로필"
   ],
   "Edit Profile": [
-    "????????????",
-    "??? ??"
+    "แก้ไขโปรไฟล์",
+    "프로필 수정"
   ],
   "Hospital Information": [
-    "???????????????",
-    "?? ??"
+    "ข้อมูลโรงพยาบาล",
+    "병원 정보"
   ],
   "Hospital Name": [
-    "?????????????",
-    "?? ??"
+    "ชื่อโรงพยาบาล",
+    "병원 이름"
   ],
   "Short Description": [
-    "??????????????",
-    "??? ??"
+    "คำอธิบายโดยย่อ",
+    "간략한 설명"
   ],
   "Full Description": [
-    "??????????????????",
-    "?? ??"
+    "รายละเอียดทั้งหมด",
+    "상세 설명"
   ],
   "Hospital Address": [
-    "????????????????",
-    "?? ??"
+    "ที่อยู่โรงพยาบาล",
+    "병원 주소"
   ],
   "City / Province": [
-    "????? / ???????",
-    "?? / ??"
+    "เมือง / จังหวัด",
+    "도시 / 지역"
   ],
   "Google Maps Location": [
-    "????????? Google Maps",
-    "Google ?? ??"
+    "ตำแหน่งบน Google Maps",
+    "Google 지도 위치"
   ],
   "Contact Information": [
-    "????????????",
-    "??? ??"
+    "ข้อมูลติดต่อ",
+    "연락처 정보"
   ],
   "Contact Person": [
-    "?????????",
-    "???"
+    "ผู้ติดต่อ",
+    "담당자"
   ],
   "Operating Hours": [
-    "?????????",
-    "?? ??"
+    "เวลาทำการ",
+    "운영 시간"
   ],
   "Hospital Photos & Gallery": [
-    "??????????????????????????",
-    "?? ?? ? ???"
+    "รูปภาพและแกลเลอรีโรงพยาบาล",
+    "병원 사진 및 갤러리"
   ],
   "Hospital Logo": [
-    "??????????????",
-    "?? ??"
+    "โลโก้โรงพยาบาล",
+    "병원 로고"
   ],
   "Main Profile Image": [
-    "??????????",
-    "?? ???"
+    "รูปภาพหลัก",
+    "대표 프로필 사진"
   ],
   "Gallery Photos": [
-    "??????????????",
-    "??? ??"
+    "รูปภาพในแกลเลอรี",
+    "갤러리 사진"
   ],
   "Hospital Gallery": [
-    "?????????????????",
-    "?? ???"
+    "แกลเลอรีโรงพยาบาล",
+    "병원 갤러리"
   ],
   "Treatments & Specialties": [
-    "????????????????????????",
-    "?? ? ?? ??"
+    "การรักษาและความเชี่ยวชาญ",
+    "시술 및 전문 분야"
   ],
   "Hospital Specialties": [
-    "?????????????????????????",
-    "?? ?? ??"
+    "ความเชี่ยวชาญของโรงพยาบาล",
+    "병원 전문 분야"
   ],
   "Treatment Descriptions": [
-    "??????????????????",
-    "?? ??"
+    "รายละเอียดการรักษา",
+    "시술 설명"
   ],
   "Hospital Verification": [
-    "???????????????????",
-    "?? ??"
+    "ตรวจสอบโรงพยาบาล",
+    "병원 인증"
   ],
   "Registered Hospital Name": [
-    "?????????????????????????",
-    "?? ???"
+    "ชื่อโรงพยาบาลที่จดทะเบียน",
+    "등록된 병원명"
   ],
   "Hospital License Number": [
-    "???????????????????????",
-    "?? ?? ??"
+    "เลขที่ใบอนุญาตโรงพยาบาล",
+    "병원 허가 번호"
   ],
   "License Documents": [
-    "??????????????",
-    "?? ??"
+    "เอกสารใบอนุญาต",
+    "허가 서류"
   ],
   "Save Changes": [
-    "????????????????????",
-    "?? ?? ??"
+    "บันทึกการเปลี่ยนแปลง",
+    "변경 사항 저장"
   ],
   "No profile image uploaded.": [
-    "?????????????????????????????",
-    "??? ???? ????."
+    "ยังไม่ได้อัปโหลดรูปโปรไฟล์",
+    "업로드된 프로필 사진이 없습니다."
   ],
   "About the hospital": [
-    "??????????????????",
-    "?? ??"
+    "เกี่ยวกับโรงพยาบาล",
+    "병원 소개"
   ],
   "Remove current image": [
-    "????????????????",
-    "?? ??? ??"
+    "ลบรูปภาพปัจจุบัน",
+    "현재 사진 삭제"
   ],
   "Review Notes": [
-    "??????????????????",
-    "?? ??"
+    "หมายเหตุการตรวจสอบ",
+    "검토 메모"
   ],
   "No documents uploaded.": [
-    "??????????????????????",
-    "???? ??? ????."
+    "ยังไม่ได้อัปโหลดเอกสาร",
+    "업로드된 서류가 없습니다."
   ],
   "No verification requests.": [
-    "????????????????",
-    "?? ??? ????."
+    "ยังไม่มีคำขอตรวจสอบ",
+    "인증 요청이 없습니다."
   ],
   "Manage your hospital information, photos, and verification.": [
-    "???????????? ?????? ????????????????????????????",
-    "?? ??, ?? ? ??? ?????."
+    "จัดการข้อมูล รูปภาพ และการตรวจสอบโรงพยาบาลของคุณ",
+    "병원 정보, 사진 및 인증을 관리하세요."
   ],
   "These details are private. Changes require Customer Support approval before becoming effective.": [
-    "???????????????????? ??????????????????????????????????????????????????????????",
-    "? ??? ??????. ?? ??? ?? ??? ?? ? ?????."
+    "ข้อมูลเหล่านี้เป็นข้อมูลส่วนตัว การเปลี่ยนแปลงต้องได้รับการอนุมัติจากฝ่ายบริการลูกค้าก่อนจึงจะมีผล",
+    "이 정보는 비공개입니다. 변경 사항은 고객 지원팀의 승인을 받은 후 적용됩니다."
   ],
   "Verification changes are pending Customer Support approval. Your currently approved information remains active.": [
-    "?????????????????????????????????????????????????? ???????????????????????????????????",
-    "?? ?? ??? ?? ?? ??? ???? ????. ?? ?? ??? ?? ?????."
+    "การเปลี่ยนแปลงข้อมูลยืนยันอยู่ระหว่างรออนุมัติจากฝ่ายบริการลูกค้า โดยยังใช้ข้อมูลที่ได้รับอนุมัติเดิม",
+    "인증 정보 변경에 대한 고객 지원팀의 승인을 기다리고 있습니다. 현재 승인된 정보는 계속 유효합니다."
   ],
   "The latest verification request was rejected.": [
-    "??????????????????????????",
-    "?? ?? ??? ???????."
+    "คำขอตรวจสอบล่าสุดถูกปฏิเสธ",
+    "최근 인증 요청이 거절되었습니다."
   ],
   "Hospital profile saved. Verification changes require Customer Support approval.": [
-    "????????????????? ??????????????????????????????????????????????????????????????",
-    "?? ???? ???????. ?? ?? ??? ?? ?? ??? ?????."
+    "บันทึกโปรไฟล์โรงพยาบาลแล้ว การเปลี่ยนแปลงข้อมูลยืนยันต้องได้รับการอนุมัติจากฝ่ายบริการลูกค้า",
+    "병원 프로필이 저장되었습니다. 인증 정보 변경은 고객 지원팀의 승인이 필요합니다."
   ],
   "Verification request reviewed.": [
-    "????????????????????????",
-    "?? ??? ??????."
+    "ตรวจสอบคำขอเรียบร้อยแล้ว",
+    "인증 요청을 검토했습니다."
   ],
   "Contact email changes do not change your sign-in email.": [
-    "???????????????????????????????????????????????????????",
-    "??? ???? ???? ??? ???? ???? ????."
+    "การเปลี่ยนอีเมลติดต่อจะไม่เปลี่ยนอีเมลที่ใช้เข้าสู่ระบบ",
+    "연락용 이메일을 변경해도 로그인 이메일은 변경되지 않습니다."
   ],
   "JPG or PNG, up to 5 MB per image.": [
-    "JPG ???? PNG ??????????? 5 MB ??????",
-    "JPG ?? PNG, ???? ?? 5 MB."
+    "ไฟล์ JPG หรือ PNG ขนาดไม่เกิน 5 MB ต่อรูป",
+    "JPG 또는 PNG, 사진당 최대 5 MB."
   ],
   "PDF, JPG or PNG, up to 10 MB per document. Stored privately.": [
-    "PDF, JPG ???? PNG ??????????? 10 MB ????????? ??????????????????",
-    "PDF, JPG ?? PNG, ??? ?? 10 MB. ???? ?????."
+    "ไฟล์ PDF, JPG หรือ PNG ขนาดไม่เกิน 10 MB ต่อเอกสาร โดยจัดเก็บเป็นข้อมูลส่วนตัว",
+    "PDF, JPG 또는 PNG, 서류당 최대 10 MB. 비공개로 보관됩니다."
   ],
   "Verification details are private and available only to the hospital and Customer Support.": [
-    "??????????????????????????? ??????????????????????????????????????????????????????",
-    "?? ??? ????? ?? ??? ?? ??? ??? ? ????."
+    "ข้อมูลยืนยันเป็นข้อมูลส่วนตัว เฉพาะโรงพยาบาลและฝ่ายบริการลูกค้าเท่านั้นที่เข้าถึงได้",
+    "인증 정보는 비공개이며 병원과 고객 지원팀만 확인할 수 있습니다."
   ],
   "Sample image": [
-    "???????????",
-    "?? ???"
+    "รูปภาพตัวอย่าง",
+    "예시 사진"
   ],
   "Sample hospital image": [
-    "????????????????????",
-    "?? ?? ???"
+    "รูปภาพโรงพยาบาลตัวอย่าง",
+    "병원 예시 사진"
   ],
   "Manage your hospital information and photos.": [
-    "????????????????????????????????????",
-    "?? ??? ??? ?????."
+    "จัดการข้อมูลและรูปภาพโรงพยาบาลของคุณ",
+    "병원 정보와 사진을 관리하세요."
   ],
   "Hospital profile saved.": [
-    "??????????????????????????",
-    "?? ???? ???????."
+    "บันทึกโปรไฟล์โรงพยาบาลแล้ว",
+    "병원 프로필이 저장되었습니다."
   ],
   "In Progress": [
-    "??????????????",
-    "?? ?"
+    "กำลังดำเนินการ",
+    "진행 중"
   ],
   "Page": [
-    "????",
-    "???"
+    "หน้า",
+    "페이지"
   ],
   "Pages": [
-    "????",
-    "???"
+    "หน้า",
+    "페이지"
+  ],
+  "Language could not be changed. Please try again.": [
+    "ไม่สามารถเปลี่ยนภาษาได้ กรุณาลองอีกครั้ง",
+    "언어를 변경할 수 없습니다. 다시 시도해 주세요."
+  ],
+  "Main navigation": [
+    "เมนูหลัก",
+    "주 메뉴"
+  ],
+  "Mobile navigation": [
+    "เมนูบนมือถือ",
+    "모바일 메뉴"
+  ],
+  "Account navigation": [
+    "เมนูบัญชี",
+    "계정 메뉴"
+  ],
+  "Search procedures, hospitals, or locations…": [
+    "ค้นหาหัตถการ โรงพยาบาล หรือสถานที่…",
+    "시술, 병원 또는 지역 검색…"
+  ],
+  "YOUR SAVED REQUESTS": [
+    "คำขอที่บันทึกไว้",
+    "저장된 요청"
+  ],
+  "Continue Your Request": [
+    "ดำเนินการคำขอต่อ",
+    "요청 계속하기"
+  ],
+  "Choose the request you want to continue. Each keeps its own booking and payment history.": [
+    "เลือกคำขอที่ต้องการดำเนินการต่อ แต่ละคำขอมีประวัติการจองและการชำระเงินแยกกัน",
+    "계속할 요청을 선택하세요. 각 요청의 예약 및 결제 내역은 별도로 보관됩니다."
+  ],
+  "Waiting for hospital quotations": [
+    "กำลังรอใบเสนอราคาจากโรงพยาบาล",
+    "병원 견적 대기 중"
+  ],
+  "No quotation details provided.": [
+    "ยังไม่มีรายละเอียดใบเสนอราคา",
+    "견적 세부 정보가 없습니다."
+  ],
+  "Request pages": [
+    "หน้ารายการคำขอ",
+    "요청 목록 페이지"
+  ],
+  "Go to page :page": [
+    "ไปหน้าที่ :page",
+    ":page페이지로 이동"
+  ],
+  "Please fill out this field.": [
+    "กรุณากรอกข้อมูลในช่องนี้",
+    "이 항목을 입력해 주세요."
+  ],
+  "Please select an item in the list.": [
+    "กรุณาเลือกรายการ",
+    "목록에서 항목을 선택해 주세요."
+  ],
+  "Please check this box if you want to proceed.": [
+    "กรุณาทำเครื่องหมายในช่องนี้เพื่อดำเนินการต่อ",
+    "계속하려면 이 체크박스를 선택해 주세요."
+  ],
+  "Please include an '@' in the email address.": [
+    "กรุณาระบุเครื่องหมาย @ ในอีเมล",
+    "이메일 주소에 @를 포함해 주세요."
+  ],
+  "MEET OUR DOCTORS": [
+    "ทีมแพทย์ของเรา",
+    "의료진 소개"
+  ],
+  "Expert Doctors, Exceptional Care": [
+    "แพทย์ผู้เชี่ยวชาญ พร้อมการดูแลที่ใส่ใจ",
+    "전문 의료진의 세심한 진료"
+  ],
+  "Meet our experienced and trusted doctors across partner hospitals.": [
+    "พบทีมแพทย์มากประสบการณ์ที่คุณไว้วางใจได้จากโรงพยาบาลพันธมิตร",
+    "제휴 병원의 경험 풍부하고 신뢰할 수 있는 의료진을 만나보세요."
+  ],
+  "View all doctors": [
+    "ดูแพทย์ทั้งหมด",
+    "전체 의료진 보기"
+  ],
+  "Demo collection · All doctors, specialties, qualifications, and experience below are fictional.": [
+    "ข้อมูลตัวอย่าง · แพทย์ ความเชี่ยวชาญ คุณวุฒิ และประสบการณ์ด้านล่างเป็นข้อมูลสมมติ",
+    "예시 모음 · 아래 의료진, 전문 분야, 자격 및 경력은 모두 가상의 정보입니다."
+  ],
+  "Please enable JavaScript to explore the fictional doctor profiles.": [
+    "กรุณาเปิด JavaScript เพื่อดูโปรไฟล์แพทย์ตัวอย่าง",
+    "가상의 의료진 프로필을 보려면 JavaScript를 활성화해 주세요."
+  ],
+  "View Booking & Payment": [
+    "ดูการจองและการชำระเงิน",
+    "예약 및 결제 보기"
+  ],
+  "Booking Chat": [
+    "แชทเกี่ยวกับการจอง",
+    "예약 채팅"
+  ],
+  "Booking Chat unlocks after deposit approval.": [
+    "แชทเกี่ยวกับการจองจะเปิดใช้งานหลังอนุมัติเงินมัดจำ",
+    "예약금 승인 후 예약 채팅을 이용할 수 있습니다."
+  ],
+  "Payments": [
+    "การชำระเงิน",
+    "결제"
+  ],
+  "View Payment Details": [
+    "ดูรายละเอียดการชำระเงิน",
+    "결제 내역 보기"
+  ],
+  "This email already has an account. Sign in securely to link your approved booking.": [
+    "อีเมลนี้มีบัญชีอยู่แล้ว กรุณาเข้าสู่ระบบเพื่อเชื่อมโยงการจองที่ได้รับอนุมัติ",
+    "이 이메일로 등록된 계정이 있습니다. 승인된 예약을 연결하려면 안전하게 로그인하세요."
+  ],
+  "Username": [
+    "ชื่อผู้ใช้",
+    "사용자 이름"
+  ],
+  "Your verified email is your username. Your personal information is already saved.": [
+    "อีเมลที่ยืนยันแล้วคือชื่อผู้ใช้ของคุณ ข้อมูลส่วนตัวของคุณได้รับการบันทึกแล้ว",
+    "인증된 이메일이 사용자 이름입니다. 개인정보는 이미 저장되어 있습니다."
+  ],
+  "I agree to the Terms of Service and Privacy Policy.": [
+    "ฉันยอมรับข้อกำหนดการใช้บริการและนโยบายความเป็นส่วนตัว",
+    "이용약관 및 개인정보 처리방침에 동의합니다."
+  ],
+  "EMAIL VERIFIED SUCCESSFULLY": [
+    "ยืนยันอีเมลสำเร็จ",
+    "이메일 인증 완료"
+  ],
+  "Your verified booking email is": [
+    "อีเมลการจองที่ยืนยันแล้วของคุณคือ",
+    "인증된 예약 이메일:"
+  ],
+  "Sign in using this email to connect your booking. If you intended to test a new customer, use a request with an email that has no existing account.": [
+    "เข้าสู่ระบบด้วยอีเมลนี้เพื่อเชื่อมโยงการจอง หากต้องการทดสอบลูกค้าใหม่ ให้ใช้คำขอที่มีอีเมลซึ่งยังไม่มีบัญชี",
+    "예약을 연결하려면 이 이메일로 로그인하세요. 신규 고객을 테스트하려면 기존 계정이 없는 이메일의 요청을 사용하세요."
+  ],
+  "Your payment has been approved. Verify your email to continue setting up your account.": [
+    "การชำระเงินของคุณได้รับอนุมัติแล้ว กรุณายืนยันอีเมลเพื่อตั้งค่าบัญชีต่อ",
+    "결제가 승인되었습니다. 계정 설정을 계속하려면 이메일을 인증하세요."
+  ],
+  "Verify Your Email": [
+    "ยืนยันอีเมลของคุณ",
+    "이메일 인증"
+  ],
+  "Enter the 6-digit code sent to your email.": [
+    "กรอกรหัส 6 หลักที่ส่งไปยังอีเมลของคุณ",
+    "이메일로 전송된 6자리 코드를 입력하세요."
+  ],
+  "Verify": [
+    "ยืนยัน",
+    "인증"
+  ],
+  "The code expires in 10 minutes and can be used once.": [
+    "รหัสหมดอายุภายใน 10 นาทีและใช้ได้ครั้งเดียว",
+    "코드는 10분 후 만료되며 한 번만 사용할 수 있습니다."
+  ],
+  "Resend Code": [
+    "ส่งรหัสอีกครั้ง",
+    "코드 다시 보내기"
+  ],
+  "Open the verification dialog using a JavaScript-enabled browser, or enter the code below.": [
+    "เปิดหน้าต่างยืนยันด้วยเบราว์เซอร์ที่รองรับ JavaScript หรือกรอกรหัสด้านล่าง",
+    "JavaScript가 활성화된 브라우저에서 인증 창을 열거나 아래에 코드를 입력하세요."
+  ],
+  "Verification Code": [
+    "รหัสยืนยัน",
+    "인증 코드"
+  ],
+  "Back to website": [
+    "กลับไปยังเว็บไซต์",
+    "웹사이트로 돌아가기"
+  ],
+  "Preferred Treatment": [
+    "ช่วงเวลาที่ต้องการรักษา",
+    "희망 시술 시기"
+  ],
+  "Private Photos": [
+    "รูปภาพส่วนตัว",
+    "비공개 사진"
+  ],
+  "We will email you automatically when a hospital submits or updates a quotation. Use the View Quotation button in the email to return to this request. You do not need an account to compare quotations or choose a hospital.": [
+    "เราจะส่งอีเมลอัตโนมัติเมื่อโรงพยาบาลส่งหรือปรับปรุงใบเสนอราคา กดปุ่มดูใบเสนอราคาในอีเมลเพื่อกลับมายังคำขอนี้ คุณไม่จำเป็นต้องมีบัญชีเพื่อเปรียบเทียบใบเสนอราคาหรือเลือกโรงพยาบาล",
+    "병원이 견적을 제출하거나 수정하면 자동으로 이메일을 보내드립니다. 이메일의 견적 보기 버튼으로 이 요청에 돌아올 수 있습니다. 견적 비교와 병원 선택에는 계정이 필요하지 않습니다."
+  ],
+  "Keep your private email link to return to this request. Each email link expires in 7 days.": [
+    "เก็บลิงก์ส่วนตัวในอีเมลไว้เพื่อกลับมายังคำขอนี้ ลิงก์แต่ละรายการหมดอายุใน 7 วัน",
+    "이 요청으로 돌아오려면 이메일의 비공개 링크를 보관하세요. 각 링크는 7일 후 만료됩니다."
+  ],
+  "Total Quotation Price": [
+    "ราคารวมตามใบเสนอราคา",
+    "견적 총액"
+  ],
+  "Your payment has been submitted and is awaiting verification by our team. You can safely leave this page and return later. Please do not make another payment.": [
+    "ส่งข้อมูลการชำระเงินแล้วและกำลังรอทีมงานตรวจสอบ คุณสามารถออกจากหน้านี้แล้วกลับมาได้ภายหลัง กรุณาอย่าชำระเงินซ้ำ",
+    "결제 정보가 제출되어 담당팀의 확인을 기다리고 있습니다. 이 페이지를 닫고 나중에 돌아와도 됩니다. 다시 결제하지 마세요."
+  ],
+  "Check Payment Status": [
+    "ตรวจสอบสถานะการชำระเงิน",
+    "결제 상태 확인"
+  ],
+  "Contact Support": [
+    "ติดต่อฝ่ายบริการลูกค้า",
+    "고객 지원 문의"
+  ],
+  "Check Latest Status Before Retry": [
+    "ตรวจสอบสถานะล่าสุดก่อนลองอีกครั้ง",
+    "재시도 전 최신 상태 확인"
+  ],
+  "A new payable QR cannot be issued until the payment provider is connected. Your existing booking is retained.": [
+    "ยังไม่สามารถออก QR สำหรับชำระเงินใหม่ได้จนกว่าจะเชื่อมต่อผู้ให้บริการชำระเงิน การจองเดิมของคุณยังคงอยู่",
+    "결제 서비스가 연결되기 전에는 새로운 결제 QR을 발급할 수 없습니다. 기존 예약은 유지됩니다."
+  ],
+  "Please contact our team if needed, then submit your payment notification below. Do not transfer money again unless our team asks you to.": [
+    "หากต้องการความช่วยเหลือ กรุณาติดต่อทีมงาน แล้วส่งข้อมูลการชำระเงินด้านล่าง อย่าโอนเงินซ้ำเว้นแต่ทีมงานจะแจ้งให้ดำเนินการ",
+    "필요하면 담당팀에 문의한 후 아래에서 결제 정보를 제출하세요. 담당팀의 요청이 없는 한 다시 송금하지 마세요."
+  ],
+  "Transaction reference (optional)": [
+    "เลขอ้างอิงธุรกรรม (ไม่บังคับ)",
+    "거래 참조 번호 (선택)"
+  ],
+  "Payment proof (optional)": [
+    "หลักฐานการชำระเงิน (ไม่บังคับ)",
+    "결제 증빙 (선택)"
+  ],
+  "I Have Paid": [
+    "ฉันชำระเงินแล้ว",
+    "결제 완료"
+  ],
+  "No upload required. Our team will check received funds before approving your payment. The example QR cannot receive funds.": [
+    "ไม่จำเป็นต้องอัปโหลด ทีมงานจะตรวจสอบยอดเงินที่ได้รับก่อนอนุมัติการชำระเงิน QR ตัวอย่างไม่สามารถรับเงินได้",
+    "업로드는 필수가 아닙니다. 담당팀이 입금을 확인한 후 결제를 승인합니다. 예시 QR로는 결제할 수 없습니다."
+  ],
+  "Payment submissions are temporarily unavailable. Your request and booking are saved.": [
+    "ไม่สามารถส่งข้อมูลการชำระเงินได้ชั่วคราว คำขอและการจองของคุณได้รับการบันทึกแล้ว",
+    "현재 결제 정보를 제출할 수 없습니다. 요청과 예약은 저장되어 있습니다."
+  ],
+  "After your deposit payment is confirmed, a 6-digit OTP will be sent to your email address. Use it to verify your email and complete your account setup. You can then log in to access your requests, quotations, and other customer menus.": [
+    "หลังยืนยันการชำระเงินมัดจำ ระบบจะส่งรหัส OTP 6 หลักไปยังอีเมลของคุณ ใช้รหัสเพื่อยืนยันอีเมลและตั้งค่าบัญชีให้เสร็จ จากนั้นคุณสามารถเข้าสู่ระบบเพื่อดูคำขอ ใบเสนอราคา และเมนูลูกค้าอื่น ๆ",
+    "예약금 결제가 확인되면 이메일로 6자리 OTP가 전송됩니다. 코드로 이메일을 인증하고 계정 설정을 완료하세요. 이후 로그인하여 요청, 견적 및 기타 고객 메뉴를 이용할 수 있습니다."
+  ],
+  "Verified Email Address": [
+    "อีเมลที่ยืนยันแล้ว",
+    "인증된 이메일 주소"
+  ],
+  "Email My Private Return Link": [
+    "ส่งลิงก์ส่วนตัวสำหรับกลับมาทางอีเมล",
+    "비공개 복귀 링크 이메일로 받기"
+  ],
+  "Deposit Amount:": [
+    "เงินมัดจำ:",
+    "예약금:"
+  ],
+  "Accept Quotation & Continue": [
+    "ยอมรับใบเสนอราคาและดำเนินการต่อ",
+    "견적 수락 후 계속"
+  ],
+  "Selected Quotation": [
+    "ใบเสนอราคาที่เลือก",
+    "선택한 견적"
+  ],
+  "← Patient Reviews": [
+    "← รีวิวจากผู้ใช้บริการ",
+    "← 환자 후기"
+  ],
+  "Search": [
+    "ค้นหา",
+    "검색"
+  ],
+  "New to AESTHETIC?": [
+    "ยังไม่มีบัญชี AESTHETIC?",
+    "AESTHETIC이 처음이신가요?"
+  ],
+  "Booking Confirmed | AESTHETIC": [
+    "ยืนยันการจองแล้ว | AESTHETIC",
+    "예약 확정 | AESTHETIC"
+  ],
+  "Dear Customer,": [
+    "เรียน ลูกค้า",
+    "고객님께,"
+  ],
+  "Your booking deposit payment of **:amount** has been verified and approved by our admin and used to confirm your booking.": [
+    "เงินมัดจำการจอง **:amount** ของคุณได้รับการตรวจสอบและอนุมัติจากผู้ดูแลระบบแล้ว และใช้ยืนยันการจองของคุณ",
+    "예약금 **:amount**의 결제가 관리자에 의해 확인 및 승인되어 예약이 확정되었습니다."
+  ],
+  "Your booking status is now **Confirmed**.": [
+    "สถานะการจองของคุณคือ **ยืนยันแล้ว**",
+    "예약 상태가 **확정**으로 변경되었습니다."
+  ],
+  "The remaining balance of :amount can be paid directly to your selected hospital or clinic on your treatment date.": [
+    "ยอดคงเหลือ :amount สามารถชำระโดยตรงกับโรงพยาบาลหรือคลินิกที่เลือกในวันที่เข้ารับการรักษา",
+    "잔액 :amount은 시술 당일 선택한 병원이나 클리닉에 직접 결제하실 수 있습니다."
+  ],
+  "View My Bookings": [
+    "ดูการจองของฉัน",
+    "내 예약 보기"
+  ],
+  "Thank you for choosing AESTHETIC.": [
+    "ขอบคุณที่เลือกใช้บริการ AESTHETIC",
+    "AESTHETIC을 선택해 주셔서 감사합니다."
+  ],
+  "MedicalBeautiful — A hospital has responded to :reference": [
+    "MedicalBeautiful — โรงพยาบาลตอบกลับคำขอ :reference แล้ว",
+    "MedicalBeautiful — :reference 요청에 병원이 응답했습니다"
+  ],
+  "You have a new hospital response.": [
+    "คุณได้รับการตอบกลับใหม่จากโรงพยาบาล",
+    "병원의 새 응답이 도착했습니다."
+  ],
+  "A hospital has submitted or updated a quotation for your request.": [
+    "โรงพยาบาลส่งหรือปรับปรุงใบเสนอราคาสำหรับคำขอของคุณแล้ว",
+    "병원이 요청에 대한 견적을 제출하거나 수정했습니다."
+  ],
+  "You can compare quotations and select your preferred hospital without creating an account.": [
+    "คุณสามารถเปรียบเทียบใบเสนอราคาและเลือกโรงพยาบาลที่ต้องการได้โดยไม่ต้องสร้างบัญชี",
+    "계정을 만들지 않고도 견적을 비교하고 원하는 병원을 선택할 수 있습니다."
+  ],
+  "This private link expires in 7 days. Do not share or forward it.": [
+    "ลิงก์ส่วนตัวนี้หมดอายุใน 7 วัน ห้ามแชร์หรือส่งต่อ",
+    "이 비공개 링크는 7일 후 만료됩니다. 다른 사람에게 공유하거나 전달하지 마세요."
+  ],
+  "Sign in to your account to view your hospital quotations.": [
+    "เข้าสู่ระบบบัญชีของคุณเพื่อดูใบเสนอราคาจากโรงพยาบาล",
+    "병원 견적을 보려면 계정에 로그인하세요."
+  ],
+  "For your privacy, medical details and photos are available only on your private request page.": [
+    "เพื่อความเป็นส่วนตัว รายละเอียดทางการแพทย์และรูปภาพจะแสดงเฉพาะในหน้าคำขอส่วนตัวของคุณ",
+    "개인정보 보호를 위해 의료 정보와 사진은 비공개 요청 페이지에서만 확인할 수 있습니다."
+  ],
+  "MedicalBeautiful Team": [
+    "ทีมงาน MedicalBeautiful",
+    "MedicalBeautiful 팀"
+  ],
+  "AESTHETIC — Your guest request access link": [
+    "AESTHETIC — ลิงก์สำหรับเข้าถึงคำขอของคุณ",
+    "AESTHETIC — 비회원 요청 접속 링크"
+  ],
+  "Your request has been received.": [
+    "ได้รับคำขอของคุณแล้ว",
+    "요청이 접수되었습니다."
+  ],
+  "Reference": [
+    "เลขอ้างอิง",
+    "참조 번호"
+  ],
+  "Preferred surgery month / year": [
+    "เดือน / ปีที่ต้องการเข้ารับการรักษา",
+    "희망 시술 월 / 연도"
+  ],
+  "View Your Request": [
+    "ดูคำขอของคุณ",
+    "내 요청 보기"
+  ],
+  "This private link expires in 7 days. Do not forward it to anyone else.": [
+    "ลิงก์ส่วนตัวนี้หมดอายุใน 7 วัน ห้ามส่งต่อให้ผู้อื่น",
+    "이 비공개 링크는 7일 후 만료됩니다. 다른 사람에게 전달하지 마세요."
+  ],
+  "Your request is saved and available to authorized partner hospitals. You can review their quotations using the private link above. No payment has been collected.": [
+    "บันทึกคำขอของคุณแล้วและโรงพยาบาลพันธมิตรที่ได้รับอนุญาตสามารถเข้าถึงได้ คุณสามารถดูใบเสนอราคาผ่านลิงก์ส่วนตัวด้านบน ยังไม่มีการเรียกเก็บเงิน",
+    "요청이 저장되었으며 승인된 제휴 병원에서 확인할 수 있습니다. 위 비공개 링크로 견적을 확인하세요. 결제된 금액은 없습니다."
+  ],
+  "This request belongs to the guest journey preview. Hospital quotations, payments, and account creation remain a simulation. No payment has been collected.": [
+    "คำขอนี้เป็นส่วนหนึ่งของระบบตัวอย่างสำหรับผู้เยี่ยมชม ใบเสนอราคา การชำระเงิน และการสร้างบัญชีเป็นการจำลอง ยังไม่มีการเรียกเก็บเงิน",
+    "이 요청은 비회원 이용 과정의 미리보기입니다. 병원 견적, 결제 및 계정 생성은 시뮬레이션이며 결제된 금액은 없습니다."
+  ],
+  "Kind regards, admin": [
+    "ขอแสดงความนับถือ ทีมผู้ดูแลระบบ",
+    "감사합니다. 관리자 드림"
+  ],
+  "Payment Confirmed – Verify Your Email | AESTHETIC": [
+    "ยืนยันการชำระเงินแล้ว – ยืนยันอีเมลของคุณ | AESTHETIC",
+    "결제 확인 – 이메일 인증 | AESTHETIC"
+  ],
+  "We are pleased to inform you that your deposit payment has been successfully verified.": [
+    "เราขอแจ้งให้ทราบว่าการชำระเงินมัดจำของคุณได้รับการตรวจสอบเรียบร้อยแล้ว",
+    "예약금 결제가 정상적으로 확인되었음을 알려드립니다."
+  ],
+  "Your payment has been confirmed.": [
+    "การชำระเงินของคุณได้รับการยืนยันแล้ว",
+    "결제가 확인되었습니다."
+  ],
+  "Please use the following 6-digit verification code to verify your email address and continue setting up your account.": [
+    "กรุณาใช้รหัสยืนยัน 6 หลักต่อไปนี้เพื่อยืนยันอีเมลและตั้งค่าบัญชีต่อ",
+    "아래 6자리 인증 코드로 이메일을 인증하고 계정 설정을 계속하세요."
+  ],
+  "This code will expire in 10 minutes. It can be used once. Never share this code.": [
+    "รหัสนี้หมดอายุใน 10 นาทีและใช้ได้ครั้งเดียว ห้ามเปิดเผยรหัสให้ผู้อื่น",
+    "이 코드는 10분 후 만료되며 한 번만 사용할 수 있습니다. 다른 사람에게 공유하지 마세요."
+  ],
+  "AESTHETIC — Guest journey verification code": [
+    "AESTHETIC — รหัสยืนยันสำหรับผู้เยี่ยมชม",
+    "AESTHETIC — 비회원 인증 코드"
+  ],
+  "Your 6-digit verification code is:": [
+    "รหัสยืนยัน 6 หลักของคุณคือ:",
+    "6자리 인증 코드:"
+  ],
+  "This code expires in 5 minutes and can be used once. Never share this code.": [
+    "รหัสนี้หมดอายุใน 5 นาทีและใช้ได้ครั้งเดียว ห้ามเปิดเผยรหัสให้ผู้อื่น",
+    "이 코드는 5분 후 만료되며 한 번만 사용할 수 있습니다. 다른 사람에게 공유하지 마세요."
+  ],
+  "Enter this code on the website to verify your email and continue to your customer account.": [
+    "กรอกรหัสนี้บนเว็บไซต์เพื่อยืนยันอีเมลและเข้าสู่บัญชีลูกค้า",
+    "웹사이트에 코드를 입력하여 이메일을 인증하고 고객 계정으로 이동하세요."
+  ],
+  "This code verifies email access for the guest journey preview only. It does not confirm a real payment or create a real customer account.": [
+    "รหัสนี้ใช้ยืนยันอีเมลสำหรับระบบตัวอย่างเท่านั้น ไม่ได้ยืนยันการชำระเงินจริงหรือสร้างบัญชีลูกค้าจริง",
+    "이 코드는 비회원 미리보기의 이메일 접근만 인증합니다. 실제 결제를 확인하거나 실제 고객 계정을 생성하지 않습니다."
+  ],
+  "AESTHETIC — Payment evidence requested": [
+    "AESTHETIC — ขอหลักฐานการชำระเงิน",
+    "AESTHETIC — 결제 증빙 요청"
+  ],
+  "Our team needs payment evidence to review your existing booking.": [
+    "ทีมงานต้องการหลักฐานการชำระเงินเพื่อตรวจสอบการจองของคุณ",
+    "기존 예약을 검토하기 위해 결제 증빙이 필요합니다."
+  ],
+  "Submit Requested Payment Evidence": [
+    "ส่งหลักฐานการชำระเงินที่ร้องขอ",
+    "요청된 결제 증빙 제출"
+  ],
+  "This private link expires in 7 days. Do not pay again unless our team specifically asks you to.": [
+    "ลิงก์ส่วนตัวนี้หมดอายุใน 7 วัน อย่าชำระเงินซ้ำเว้นแต่ทีมงานจะแจ้งให้ดำเนินการ",
+    "이 비공개 링크는 7일 후 만료됩니다. 담당팀의 별도 요청이 없는 한 다시 결제하지 마세요."
+  ],
+  "Please enter a valid email address.": [
+    "กรุณากรอกอีเมลที่ถูกต้อง",
+    "올바른 이메일 주소를 입력해 주세요."
+  ],
+  "Please match the requested format.": [
+    "กรุณากรอกข้อมูลให้ตรงตามรูปแบบที่กำหนด",
+    "요청된 형식에 맞게 입력해 주세요."
+  ],
+  "Hospital Dashboard": [
+    "แดชบอร์ดโรงพยาบาล",
+    "병원 대시보드"
+  ],
+  "My Dashboard": [
+    "แดชบอร์ดของฉัน",
+    "내 대시보드"
+  ],
+  "My Quotations": [
+    "ใบเสนอราคาของฉัน",
+    "내 견적"
+  ],
+  "My Chats": [
+    "แชทของฉัน",
+    "내 채팅"
+  ],
+  "Request a quote for": [
+    "ขอใบเสนอราคาสำหรับ",
+    "견적 요청:"
+  ],
+  "Your request": [
+    "คำขอของคุณ",
+    "내 요청"
+  ],
+  "Tell us what you're looking for and explore personalized treatment offers from our hospital partners.": [
+    "บอกความต้องการของคุณ แล้วสำรวจข้อเสนอการรักษาเฉพาะบุคคลจากโรงพยาบาลพันธมิตรของเรา",
+    "원하는 시술을 알려주시고 제휴 병원의 맞춤 시술 제안을 확인하세요."
+  ],
+  "Direct Communication,": [
+    "สื่อสารโดยตรง",
+    "직접 소통,"
+  ],
+  "Various Opinions & Comparison": [
+    "รับฟังหลายความเห็นและเปรียบเทียบ",
+    "다양한 의견과 비교"
+  ],
+  "Quotations will appear here when received.": [
+    "ใบเสนอราคาจะแสดงที่นี่เมื่อได้รับ",
+    "견적을 받으면 여기에 표시됩니다."
+  ],
+  "LINE ID": [
+    "ไอดี LINE",
+    "LINE ID"
+  ],
+  "Payment Reference": [
+    "เลขอ้างอิงการชำระเงิน",
+    "결제 참조 번호"
+  ],
+  "Forgot your password?": [
+    "ลืมรหัสผ่าน?",
+    "비밀번호를 잊으셨나요?"
+  ],
+  "Enter your registered email to receive a 6-digit reset code.": [
+    "กรอกอีเมลที่ลงทะเบียนเพื่อรับรหัสรีเซ็ต 6 หลัก",
+    "가입한 이메일을 입력하면 6자리 재설정 코드를 보내드립니다."
+  ],
+  "Send reset code": [
+    "ส่งรหัสรีเซ็ต",
+    "재설정 코드 보내기"
+  ],
+  "Back to sign in": [
+    "กลับไปเข้าสู่ระบบ",
+    "로그인으로 돌아가기"
+  ],
+  "Reset password": [
+    "รีเซ็ตรหัสผ่าน",
+    "비밀번호 재설정"
+  ],
+  "6-digit verification code": [
+    "รหัสยืนยัน 6 หลัก",
+    "6자리 인증 코드"
+  ],
+  "Previous doctors": [
+    "แพทย์ก่อนหน้า",
+    "이전 의료진"
+  ],
+  "Next doctors": [
+    "แพทย์ถัดไป",
+    "다음 의료진"
+  ],
+  "Demo doctors": [
+    "แพทย์ตัวอย่าง",
+    "예시 의료진"
+  ],
+  "Facial Plastic Surgery": [
+    "ศัลยกรรมตกแต่งใบหน้า",
+    "안면 성형외과"
+  ],
+  "Nasal Aesthetic Surgery": [
+    "ศัลยกรรมเสริมความงามจมูก",
+    "코 미용 성형"
+  ],
+  "Dermatology": [
+    "ตจวิทยา",
+    "피부과"
+  ],
+  "Craniofacial Aesthetics": [
+    "ศัลยกรรมความงามกะโหลกและใบหน้า",
+    "두개안면 미용"
+  ],
+  "Aesthetic Plastic Surgery": [
+    "ศัลยกรรมตกแต่งเพื่อความงาม",
+    "미용 성형외과"
+  ],
+  "Skin and Aesthetic Medicine": [
+    "เวชศาสตร์ผิวหนังและความงาม",
+    "피부 및 미용 의학"
+  ],
+  "Fictional professional profile": [
+    "โปรไฟล์วิชาชีพตัวอย่าง",
+    "가상의 전문가 프로필"
+  ],
+  "Dashboard": [
+    "แดชบอร์ด",
+    "대시보드"
+  ],
+  "Patient Requests": [
+    "คำขอจากผู้ป่วย",
+    "환자 요청"
+  ],
+  "Bookings": [
+    "การจอง",
+    "예약"
+  ],
+  "Notifications": [
+    "การแจ้งเตือน",
+    "알림"
+  ],
+  "Settings": [
+    "ตั้งค่า",
+    "설정"
+  ],
+  "New Requests": [
+    "คำขอใหม่",
+    "새 요청"
+  ],
+  "Quotations Sent": [
+    "ใบเสนอราคาที่ส่งแล้ว",
+    "발송한 견적"
+  ],
+  "Confirmed Bookings": [
+    "การจองที่ยืนยันแล้ว",
+    "확정된 예약"
+  ],
+  "Completed Bookings": [
+    "การจองที่เสร็จสิ้น",
+    "완료된 예약"
+  ],
+  "Procedure": [
+    "หัตถการ",
+    "시술"
+  ],
+  "Amount": [
+    "จำนวนเงิน",
+    "금액"
+  ],
+  "Valid until": [
+    "ใช้ได้ถึงวันที่",
+    "유효 기간"
+  ],
+  "Details": [
+    "รายละเอียด",
+    "세부 정보"
+  ],
+  "Status": [
+    "สถานะ",
+    "상태"
+  ],
+  "Actions": [
+    "การดำเนินการ",
+    "작업"
+  ],
+  "Preferred Date": [
+    "วันที่ต้องการ",
+    "희망 날짜"
+  ],
+  "Booking Status": [
+    "สถานะการจอง",
+    "예약 상태"
+  ],
+  "Deposit Status": [
+    "สถานะเงินมัดจำ",
+    "예약금 상태"
+  ],
+  "Quotation Sent": [
+    "ส่งใบเสนอราคาแล้ว",
+    "견적 발송 완료"
+  ],
+  "Sent": [
+    "ส่งแล้ว",
+    "발송됨"
+  ],
+  "Withdrawn": [
+    "ถอนแล้ว",
+    "철회됨"
+  ],
+  "Pending Payment": [
+    "รอชำระเงิน",
+    "결제 대기"
+  ],
+  "Confirmed": [
+    "ยืนยันแล้ว",
+    "확정됨"
+  ],
+  "Completed": [
+    "เสร็จสิ้น",
+    "완료"
+  ],
+  "Paid": [
+    "ชำระแล้ว",
+    "결제 완료"
+  ],
+  "Failed": [
+    "ไม่สำเร็จ",
+    "실패"
+  ],
+  "Expired": [
+    "หมดอายุ",
+    "만료됨"
+  ],
+  "Refunded": [
+    "คืนเงินแล้ว",
+    "환불 완료"
+  ],
+  "Website": [
+    "เว็บไซต์",
+    "웹사이트"
+  ],
+  "Country": [
+    "ประเทศ",
+    "국가"
+  ],
+  "HOSPITAL DASHBOARD": [
+    "แดชบอร์ดโรงพยาบาล",
+    "병원 대시보드"
+  ],
+  "Welcome Back,": [
+    "ยินดีต้อนรับกลับ",
+    "다시 오신 것을 환영합니다,"
+  ],
+  "Here is an overview of your hospital’s activity.": [
+    "ภาพรวมกิจกรรมของโรงพยาบาลของคุณ",
+    "병원 활동 현황을 확인하세요."
+  ],
+  "Activity overview": [
+    "ภาพรวมกิจกรรม",
+    "활동 현황"
+  ],
+  "Recent Patient Requests": [
+    "คำขอจากผู้ป่วยล่าสุด",
+    "최근 환자 요청"
+  ],
+  "View all": [
+    "ดูทั้งหมด",
+    "전체 보기"
+  ],
+  "Request Status": [
+    "สถานะคำขอ",
+    "요청 상태"
+  ],
+  "Total": [
+    "ทั้งหมด",
+    "전체"
+  ],
+  "Withdraw Quotation": [
+    "ถอนใบเสนอราคา",
+    "견적 철회"
+  ],
+  "No quotations sent.": [
+    "ยังไม่มีใบเสนอราคาที่ส่ง",
+    "발송한 견적이 없습니다."
+  ],
+  "Mark completed": [
+    "ทำเครื่องหมายว่าเสร็จสิ้น",
+    "완료 처리"
+  ],
+  "No bookings yet.": [
+    "ยังไม่มีการจอง",
+    "아직 예약이 없습니다."
+  ],
+  "Submit quotation": [
+    "จัดทำใบเสนอราคา",
+    "견적 작성"
+  ],
+  "Send quotation": [
+    "ส่งใบเสนอราคา",
+    "견적 보내기"
+  ],
+  "HOSPITAL WORKSPACE": [
+    "พื้นที่ทำงานโรงพยาบาล",
+    "병원 업무 공간"
+  ],
+  "Toggle navigation": [
+    "เปิดหรือปิดเมนู",
+    "메뉴 열기/닫기"
+  ],
+  "Hospital workspace": [
+    "พื้นที่ทำงานโรงพยาบาล",
+    "병원 업무 공간"
+  ],
+  "Hospital Admin": [
+    "ผู้ดูแลโรงพยาบาล",
+    "병원 관리자"
+  ],
+  "Back to homepage": [
+    "กลับหน้าหลัก",
+    "홈으로 돌아가기"
+  ],
+  "Hospital navigation": [
+    "เมนูโรงพยาบาล",
+    "병원 메뉴"
+  ],
+  "Need Help?": [
+    "ต้องการความช่วยเหลือ?",
+    "도움이 필요하신가요?"
+  ],
+  "Contact Platform Support": [
+    "ติดต่อฝ่ายสนับสนุนแพลตฟอร์ม",
+    "플랫폼 지원팀 문의"
+  ],
+  "No patient requests available.": [
+    "ยังไม่มีคำขอจากผู้ป่วย",
+    "현재 환자 요청이 없습니다."
+  ],
+  "Simulated test payment": [
+    "การชำระเงินจำลองสำหรับทดสอบ",
+    "테스트용 모의 결제"
+  ],
+  "No records available. This feature is not connected yet.": [
+    "ยังไม่มีข้อมูล ฟังก์ชันนี้ยังไม่เปิดใช้งาน",
+    "표시할 데이터가 없습니다. 아직 연결되지 않은 기능입니다."
+  ],
+  "New Request": [
+    "คำขอใหม่",
+    "새 요청"
+  ],
+  "Customer": [
+    "ลูกค้า",
+    "고객"
+  ],
+  "Pending": [
+    "รอดำเนินการ",
+    "대기 중"
+  ],
+  "Not Started": [
+    "ยังไม่เริ่มดำเนินการ",
+    "시작 전"
+  ],
+  "Male": [
+    "ชาย",
+    "남성"
+  ],
+  "Female": [
+    "หญิง",
+    "여성"
+  ],
+  "Other": [
+    "อื่น ๆ",
+    "기타"
+  ],
+  "Prefer not to say": [
+    "ไม่ประสงค์ระบุ",
+    "응답하지 않음"
+  ],
+  "Selected hospital image": [
+    "รูปภาพโรงพยาบาลที่เลือก",
+    "선택한 병원 사진"
+  ],
+  "Hospital profile image": [
+    "รูปโปรไฟล์โรงพยาบาล",
+    "병원 프로필 사진"
+  ],
+  "Hospital logo": [
+    "โลโก้โรงพยาบาล",
+    "병원 로고"
+  ],
+  "Hospital image": [
+    "รูปภาพโรงพยาบาล",
+    "병원 사진"
+  ],
+  "Hospital gallery photo": [
+    "รูปภาพในแกลเลอรีโรงพยาบาล",
+    "병원 갤러리 사진"
+  ],
+  "Booking Chats": [
+    "แชทเกี่ยวกับการจอง",
+    "예약 채팅"
+  ],
+  "Search conversations": [
+    "ค้นหาการสนทนา",
+    "대화 검색"
+  ],
+  "All Status": [
+    "ทุกสถานะ",
+    "전체 상태"
+  ],
+  "Active": [
+    "ใช้งานได้",
+    "활성"
+  ],
+  "Locked": [
+    "ล็อกอยู่",
+    "잠김"
+  ],
+  "Message": [
+    "ข้อความ",
+    "메시지"
+  ],
+  "Send": [
+    "ส่ง",
+    "보내기"
+  ],
+  "No records found.": [
+    "ไม่พบข้อมูล",
+    "기록이 없습니다."
+  ],
+  "Booking Chat is locked": [
+    "แชทเกี่ยวกับการจองยังล็อกอยู่",
+    "예약 채팅이 잠겨 있습니다."
+  ],
+  "Approved": [
+    "อนุมัติแล้ว",
+    "승인됨"
+  ],
+  "Selected": [
+    "เลือกแล้ว",
+    "선택됨"
+  ],
+  "Email": [
+    "อีเมล",
+    "이메일"
+  ],
+  "Hospital": [
+    "โรงพยาบาล",
+    "병원"
+  ],
+  "Quotation saved. The customer has been notified by email.": [
+    "บันทึกใบเสนอราคาแล้ว และแจ้งลูกค้าทางอีเมลแล้ว",
+    "견적을 저장하고 고객에게 이메일로 알렸습니다."
+  ],
+  "Quotation saved. The customer was already notified about this response.": [
+    "บันทึกใบเสนอราคาแล้ว ลูกค้าได้รับแจ้งการตอบกลับนี้แล้ว",
+    "견적을 저장했습니다. 고객에게 이미 이 응답을 알렸습니다."
+  ],
+  "Quotation saved. The customer has turned off quotation email alerts.": [
+    "บันทึกใบเสนอราคาแล้ว ลูกค้าปิดการแจ้งเตือนใบเสนอราคาทางอีเมลไว้",
+    "견적을 저장했습니다. 고객이 견적 이메일 알림을 꺼 두었습니다."
+  ],
+  "Quotation saved, but the customer email could not be sent. Save the quotation again to retry.": [
+    "บันทึกใบเสนอราคาแล้ว แต่ส่งอีเมลให้ลูกค้าไม่สำเร็จ กรุณาบันทึกใบเสนอราคาอีกครั้งเพื่อลองใหม่",
+    "견적은 저장했지만 고객에게 이메일을 보내지 못했습니다. 다시 저장하여 재시도하세요."
+  ],
+  "Quotation withdrawn. The customer can no longer select it.": [
+    "ถอนใบเสนอราคาแล้ว ลูกค้าไม่สามารถเลือกใบเสนอราคานี้ได้อีก",
+    "견적을 철회했습니다. 고객은 더 이상 이 견적을 선택할 수 없습니다."
+  ],
+  "This request already has a booking.": [
+    "คำขอนี้มีการจองแล้ว",
+    "이 요청에는 이미 예약이 있습니다."
+  ],
+  "A quotation cannot be withdrawn after a hospital has been selected.": [
+    "ไม่สามารถถอนใบเสนอราคาหลังจากเลือกโรงพยาบาลแล้ว",
+    "병원이 선택된 후에는 견적을 철회할 수 없습니다."
+  ],
+  "The deposit must be paid before completion.": [
+    "ต้องชำระเงินมัดจำก่อนดำเนินการให้เสร็จสิ้น",
+    "예약금을 결제해야 완료 처리할 수 있습니다."
+  ],
+  "Booking completed.": [
+    "การจองเสร็จสิ้นแล้ว",
+    "예약이 완료되었습니다."
+  ],
+  "Approve": [
+    "อนุมัติ",
+    "승인"
+  ],
+  "approved": [
+    "อนุมัติแล้ว",
+    "승인됨"
+  ],
+  "rejected": [
+    "ปฏิเสธแล้ว",
+    "거절됨"
+  ],
+  "pending": [
+    "รอดำเนินการ",
+    "대기 중"
   ]
 }

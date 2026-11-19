@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {translateText} from '../../resources/js/i18n.js';
 const source=readFileSync(new URL('../../resources/js/booking-inbox.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace('export function','function');
-function harness(rooms,messages=[],role='hospital'){
+function harness(rooms,messages=[],role='hospital',t=value=>value){
  const nodes=new Map(),created=[],calls=[];let pollLoad,initial;
  const element=()=>({value:'',textContent:'',innerHTML:'',hidden:false,disabled:false,children:[],dataset:{},listeners:{},scrollHeight:0,scrollTop:0,clientHeight:0,
   addEventListener(event,fn){this.listeners[event]=fn;},setAttribute(){},append(...children){this.children.push(...children);},replaceChildren(...children){this.children=children;},showModal(){this.open=true;},close(){this.open=false;}});
@@ -17,10 +18,27 @@ function harness(rooms,messages=[],role='hospital'){
   refreshChatSession:async()=>({csrf_token:'test-token'}),
   postChatMessage:async args=>{posted=args;return{ok:true,status:201,json:async()=>({})};}};
  vm.runInNewContext(source,context);
- const dispose=context.initBookingInbox({root,config:{bookingChatEndpoint:'/chat/bookings',chatSessionEndpoint:'/chat/session',userId:7,locale:'en'},esc:value=>String(value??'').replaceAll('<','&lt;').replaceAll('>','&gt;')});
+ const dispose=context.initBookingInbox({root,config:{bookingChatEndpoint:'/chat/bookings',chatSessionEndpoint:'/chat/session',userId:7,locale:'en'},t,esc:value=>String(value??'').replaceAll('<','&lt;').replaceAll('>','&gt;')});
  return{nodes,created,calls,root,dispose,ready:()=>initial,refresh:()=>pollLoad(),posted:()=>posted};
 }
 const room={id:42,booking_reference:'BK-2026-000042',request_reference:'REQ-2026-000018',customer_name:'Actual Customer',customer_email:'customer@example.test',hospital_name:'Actual Hospital',procedure:'Eye Surgery',unlocked:true,booking_status:'Confirmed',deposit_status:'Paid',hospital_selected:true,hospital_approved:true,payment_approved:true,account_active:true};
+
+test('hospital chat translates controls and statuses while preserving original names and messages',async()=>{
+ for(const locale of ['th','ko']){
+  const t=value=>translateText(value,locale);
+  const page=harness([{...room,customer_name:'Settings',hospital_name:'New Requests'}],[{id:1,sender_type:'customer',body:'Pending Payment',sent_at:'2026-11-12T12:00:00Z'}],'hospital',t);
+  await page.ready();
+  assert.ok(page.root.innerHTML.includes(t('Booking Chats')));
+  assert.ok(page.root.innerHTML.includes(t('Search conversations...')));
+  assert.ok(page.nodes.get('#booking-chat-list').innerHTML.includes('<strong>Settings</strong>'));
+  assert.ok(page.created.some(node=>node.innerHTML.includes('Pending Payment')));
+  page.dispose();
+  const locked=harness([{...room,unlocked:false}],[],'hospital',t);await locked.ready();
+  assert.ok(locked.nodes.get('#booking-chat-locked').innerHTML.includes(t('Hospital chat will be available once your Initial Deposit and Booking Deposit payments have been verified and approved.')));
+  assert.ok(locked.nodes.get('#booking-chat-locked').innerHTML.includes(t('Approved')));
+  locked.dispose();
+ }
+});
 test('live inbox renders server rooms and messages and sends to the selected booking',async()=>{
  const page=harness([room],[{id:1,sender_type:'customer',body:'Actual <message>',sent_at:'2026-11-12T12:00:00Z'}]);await page.ready();
  assert.match(page.nodes.get('#booking-chat-list').innerHTML,/Actual Customer/);assert.doesNotMatch(page.root.innerHTML,/Simulate|Sarah Kim/);

@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TreatmentRequestController;
 
 Route::view('/', 'home')->name('home');
+Route::post('/language', [\App\Http\Controllers\WebsiteLanguageController::class, 'update'])->middleware('throttle:30,1')->name('website.language');
+Route::post('/language', [\App\Http\Controllers\WebsiteLanguageController::class, 'update'])->middleware('throttle:30,1')->name('website.language');
 Route::get('/patient-reviews',[\App\Http\Controllers\PatientReviewController::class,'index'])->name('reviews.index');
 Route::get('/patient-reviews/write',[\App\Http\Controllers\PatientReviewController::class,'create'])->middleware('auth')->name('reviews.create');
 Route::post('/patient-reviews',[\App\Http\Controllers\PatientReviewController::class,'store'])->middleware(['auth','throttle:5,1,patient-review'])->name('reviews.store');

@@ -1,8 +1,8 @@
-<section class="real-guest-request container" data-no-translate lang="en">
+<section class="real-guest-request container">
  <article class="real-guest-panel" data-paginate="section" id="my-bookings"><h2>My Bookings</h2>
  @forelse($customerBookings as $booking)
  <section class="real-guest-quote"><h3>{{ $booking->reference }} · {{ $booking->status }}</h3>
- <p>{{ $booking->treatmentRequest->procedure_label }} · {{ $booking->hospital?->name }}</p>
+ <p>{{ $booking->treatmentRequest->procedure_label }} · <span data-user-content>{{ $booking->hospital?->name }}</span></p>
  <p>Treatment date: {{ $booking->appointment_date?->format('M j, Y') ?? 'Awaiting hospital confirmation' }}</p>
  @if($booking->deposit_phase==='treatment' && $booking->quotation)
  <x-requests.deposit-summary :deposit="(new \App\Services\DepositPayment)->treatmentSummary($booking)" :verification-amount="in_array($booking->deposit_status,['Pending','Pending Verification','Information Required'],true)?$booking->deposit_amount_satang:null" />

@@ -8,8 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements \Illuminate\Contracts\Translation\HasLocalePreference
 {
+    public function preferredLocale(): string
+    {
+        return in_array($this->preferred_language, ['en', 'th', 'ko'], true) ? $this->preferred_language : 'en';
+    }
     public const ROLE_USER = 'user';
     public const ROLE_ADMIN = 'admin';
     public const ROLE_HOSPITAL = 'hospital';
