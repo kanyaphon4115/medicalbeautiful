@@ -29,14 +29,13 @@ export function openDepositPayment({request, response, showModal, back, onAccept
         const isPaid=data.payment_status==='Paid';
         const unavailable=!data.integration?.available;
         const row=(label,value,css='')=>`<div class="${css}"><dt>${label}</dt><dd>${escape(value)}</dd></div>`;
-        show(isPaid?'Booking Deposit Paid':'Pay Booking Deposit',`<p class="booking-payment-subtitle">${isPaid?'Your booking deposit payment has been verified and approved.':'Scan the QR Code to make your booking deposit payment.'}</p>
+        show(isPaid?'Booking Deposit Paid (Step 9)':'Pay Booking Deposit',`<p class="booking-payment-subtitle">${isPaid?'Your booking deposit payment has been verified and approved.':'Scan the QR Code to make your booking deposit payment.'}</p>
             <div class="booking-payment-columns">
-                <figure class="booking-payment-qr">${isPaid?'':`<div class="booking-payment-code"><img src="${escape(document.body.dataset.paymentQrExample)}" alt="Example QR code - not for payment"><i></i><i></i><i></i><i></i></div>`}<figcaption><span>${isPaid?'Booking Deposit Paid':'Amount to Pay'}</span><strong>${money(isPaid?deposit.booking_paid_satang:data.deposit_satang)}</strong></figcaption></figure>
+                <figure class="booking-payment-qr">${isPaid?'':`<div class="booking-payment-code"><img src="${escape(document.body.dataset.paymentQrExample)}" alt="Example QR code - not for payment"><i></i><i></i><i></i><i></i></div>`}<figcaption><span>${isPaid?'Booking Deposit Paid (Step 9)':'Amount to Pay'}</span><strong>${money(isPaid?deposit.booking_paid_satang:data.deposit_satang)}</strong></figcaption></figure>
                 <section class="booking-payment-details" aria-label="Payment Details"><h3>Payment Details</h3><dl>
                     ${row('Request No.',data.request_reference)}${row('Treatment',data.procedure_name)}${row('Hospital',data.hospital_name||'Selected Hospital')}
-                    ${row('Total Treatment Cost',money(deposit.total_satang))}${row('Required Deposit ('+deposit.percentage+'%)',money(deposit.required_satang))}
-                    ${row('Initial Deposit Paid','- '+money(deposit.initial_satang),'booking-payment-deduction')}
-                    ${row('Booking Deposit Paid',money(deposit.booking_paid_satang),'booking-payment-deduction')}
+                    ${row('Total Treatment Cost',money(deposit.total_satang))}${row(deposit.separate_booking_deposit?'Required Booking Deposit (Step 9)':'Required Deposit ('+deposit.percentage+'%)',money(deposit.required_satang))}
+                    ${row('Initial Deposit Paid',(deposit.separate_booking_deposit?'':'- ')+money(deposit.initial_satang),'booking-payment-deduction')}
                     ${row('Total Deposit Paid',money(deposit.total_paid_satang))}
                     ${isPaid?'':row('Amount to Verify (not yet paid)',money(data.deposit_satang))}
                     ${row('Remaining Balance &mdash; Pay at Hospital',money(deposit.remaining_satang),'booking-payment-total')}

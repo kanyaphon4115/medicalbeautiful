@@ -5,9 +5,8 @@
  <dl class="request-contact-details">
   <dt>Total Treatment Cost</dt><dd>{{ $formatDepositMoney($deposit['total_satang']) }}</dd>
   <dt>Required Deposit Percentage</dt><dd>{{ $deposit['percentage'] }}%</dd>
-  <dt>Required Treatment Deposit</dt><dd>{{ $formatDepositMoney($deposit['required_satang']) }}</dd>
+  <dt>{{ !empty($deposit['separate_booking_deposit']) ? __('Required Booking Deposit (Step 9)') : __('Required Treatment Deposit') }}</dt><dd>{{ $formatDepositMoney($deposit['required_satang']) }}</dd>
   <dt>Initial Deposit Paid </dt><dd class="deposit-paid">{{ $formatDepositMoney($deposit['initial_satang']) }}</dd>
-  <dt>Booking Deposit Paid </dt><dd class="deposit-paid">{{ $formatDepositMoney($deposit['booking_paid_satang']) }}</dd>
   <dt class="deposit-total-paid">Total Deposit Paid</dt><dd class="deposit-total-paid">{{ $formatDepositMoney($deposit['total_paid_satang']) }}</dd>
   @if($verificationAmount!==null)
   <dt class="ap-payment-verify-amount">Amount to Verify (not yet paid)</dt><dd class="ap-payment-verify-amount">{{ $formatDepositMoney($verificationAmount) }}</dd>

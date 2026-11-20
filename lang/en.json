@@ -1,4 +1,5 @@
 {
+    "Sample logo": "Sample logo",
     "Start Now": "Start Now",
     "Translate": "Translate",
     "Hide translation": "Hide translation",
@@ -368,9 +369,13 @@
     "Refresh your youthful look": "Refresh your youthful look",
     "A more balanced and defined jawline": "A more balanced and defined jawline",
     "A slimmer, more contoured face": "A slimmer, more contoured face",
-    "Clearer, healthier-looking skin": "Clearer, healthier-looking skin"
-,
-  "Write a Review": "Write a Review"
-,
-  "Write your review (optional)": "Write your review (optional)"
+    "Clearer, healthier-looking skin": "Clearer, healthier-looking skin",
+    "Write a Review": "Write a Review",
+    "Write your review (optional)": "Write your review (optional)",
+    "Required Booking Deposit (Step 9)": "Required Booking Deposit (Step 9)",
+    "Additional Booking Deposit Required": "Additional Booking Deposit Required",
+    "Total Deposit After Step 9 Payment": "Total Deposit After Step 9 Payment",
+    "Remaining Balance After Step 9 Payment": "Remaining Balance After Step 9 Payment",
+    "Booking Deposit Paid (Step 9)": "Booking Deposit Paid (Step 9)",
+    "Booking Deposit (Step 9)": "Booking Deposit (Step 9)"
 }

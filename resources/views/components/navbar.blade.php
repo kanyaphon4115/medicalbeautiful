@@ -1,6 +1,6 @@
 <header class="site-header" data-home-url="{{ url('/') }}">
     <div class="nav-wrap">
-        <a href="{{ url('/') }}" class="brand" aria-label="AESTHETIC homepage"><span class="brand-mark">{{ __('A') }}</span><span><strong>{{ __('AESTHETIC') }}</strong><small>{{ __('BEAUTY FOR A BETTER YOU') }}</small></span></a>
+        <a href="{{ url('/') }}" class="brand" aria-label="AESTHETIC homepage"><span class="brand-mark">{{ __('A') }}</span><span><strong>{{ __('AESTHETIC') }}</strong><small>{{ __('BEAUTY FOR A BETTER YOU') }}</small><small class="brand-sample">{{ __('Sample logo') }}</small></span></a>
         <nav class="desktop-nav" aria-label="Main navigation">
             <a href="{{ url('/') }}#procedures">{{ __('Procedures') }}</a><a href="{{ route('requests.index') }}" data-customer-feature="My Requests">{{ __('My Requests') }}</a>@if(auth()->user()?->isAdmin())<a href="{{ route('admin.dashboard') }}" data-admin-nav>{{ __('Admin Dashboard') }}</a>@endif @if(auth()->user()?->role===\App\Models\User::ROLE_SUPPORT)<a href="{{ route('admin.support') }}">{{ __('Customer Support') }}</a>@endif @if(auth()->user()?->isHospital())<a href="{{ route('hospital.dashboard') }}" data-hospital-nav>{{ __('Hospital Dashboard') }}</a>@endif<a href="{{ route('reviews.index') }}" @if(request()->routeIs('reviews.*')) aria-current="page" @endif>{{ __('Patient Reviews') }}</a><a href="{{ url('/') }}#why-us">{{ __('About Us') }}</a><button data-info="articles">{{ __('Articles') }}</button>
         </nav>

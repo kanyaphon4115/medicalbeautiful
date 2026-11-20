@@ -40,9 +40,15 @@ class DepositPayment
         $paid=$this->paidSummary($booking);
         $initial=$paid['initial_satang'];
         $required = intdiv($total * $percentage + 50, 100);
+        $separate = (bool) $booking->booking_deposit_is_additional;
+        $additional = $separate ? $required : max(0, $required-$initial);
+        $outstanding = max(0, $additional-$paid['booking_paid_satang']);
+        $projectedPaid = $paid['total_paid_satang']+$outstanding;
         return [...$paid,'total_satang'=>$total,'percentage'=>$percentage,'required_satang'=>$required,
-            'outstanding_satang'=>max(0,$required-$paid['total_paid_satang']),
-            'additional_satang'=>max(0,$required-$initial),'phase'=>$booking->deposit_phase,'payment_status'=>$booking->deposit_status,
+            'outstanding_satang'=>$outstanding,
+            'additional_satang'=>$additional,'separate_booking_deposit'=>$separate,
+            'total_after_booking_satang'=>$projectedPaid,'remaining_after_booking_satang'=>max(0,$total-$projectedPaid),
+            'phase'=>$booking->deposit_phase,'payment_status'=>$booking->deposit_status,
             'section_id'=>'booking-deposit-'.$booking->id,'start_url'=>route('bookings.treatment-deposit',$booking),'payment_url'=>route('bookings.deposit',$booking)];
     }
     public function summary(Booking $booking): array

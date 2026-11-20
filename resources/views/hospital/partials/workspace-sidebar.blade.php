@@ -4,7 +4,7 @@
  $workspaceName=$workspaceProfile?->name?:auth()->user()->name;
 @endphp
 <aside class="hd-sidebar" id="hospital-sidebar">
-    <a class="brand" href="{{ route('home') }}"><span class="brand-mark">A</span><span><strong>AESTHETIC</strong><small>BEAUTY FOR A BETTER YOU</small></span></a>
+    <a class="brand" href="{{ route('home') }}"><span class="brand-mark">A</span><span><strong>AESTHETIC</strong><small>BEAUTY FOR A BETTER YOU</small><small class="brand-sample">{{ __('Sample logo') }}</small></span></a>
     <div class="hd-clinic">@if($workspaceProfile?->logo_path)<img src="{{ $workspaceProfile->mediaUrl('logo') }}" alt="Hospital logo">@elseif($workspaceProfile?->gallery)<img src="{{ $workspaceProfile->mediaUrl('gallery',$workspaceProfile->gallery[0]['id']) }}" alt="Hospital image">@else<img src="{{ asset('images/hospital-1.jpg') }}" alt="{{ __('Sample hospital image') }}" title="{{ __('Sample image') }}">@endif<strong data-user-content>{{ $workspaceName }}</strong><span>{{ __('Hospital Admin') }}</span></div>
     <nav aria-label="{{ __('Hospital navigation') }}">
         @foreach($menus as $label=>$icon)

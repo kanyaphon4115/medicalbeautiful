@@ -1,3 +1,4 @@
+import {translateText} from './i18n.js';
 import {pageNumbers} from './pagination.js';
 import {openDepositPayment} from './deposit-payment.js';
 import {quotationStats, selectRequests, matchesRequestStatus} from './requests-data';
@@ -66,11 +67,12 @@ function render() {
    text('[data-treatment-total]',quotationPrice(deposit.total_satang/100),card);
    text('[data-treatment-percentage]',deposit.percentage,card);
    text('[data-treatment-required]',quotationPrice(deposit.required_satang/100),card);
-   text('[data-treatment-initial]','- '+quotationPrice(deposit.initial_satang/100),card);
-   text('[data-treatment-additional]',quotationPrice(deposit.outstanding_satang/100),card);
-   text('[data-treatment-booking-paid]',quotationPrice(deposit.booking_paid_satang/100),card);
+   text('[data-treatment-initial]',(deposit.separate_booking_deposit?'':'- ')+quotationPrice(deposit.initial_satang/100),card);
    text('[data-treatment-total-paid]',quotationPrice(deposit.total_paid_satang/100),card);
    text('[data-treatment-remaining]',quotationPrice(deposit.remaining_satang/100),card);
+   if(deposit.separate_booking_deposit){
+    text('[data-treatment-required-label]',translateText('Booking Deposit Paid',document.documentElement.lang),card);
+   }
    const pay=$('[data-pay-treatment]',card);
    const paid=deposit.phase==='treatment'&&deposit.payment_status==='Paid';
    const reviewing=deposit.phase==='treatment'&&deposit.payment_status==='Pending Verification';

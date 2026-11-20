@@ -54,6 +54,7 @@
   @elseif($payment->purpose==='initial')
    <section class="ap-payment-summary"><dl class="request-contact-details"><dt>Initial Deposit Amount</dt><dd>{{ $money($payment->amount_satang) }}</dd><dt class="ap-payment-verify-amount">Amount to Verify</dt><dd class="ap-payment-verify-amount">{{ $money($payment->amount_satang) }}</dd></dl></section>
   @endif
+@if($booking->booking_deposit_is_additional && $booking->quotation && $payment->purpose==='initial')<x-requests.deposit-summary :deposit="app(\App\Services\DepositPayment::class)->treatmentSummary($booking)" :admin="true" />@endif
   @include('admin.payment-verification')
   <a class="ap-button" href="{{ route('admin.bookings',['record'=>$booking->id]) }}#real-payment-{{ $booking->id }}">View Booking Details</a>
   @if($booking->payment_is_simulated)<p class="ap-note">SIMULATED PAYMENT &mdash; recorded by a local test action. No real funds were received.</p>@endif

@@ -1,4 +1,5 @@
 {
+  "Sample logo": "예시 로고",
   "Start Now": "지금 시작하기",
   "Remaining Balance": "잔액",
   "Request ID": "요청 번호",
@@ -865,5 +866,11 @@
   "Approve": "승인",
   "approved": "승인됨",
   "rejected": "거절됨",
-  "pending": "대기 중"
+  "pending": "대기 중",
+  "Required Booking Deposit (Step 9)": "필요 예약금 (9단계)",
+  "Additional Booking Deposit Required": "추가 예약금",
+  "Total Deposit After Step 9 Payment": "9단계 결제 후 총 예치금",
+  "Remaining Balance After Step 9 Payment": "9단계 결제 후 잔액",
+  "Booking Deposit Paid (Step 9)": "결제한 예약 확정금 (9단계)",
+  "Booking Deposit (Step 9)": "예약금 (9단계)"
 }

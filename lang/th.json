@@ -1,4 +1,5 @@
 {
+  "Sample logo": "ตัวอย่างโลโก้",
   "Start Now": "เริ่มต้นเลย",
   "Remaining Balance": "ยอดคงเหลือ",
   "Request ID": "เลขที่คำขอ",
@@ -870,5 +871,11 @@
   "Approve": "อนุมัติ",
   "approved": "อนุมัติแล้ว",
   "rejected": "ปฏิเสธแล้ว",
-  "pending": "รอดำเนินการ"
+  "pending": "รอดำเนินการ",
+  "Required Booking Deposit (Step 9)": "เงินมัดจำการจองที่ต้องชำระ (ขั้นตอน 9)",
+  "Additional Booking Deposit Required": "เงินมัดจำการจองที่ต้องชำระเพิ่ม",
+  "Total Deposit After Step 9 Payment": "เงินมัดจำรวมหลังชำระขั้นตอน 9",
+  "Remaining Balance After Step 9 Payment": "ยอดคงเหลือหลังชำระขั้นตอน 9",
+  "Booking Deposit Paid (Step 9)": "เงินมัดจำการจองที่ชำระแล้ว (ขั้นตอน 9)",
+  "Booking Deposit (Step 9)": "เงินมัดจำการจอง (ขั้นตอนที่ 9)"
 }

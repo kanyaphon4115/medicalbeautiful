@@ -36,6 +36,8 @@ class PaymentLedger
             422, 'Account activation is required before verifying Booking Deposit.');
         $summary = (new DepositPayment)->treatmentSummary($booking);
         abort_unless($payment->amount_satang === $summary['additional_satang'],
-            422, 'The Booking Deposit amount must match the required deposit minus the approved Initial Deposit payment.');
+            422, $summary['separate_booking_deposit']
+                ? 'The Booking Deposit amount must equal the required additional Step 9 deposit.'
+                : 'The Booking Deposit amount must match the required deposit minus the approved Initial Deposit payment.');
     }
 }

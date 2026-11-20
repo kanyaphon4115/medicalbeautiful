@@ -60,6 +60,7 @@
  <dt>Refund Amount</dt><dd>{{ $money($booking->refunded_amount_satang) }}</dd>
  @endif
  </dl>
+@if($booking->booking_deposit_is_additional && $booking->quotation)<x-requests.deposit-summary :deposit="app(\App\Services\DepositPayment::class)->treatmentSummary($booking)" :admin="true" />@endif
  @if(!$isBooking)@include('admin.payment-verification')@endif
  @php($currentPayment=$booking->paymentSubmissions->firstWhere('purpose',$booking->deposit_phase))
  <a class="ap-button" href="{{ route('admin.'.($isBooking?'payments':'bookings'),['record'=>$booking->id]) }}#real-payment-{{ $isBooking ? ($currentPayment?'tx-'.$currentPayment->id:'legacy-'.$booking->id) : $booking->id }}">{{ $isBooking?'View Payment Details':'View Booking Details' }}</a>

@@ -16,7 +16,7 @@
  @php($booking=$item->booking)
  @php($paidBalance=$booking?(new \App\Services\DepositPayment)->paidSummary($booking):null)
  @if($booking)<article class="real-guest-panel real-guest-payment" id="booking-deposit" data-payment-state="{{ $progress['status'] }}"><h2>{{ $progress['status']==='pending_verification'?'Payment Under Review':($progress['status']==='paid'?'Payment Approved':'Booking & Deposit') }}</h2><dl><dt>Procedure</dt><dd>{{ $item->procedure_label }}</dd><dt>Booking ID</dt><dd>{{ $booking->reference }}</dd><dt>Payment Reference</dt><dd>{{ $booking->payment_reference }}</dd><dt>Selected Hospital</dt><dd data-user-content>{{ $booking->hospital?->name }}</dd><dt>Total Quotation Price</dt><dd>THB {{ number_format((float)$booking->quotation->amount,2) }}</dd><dt>Deposit Amount</dt><dd>{{ $booking->deposit_amount_satang===null?'Not recorded':'THB '.number_format($booking->deposit_amount_satang/100,2) }}</dd><dt>Remaining Balance &mdash; Pay at Hospital</dt><dd>THB {{ number_format($paidBalance['remaining_satang']/100,2) }}</dd><dt>Booking Status</dt><dd>{{ $booking->status }}</dd><dt>Payment Status</dt><dd>{{ $progress['status']==='pending_verification'?'Pending Admin Approval':$booking->payment_status }}</dd><dt>Request ID</dt><dd>{{ sprintf('REQ-%s-%06d',$item->created_at->format('Y'),$item->id) }}</dd><dt>Customer</dt><dd data-user-content>{{ $item->name }}</dd><dt>Submission Date</dt><dd>{{ $booking->paymentSubmissions->first()?->method==='Not submitted'?'Not submitted':($booking->paymentSubmissions->first()?->submitted_at?->format('M j, Y H:i') ?? 'Not submitted') }}</dd></dl>
- @if($booking->deposit_phase==='treatment')
+ @if($booking->deposit_phase==='treatment' || $booking->booking_deposit_is_additional)
  <x-requests.deposit-summary :deposit="(new \App\Services\DepositPayment)->treatmentSummary($booking)" :verification-amount="in_array($booking->deposit_status,['Pending','Pending Verification','Information Required'],true)?$booking->deposit_amount_satang:null" />
  @endif
  @if($progress['status']==='pending_verification')
@@ -32,8 +32,6 @@
  @if(in_array($progress['status'],['rejected','information_required']))<h3>{{ $progress['status']==='rejected'?'Payment Verification Unsuccessful':'Additional Payment Information Required' }}</h3><p data-user-content class="real-guest-message">{{ $submission?->review_notes }}</p><p>Please contact our team if needed, then submit your payment notification below. Do not transfer money again unless our team asks you to.</p>@endif
  @if($paymentReviewReady && in_array($progress['status'],['not_started','pending_payment','rejected','information_required']))
  <form method="POST" enctype="multipart/form-data" action="{{ route('guest.requests.payment-claim',$item->reference) }}">@csrf
- <label>Transaction reference (optional)<input type="text" name="transaction_reference" maxlength="200"></label>
- <label>Payment proof (optional)<input type="file" name="proof" accept="image/jpeg,image/png,image/webp,application/pdf"></label>
  <button class="button button-gold">I Have Paid</button>
  </form>
  <p class="real-guest-help">No upload required. Our team will check received funds before approving your payment. The example QR cannot receive funds.</p>

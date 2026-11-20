@@ -11,7 +11,7 @@
 </head>
 <body class="ap-body" data-page="{{ $page }}">
 <aside class="ap-sidebar" id="ap-sidebar">
-    <a class="brand" href="{{ route('home') }}"><span class="brand-mark">A</span><span><strong>AESTHETIC</strong><small>BEAUTY FOR A BETTER YOU</small></span></a>
+    <a class="brand" href="{{ route('home') }}"><span class="brand-mark">A</span><span><strong>AESTHETIC</strong><small>BEAUTY FOR A BETTER YOU</small><small class="brand-sample">{{ __('Sample logo') }}</small></span></a>
     <nav aria-label="{{ $catalog['Admin navigation'] }}">
         @foreach($pages as $slug=>$label)
         @continue(in_array($slug,['support','booking-chats','reports']))

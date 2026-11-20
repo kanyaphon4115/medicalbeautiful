@@ -1,5 +1,6 @@
 /* Shared sizing for customer, hospital and admin workspaces. */
 img, video, canvas { max-width: 100%; }
+.brand .brand-sample { display: block; width: max-content; max-width: 100%; margin-top: 4px; padding: 2px 6px; border: 1px solid #e7dac7; border-radius: 4px; background: #faf4e9; color: #896e46; font-size: 8px; line-height: 1.25; letter-spacing: 0; text-transform: none; }
 input, select, textarea { min-width: 0; max-width: 100%; }
 .hero-benefits > div, .real-guest-grid > *, .real-guest-panel,
 .ap-shell, .hd-shell, .ap-panel, .hd-panel { min-width: 0; }
